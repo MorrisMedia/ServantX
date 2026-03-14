@@ -15,6 +15,7 @@ from routes.appeals import router as appeals_router
 from routes.admin_rates import router as admin_rates_router
 from routes.auth import router as auth_router
 from routes.documents import router as documents_router
+from routes.projects import router as projects_router
 
 load_dotenv()
 
@@ -48,6 +49,7 @@ app.include_router(analysis_router)
 app.include_router(appeals_router)
 app.include_router(admin_rates_router)
 app.include_router(documents_router)
+app.include_router(projects_router)
 
 # Serve uploaded files
 uploads_dir = Path("uploads")
@@ -76,7 +78,7 @@ async def root():
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy"}
+    return {"status": "healthy", "service": "servantx-api", "environment": os.getenv("ENVIRONMENT", "development")}
 
 
 

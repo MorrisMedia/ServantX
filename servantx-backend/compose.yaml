@@ -1,16 +1,39 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: servantx-postgres
+    environment:
+      POSTGRES_DB: servantx
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d servantx"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: .
     container_name: servantx-backend
     env_file:
       - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/servantx
+      STORAGE_ROOT: /app/uploads
+      DUCKDB_WORKSPACE_ROOT: /app/uploads/workspaces
     volumes:
       - .:/app
+      - servantx_uploads:/app/uploads
     ports:
       - "8000:8000"
-    networks:
-      - postgress_shared_net
+    depends_on:
+      postgres:
+        condition: service_healthy
 
-networks:
-  postgress_shared_net:
-    external: true
+volumes:
+  postgres_data:
+  servantx_uploads:

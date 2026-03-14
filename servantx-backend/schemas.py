@@ -269,6 +269,7 @@ class Document(BaseModel):
     id: str
     receiptId: Optional[str] = None
     hospitalId: str
+    projectId: Optional[str] = None
     contractId: Optional[str] = None
     batchRunId: Optional[str] = None
     documentRole: Optional[str] = None
@@ -317,6 +318,7 @@ class PaginatedDocumentsResponse(BaseModel):
 class BatchRun(BaseModel):
     id: str
     hospitalId: str
+    projectId: Optional[str] = None
     status: str
     payerScope: str
     sourceFileCount: int
@@ -430,3 +432,70 @@ class RateStatusResponse(BaseModel):
     versions: List[Dict[str, Any]]
     coverage: Dict[str, Any]
 
+
+
+class ProjectCreateRequest(BaseModel):
+    name: str = Field(..., min_length=2, max_length=120)
+    description: Optional[str] = None
+    payerScope: Optional[str] = None
+
+
+class ProjectResponse(BaseModel):
+    id: str
+    hospitalId: str
+    name: str
+    slug: str
+    description: Optional[str] = None
+    status: str
+    payerScope: Optional[str] = None
+    workspaceDuckdbPath: Optional[str] = None
+    storagePrefix: Optional[str] = None
+    workspaceSummary: Optional[Dict[str, Any]] = None
+    createdAt: datetime
+    updatedAt: datetime
+
+
+class StoragePresignRequest(BaseModel):
+    operation: str = "download"
+    storageKey: Optional[str] = None
+    prefix: Optional[str] = None
+    fileName: Optional[str] = None
+
+
+class StoragePresignResponse(BaseModel):
+    storageKey: str
+    operation: str
+    expiresAt: int
+    token: str
+    url: str
+
+
+class TruthVerificationRequest(BaseModel):
+    batchRunId: Optional[str] = None
+
+
+class TruthVerificationResponse(BaseModel):
+    id: str
+    projectId: str
+    batchRunId: Optional[str] = None
+    status: str
+    verificationSummary: Dict[str, Any]
+    createdAt: datetime
+    completedAt: Optional[datetime] = None
+
+
+class FormalAuditRunCreateRequest(BaseModel):
+    batchRunId: Optional[str] = None
+    verificationRunId: Optional[str] = None
+
+
+class FormalAuditRunResponse(BaseModel):
+    id: str
+    projectId: str
+    batchRunId: Optional[str] = None
+    verificationRunId: Optional[str] = None
+    status: str
+    auditStandard: str
+    report: Dict[str, Any]
+    createdAt: datetime
+    completedAt: Optional[datetime] = None

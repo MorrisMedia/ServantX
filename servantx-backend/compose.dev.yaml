@@ -1,11 +1,43 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: servantx-postgres-dev
+    environment:
+      POSTGRES_DB: servantx
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
   redis:
     image: redis:7-alpine
     container_name: servantx-redis
     ports:
       - "6379:6379"
-    networks:
-      - postgress_shared_net
+
+  backend:
+    build: .
+    container_name: servantx-backend-dev
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/servantx
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      STORAGE_ROOT: /app/uploads
+      DUCKDB_WORKSPACE_ROOT: /app/uploads/workspaces
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+      - servantx_uploads:/app/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
 
   celery-worker:
     build: .
@@ -13,17 +45,20 @@ services:
     env_file:
       - .env
     environment:
-      - REDIS_URL=redis://redis:6379/0
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/servantx
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      STORAGE_ROOT: /app/uploads
+      DUCKDB_WORKSPACE_ROOT: /app/uploads/workspaces
     command: celery -A celery_app.celery_app worker --loglevel=info -Q ingest,parse,review,synthesize,reconcile
     volumes:
       - .:/app
+      - servantx_uploads:/app/uploads
     depends_on:
+      - postgres
       - redis
-    networks:
-      - postgress_shared_net
 
-networks:
-  postgress_shared_net:
-    external: true
+volumes:
+  postgres_dev_data:
+  servantx_uploads:

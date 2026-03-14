@@ -1,8 +1,10 @@
 import os
-from pydantic_settings import BaseSettings
+
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
 
 load_dotenv()
+
 
 class Settings(BaseSettings):
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
@@ -14,6 +16,11 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
     POSTGRES_DB: str = os.getenv("POSTGRES_DB", "servantx")
+
+    STORAGE_ROOT: str = os.getenv("STORAGE_ROOT", "uploads")
+    STORAGE_PRESIGN_SECRET: str = os.getenv("STORAGE_PRESIGN_SECRET", os.getenv("JWT_SECRET_KEY", "dev-storage-secret"))
+    STORAGE_PRESIGN_TTL_SECONDS: int = int(os.getenv("STORAGE_PRESIGN_TTL_SECONDS", "900"))
+    DUCKDB_WORKSPACE_ROOT: str = os.getenv("DUCKDB_WORKSPACE_ROOT", "uploads/workspaces")
 
     SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
     SENDGRID_FROM_EMAIL: str = os.getenv("SENDGRID_FROM_EMAIL", "servantx@hirekosovo.com")
@@ -30,8 +37,9 @@ class Settings(BaseSettings):
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
     CELERY_RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
-    
+
     class Config:
         env_file = ".env"
+
 
 settings = Settings()

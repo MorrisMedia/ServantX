@@ -1,24 +1,27 @@
 import enum
+import uuid
+from datetime import datetime
+
 from sqlalchemy import (
-    Column,
-    String,
-    Integer,
-    Float,
-    Boolean,
-    DateTime,
-    ForeignKey,
-    Text,
     JSON,
+    Boolean,
+    Column,
     Date,
-    Numeric,
+    DateTime,
     Enum as SAEnum,
+    Float,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from datetime import datetime
-import uuid
 
 Base = declarative_base()
+
 
 def generate_uuid():
     return str(uuid.uuid4())
@@ -39,20 +42,110 @@ class LocalityOverrideEntityType(str, enum.Enum):
 
 class Hospital(Base):
     __tablename__ = "hospitals"
-    
+
     id = Column(String, primary_key=True, default=generate_uuid)
     name = Column(String, nullable=False)
     phone = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    
+
     users = relationship("User", back_populates="hospital")
     contracts = relationship("Contract", back_populates="hospital")
     receipts = relationship("Receipt", back_populates="hospital")
     batch_runs = relationship("BatchRun", back_populates="hospital")
+    projects = relationship("Project", back_populates="hospital")
+
+
+class Project(Base):
+    __tablename__ = "projects"
+    __table_args__ = (UniqueConstraint("hospital_id", "slug", name="uq_projects_hospital_slug"),)
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    name = Column(String, nullable=False)
+    slug = Column(String, nullable=False, index=True)
+    description = Column(Text, nullable=True)
+    status = Column(String, nullable=False, default="active")
+    payer_scope = Column(String, nullable=True)
+    workspace_duckdb_path = Column(String, nullable=True)
+    storage_prefix = Column(String, nullable=True)
+    created_by = Column(String, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    hospital = relationship("Hospital", back_populates="projects")
+    creator = relationship("User", foreign_keys=[created_by])
+    contracts = relationship("Contract", back_populates="project")
+    receipts = relationship("Receipt", back_populates="project")
+    batch_runs = relationship("BatchRun", back_populates="project")
+    documents = relationship("Document", back_populates="project")
+    artifacts = relationship("ProjectArtifact", back_populates="project")
+    verification_runs = relationship("TruthVerificationRun", back_populates="project")
+    audit_runs = relationship("FormalAuditRun", back_populates="project")
+
+
+class ProjectArtifact(Base):
+    __tablename__ = "project_artifacts"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=False, index=True)
+    hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    document_id = Column(String, ForeignKey("documents.id"), nullable=True, index=True)
+    artifact_type = Column(String, nullable=False, index=True)
+    storage_key = Column(String, nullable=False)
+    original_file_name = Column(String, nullable=True)
+    content_type = Column(String, nullable=True)
+    byte_size = Column(Integer, nullable=True)
+    sha256 = Column(String, nullable=True, index=True)
+    metadata_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    project = relationship("Project", back_populates="artifacts")
+    hospital = relationship("Hospital")
+    document = relationship("Document")
+
+
+class TruthVerificationRun(Base):
+    __tablename__ = "truth_verification_runs"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=False, index=True)
+    hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    batch_run_id = Column(String, ForeignKey("batch_runs.id"), nullable=True, index=True)
+    status = Column(String, nullable=False, default="pending")
+    verification_summary = Column(JSON, nullable=True)
+    created_by = Column(String, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    completed_at = Column(DateTime, nullable=True)
+
+    project = relationship("Project", back_populates="verification_runs")
+    hospital = relationship("Hospital")
+    batch_run = relationship("BatchRun")
+
+
+class FormalAuditRun(Base):
+    __tablename__ = "formal_audit_runs"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=False, index=True)
+    hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    batch_run_id = Column(String, ForeignKey("batch_runs.id"), nullable=True, index=True)
+    verification_run_id = Column(String, ForeignKey("truth_verification_runs.id"), nullable=True, index=True)
+    status = Column(String, nullable=False, default="draft")
+    audit_standard = Column(String, nullable=False, default="MEDICAL_AUDIT_V1")
+    report_json = Column(JSON, nullable=True)
+    created_by = Column(String, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    completed_at = Column(DateTime, nullable=True)
+
+    project = relationship("Project", back_populates="audit_runs")
+    hospital = relationship("Hospital")
+    batch_run = relationship("BatchRun")
+    verification_run = relationship("TruthVerificationRun")
+
 
 class User(Base):
     __tablename__ = "users"
-    
+
     id = Column(String, primary_key=True, default=generate_uuid)
     email = Column(String, unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
@@ -67,15 +160,18 @@ class User(Base):
     reset_password_code = Column(String, nullable=True)
     reset_password_expires = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    
+
     hospital = relationship("Hospital", back_populates="users")
     oauth_tokens = relationship("OAuthToken", back_populates="user")
+    created_projects = relationship("Project", foreign_keys=[Project.created_by])
+
 
 class Contract(Base):
     __tablename__ = "contracts"
-    
+
     id = Column(String, primary_key=True, default=generate_uuid)
     hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=True, index=True)
     name = Column(String, nullable=False)
     file_name = Column(String, nullable=False)
     file_size = Column(Integer, nullable=True)
@@ -84,17 +180,18 @@ class Contract(Base):
     status = Column(String, default="processing", nullable=False)
     rules_extracted = Column(Integer, nullable=True)
     notes = Column(Text, nullable=True)
-    # Exhaustive payment rule library extracted from the contract.
-    # JSON structure defined by services/rule_library_schema.py
     rule_library = Column(JSON, nullable=True)
-    
+
     hospital = relationship("Hospital", back_populates="contracts")
+    project = relationship("Project", back_populates="contracts")
+
 
 class Receipt(Base):
     __tablename__ = "receipts"
-    
+
     id = Column(String, primary_key=True, default=generate_uuid)
     hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=True, index=True)
     has_difference = Column(Boolean, default=False, nullable=False)
     amount = Column(Float, default=0.0, nullable=False)
     uploaded_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -103,8 +200,9 @@ class Receipt(Base):
     file_size = Column(Integer, nullable=True)
     file_url = Column(String, nullable=True)
     status = Column(String, default="pending", nullable=False)
-    
+
     hospital = relationship("Hospital", back_populates="receipts")
+    project = relationship("Project", back_populates="receipts")
     documents = relationship("Document", back_populates="receipt")
 
 
@@ -113,6 +211,7 @@ class BatchRun(Base):
 
     id = Column(String, primary_key=True, default=generate_uuid)
     hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=True, index=True)
     status = Column(String, nullable=False, default="queued")
     payer_scope = Column(String, nullable=False, default="MEDICARE_TX_MEDICAID_FFS")
     source_file_count = Column(Integer, nullable=False, default=0)
@@ -127,6 +226,7 @@ class BatchRun(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     hospital = relationship("Hospital", back_populates="batch_runs")
+    project = relationship("Project", back_populates="batch_runs")
     documents = relationship("Document", back_populates="batch_run")
     parsed_data_entries = relationship("ParsedData", back_populates="batch_run")
     findings = relationship("AuditFinding", back_populates="batch_run")
@@ -135,10 +235,11 @@ class BatchRun(Base):
 
 class Document(Base):
     __tablename__ = "documents"
-    
+
     id = Column(String, primary_key=True, default=generate_uuid)
     receipt_id = Column(String, ForeignKey("receipts.id"), nullable=True, index=True)
     hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=True, index=True)
     batch_run_id = Column(String, ForeignKey("batch_runs.id"), nullable=True, index=True)
     contract_id = Column(String, ForeignKey("contracts.id"), nullable=True)
     document_role = Column(SAEnum(DocumentRole, name="document_role_enum"), nullable=False, default=DocumentRole.LEGACY, index=True)
@@ -163,9 +264,10 @@ class Document(Base):
     notes = Column(Text, nullable=True)
     rules_applied = Column(Text, nullable=True)
     is_bulk_downloaded = Column(Boolean, default=False, nullable=False)
-    
+
     receipt = relationship("Receipt", back_populates="documents")
     hospital = relationship("Hospital")
+    project = relationship("Project", back_populates="documents")
     contract = relationship("Contract")
     batch_run = relationship("BatchRun", back_populates="documents")
     parent_document = relationship(
@@ -183,9 +285,10 @@ class Document(Base):
     findings = relationship("AuditFinding", back_populates="document")
     audit_notes = relationship("AuditNote", back_populates="document")
 
+
 class OAuthToken(Base):
     __tablename__ = "oauth_tokens"
-    
+
     id = Column(String, primary_key=True, default=generate_uuid)
     user_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
     access_token = Column(String, unique=True, nullable=False, index=True)
@@ -194,7 +297,7 @@ class OAuthToken(Base):
     expires_at = Column(DateTime, nullable=False)
     revoked_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    
+
     user = relationship("User", back_populates="oauth_tokens")
 
 

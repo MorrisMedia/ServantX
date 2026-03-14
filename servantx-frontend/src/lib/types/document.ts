@@ -29,6 +29,7 @@ export interface Document {
   sourceFilePath?: string;
   rulesApplied?: string[];
   hospitalId: string;
+  projectId?: string;
   notes?: string;
   hasUnderpayment?: boolean;
   contractAmount?: number;

@@ -35,11 +35,8 @@ CLAIM_SCHEMA_VERSION = "claim_835_v1"
 
 
 def _read_storage_file(relative_path: str) -> str:
-    storage_root = Path("uploads")
-    full_path = storage_root / relative_path
-    if not full_path.exists():
-        raise FileNotFoundError(f"Storage file not found: {relative_path}")
-    return full_path.read_text(encoding="utf-8", errors="ignore")
+    from services.storage_service import storage_service
+    return storage_service.read_text(relative_path)
 
 
 def _dict_to_notes_json(payload: Dict[str, Any]) -> str:
@@ -133,6 +130,7 @@ async def run_stage1_ingest_835_file(file_document_id: str, batch_id: str) -> Di
                 receipt_id=None,
                 hospital_id=file_document.hospital_id,
                 batch_run_id=batch.id,
+                project_id=batch.project_id,
                 contract_id=None,
                 document_role=DocumentRole.CLAIM,
                 parent_document_id=file_document.id,
