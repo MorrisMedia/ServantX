@@ -101,6 +101,15 @@ class Settings(BaseSettings):
             if candidate.startswith("postgresql://") and "+asyncpg" not in candidate:
                 return candidate.replace("postgresql://", "postgresql+asyncpg://", 1)
             return candidate
+
+        pg_host = os.getenv("PGHOST") or os.getenv("POSTGRES_HOST") or self.DB_HOST
+        pg_port = os.getenv("PGPORT") or os.getenv("POSTGRES_PORT") or str(self.DB_PORT)
+        pg_user = os.getenv("PGUSER") or os.getenv("POSTGRES_USER") or self.POSTGRES_USER
+        pg_password = os.getenv("PGPASSWORD") or os.getenv("POSTGRES_PASSWORD") or self.POSTGRES_PASSWORD
+        pg_db = os.getenv("PGDATABASE") or os.getenv("POSTGRES_DATABASE") or self.POSTGRES_DB
+        if pg_host and pg_user and pg_db:
+            return f"postgresql+asyncpg://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}"
+
         if self.ENVIRONMENT == "development":
             sqlite_path = Path("./servantx_local.db").resolve()
             return f"sqlite+aiosqlite:///{sqlite_path}"

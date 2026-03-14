@@ -324,6 +324,10 @@ storage_service: BaseStorageService
 if settings.has_s3_storage:
     storage_service = S3StorageService()
 elif settings.has_vercel_blob_storage:
-    storage_service = VercelBlobStorageService()
+    try:
+        storage_service = VercelBlobStorageService()
+    except Exception as exc:
+        print(f"Warning: Vercel Blob unavailable, falling back to local storage: {exc}")
+        storage_service = LocalStorageService(settings.resolved_storage_root)
 else:
     storage_service = LocalStorageService(settings.resolved_storage_root)
