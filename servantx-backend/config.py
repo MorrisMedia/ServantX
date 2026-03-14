@@ -1,45 +1,142 @@
-import os
+from __future__ import annotations
+
+from functools import lru_cache
+from pathlib import Path
+from typing import Literal
 
 from dotenv import load_dotenv
+from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", case_sensitive=True)
 
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
-    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+    APP_NAME: str = "ServantX API"
+    APP_VERSION: str = "1.0.0"
+    ENVIRONMENT: Literal["development", "test", "staging", "production"] = "development"
+    LOG_LEVEL: str = "INFO"
+    APP_HOST: str = "0.0.0.0"
+    APP_PORT: int = 8000
+    API_BASE_URL: str = "http://localhost:8000"
+    FRONTEND_URL: str = "http://localhost:5000"
+    CORS_ORIGINS: list[str] | str = Field(default_factory=lambda: [
+        "http://localhost:3000",
+        "http://localhost:5000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5000",
+    ])
 
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "")
-    DB_HOST: str = os.getenv("DB_HOST", "localhost")
-    DB_PORT: str = os.getenv("DB_PORT", "5432")
-    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
-    POSTGRES_DB: str = os.getenv("POSTGRES_DB", "servantx")
+    OPENAI_API_KEY: str = ""
+    SENDGRID_API_KEY: str = ""
+    SENDGRID_FROM_EMAIL: str = "servantx@hirekosovo.com"
+    SENDGRID_FROM_NAME: str = "ServantX Contact"
+    SENDGRID_TO_EMAIL: str = ""
+    JWT_SECRET_KEY: str = "your-secret-key-change-in-production"
+    LANGFUSE_SECRET_KEY: str = ""
+    LANGFUSE_PUBLIC_KEY: str = ""
+    LANGFUSE_HOST: str = "https://cloud.langfuse.com"
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
 
-    STORAGE_ROOT: str = os.getenv("STORAGE_ROOT", "uploads")
-    STORAGE_PRESIGN_SECRET: str = os.getenv("STORAGE_PRESIGN_SECRET", os.getenv("JWT_SECRET_KEY", "dev-storage-secret"))
-    STORAGE_PRESIGN_TTL_SECONDS: int = int(os.getenv("STORAGE_PRESIGN_TTL_SECONDS", "900"))
-    DUCKDB_WORKSPACE_ROOT: str = os.getenv("DUCKDB_WORKSPACE_ROOT", "uploads/workspaces")
+    DATABASE_URL: str = ""
+    DB_HOST: str = "localhost"
+    DB_PORT: int = 5432
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_DB: str = "servantx"
+    SQL_ECHO: bool = False
+    SQL_POOL_SIZE: int = 10
+    SQL_MAX_OVERFLOW: int = 20
 
-    SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
-    SENDGRID_FROM_EMAIL: str = os.getenv("SENDGRID_FROM_EMAIL", "servantx@hirekosovo.com")
-    SENDGRID_FROM_NAME: str = os.getenv("SENDGRID_FROM_NAME", "ServantX Contact")
-    SENDGRID_TO_EMAIL: str = os.getenv("SENDGRID_TO_EMAIL", "")
+    REDIS_URL: str = "redis://localhost:6379/0"
+    CELERY_BROKER_URL: str | None = None
+    CELERY_RESULT_BACKEND: str | None = None
+    ENABLE_CELERY_ASYNC: bool = False
 
-    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
-    LANGFUSE_SECRET_KEY: str = os.getenv("LANGFUSE_SECRET_KEY", "")
-    LANGFUSE_PUBLIC_KEY: str = os.getenv("LANGFUSE_PUBLIC_KEY", "")
-    LANGFUSE_HOST: str = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
-    GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")
-    GOOGLE_CLIENT_SECRET: str = os.getenv("GOOGLE_CLIENT_SECRET", "")
-    CORS_ORIGINS: str = os.getenv("CORS_ORIGINS", "http://localhost:5000,http://localhost:3000")
-    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-    CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
-    CELERY_RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
+    STORAGE_BACKEND: Literal["local", "s3"] = "local"
+    STORAGE_ROOT: str = "uploads"
+    STORAGE_PUBLIC_BASE_URL: str = ""
+    STORAGE_BUCKET: str = ""
+    STORAGE_REGION: str = "us-east-1"
+    STORAGE_ENDPOINT_URL: str = ""
+    STORAGE_ACCESS_KEY_ID: str = ""
+    STORAGE_SECRET_ACCESS_KEY: str = ""
+    STORAGE_FORCE_PATH_STYLE: bool = False
+    STORAGE_PRESIGN_SECRET: str = "dev-storage-secret"
+    STORAGE_PRESIGN_TTL_SECONDS: int = 900
+    DUCKDB_WORKSPACE_ROOT: str = "uploads/workspaces"
+
+    AUTO_BOOTSTRAP_SQLITE: bool = True
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def _parse_cors_origins(cls, value):
+        if isinstance(value, str):
+            return [item.strip() for item in value.split(",") if item.strip()]
+        return value
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def resolved_database_url(self) -> str:
+        if self.DATABASE_URL:
+            if self.DATABASE_URL.startswith("sqlite:///") and "+aiosqlite" not in self.DATABASE_URL:
+                return self.DATABASE_URL.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
+            return self.DATABASE_URL
+        if self.ENVIRONMENT == "development":
+            sqlite_path = Path("./servantx_local.db").resolve()
+            return f"sqlite+aiosqlite:///{sqlite_path}"
+        return (
+            f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
+        )
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def is_sqlite(self) -> bool:
+        return self.resolved_database_url.startswith("sqlite+aiosqlite://")
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def resolved_storage_root(self) -> Path:
+        return Path(self.STORAGE_ROOT).expanduser().resolve()
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def resolved_duckdb_workspace_root(self) -> Path:
+        root = Path(self.DUCKDB_WORKSPACE_ROOT)
+        if root.is_absolute():
+            return root.expanduser().resolve()
+        return (Path.cwd() / root).resolve()
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def resolved_celery_broker_url(self) -> str:
+        return self.CELERY_BROKER_URL or self.REDIS_URL
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def resolved_celery_result_backend(self) -> str:
+        return self.CELERY_RESULT_BACKEND or self.REDIS_URL
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def has_s3_storage(self) -> bool:
+        return self.STORAGE_BACKEND == "s3"
 
 
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    settings = Settings()
+    settings.resolved_storage_root.mkdir(parents=True, exist_ok=True)
+    settings.resolved_duckdb_workspace_root.mkdir(parents=True, exist_ok=True)
+    if settings.is_sqlite:
+        sqlite_path = settings.resolved_database_url.replace("sqlite+aiosqlite:///", "", 1)
+        if sqlite_path and sqlite_path != ":memory:":
+            Path(sqlite_path).expanduser().resolve().parent.mkdir(parents=True, exist_ok=True)
+    return settings
 
-settings = Settings()
+
+settings = get_settings()

@@ -6,9 +6,9 @@
  */
 import { chromium } from "playwright";
 
-const BASE = "http://localhost:5001";
-const EMAIL = "marshall+servantx-test@example.com";
-const PASSWORD = "TestPass123!";
+const BASE = process.env.SMOKE_BASE_URL || "http://localhost:5001";
+const EMAIL = process.env.SMOKE_EMAIL || "marshall+servantx-test@example.com";
+const PASSWORD = process.env.SMOKE_PASSWORD || "TestPass123!";
 
 const results = [];
 

@@ -23,13 +23,15 @@ services:
     env_file:
       - .env
     environment:
+      SERVICE_ROLE: api
+      ENVIRONMENT: development
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/servantx
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
+      STORAGE_BACKEND: local
       STORAGE_ROOT: /app/uploads
       DUCKDB_WORKSPACE_ROOT: /app/uploads/workspaces
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - .:/app
       - servantx_uploads:/app/uploads
@@ -45,13 +47,16 @@ services:
     env_file:
       - .env
     environment:
+      SERVICE_ROLE: worker
+      ENVIRONMENT: development
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/servantx
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
+      STORAGE_BACKEND: local
       STORAGE_ROOT: /app/uploads
       DUCKDB_WORKSPACE_ROOT: /app/uploads/workspaces
-    command: celery -A celery_app.celery_app worker --loglevel=info -Q ingest,parse,review,synthesize,reconcile
+      ENABLE_CELERY_ASYNC: "true"
     volumes:
       - .:/app
       - servantx_uploads:/app/uploads

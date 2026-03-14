@@ -2,7 +2,6 @@ import hashlib
 import json
 import csv
 import uuid
-import os
 from datetime import timedelta
 from datetime import date, datetime
 from pathlib import Path
@@ -10,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from sqlalchemy import func, select, update
 
+from config import settings
 from core_services.db_service import AsyncSessionLocal
 from models import AuditFinding, BatchRun, Document, DocumentRole, ParsedData
 from services.edi_835_parser import parse_claim_835
@@ -55,7 +55,7 @@ def _parse_iso_date(value: Optional[str]) -> Optional[date]:
 async def _enqueue_stage2_parse(document_id: str):
     from tasks.parse import task_parse_claim_edi
 
-    if os.getenv("ENABLE_CELERY_ASYNC", "false").lower() != "true":
+    if not settings.ENABLE_CELERY_ASYNC:
         await run_stage2_parse_claim(document_id=document_id)
         return
 
@@ -69,7 +69,7 @@ async def _enqueue_stage2_parse(document_id: str):
 async def _enqueue_stage3_reprice(document_id: str):
     from tasks.reprice import task_reprice_claim
 
-    if os.getenv("ENABLE_CELERY_ASYNC", "false").lower() != "true":
+    if not settings.ENABLE_CELERY_ASYNC:
         await run_stage3_reprice_claim(document_id=document_id)
         return
 
@@ -82,7 +82,7 @@ async def _enqueue_stage3_reprice(document_id: str):
 async def _enqueue_stage4_summarize(batch_id: str):
     from tasks.summarize import task_summarize_batch
 
-    if os.getenv("ENABLE_CELERY_ASYNC", "false").lower() != "true":
+    if not settings.ENABLE_CELERY_ASYNC:
         await run_stage4_summarize_batch(batch_id=batch_id)
         return
 
@@ -602,7 +602,7 @@ async def run_stage5_build_appeals(
 ) -> Dict[str, Any]:
     minimum_variance = float(minimum_variance if minimum_variance is not None else 0.01)
     workflow_config = get_payer_workflow_config()
-    appeals_root = Path("uploads") / "appeals" / batch_id
+    appeals_root = settings.resolved_storage_root / "appeals" / batch_id
     appeals_root.mkdir(parents=True, exist_ok=True)
 
     async with AsyncSessionLocal() as db:

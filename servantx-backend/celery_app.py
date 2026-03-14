@@ -1,15 +1,12 @@
-import os
 from celery import Celery
 from kombu import Queue
 
-
-BROKER_URL = os.getenv("CELERY_BROKER_URL", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
-RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
+from config import settings
 
 celery_app = Celery(
     "servantx_audit_engine",
-    broker=BROKER_URL,
-    backend=RESULT_BACKEND,
+    broker=settings.resolved_celery_broker_url,
+    backend=settings.resolved_celery_result_backend,
 )
 
 celery_app.conf.update(

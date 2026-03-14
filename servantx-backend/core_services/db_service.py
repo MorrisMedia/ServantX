@@ -1,40 +1,28 @@
 from __future__ import annotations
 
-import os
-from pathlib import Path
-
-from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
-load_dotenv()
+from config import settings
 
 Base = declarative_base()
 
+DATABASE_URL = settings.resolved_database_url
+IS_SQLITE = settings.is_sqlite
 
-def _normalize_database_url(raw_url: str | None) -> str:
-    if raw_url:
-        if raw_url.startswith("sqlite:///") and "+aiosqlite" not in raw_url:
-            return raw_url.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
-        return raw_url
+engine_kwargs = {
+    "echo": settings.SQL_ECHO,
+}
+if not IS_SQLITE:
+    engine_kwargs.update(
+        {
+            "pool_pre_ping": True,
+            "pool_size": settings.SQL_POOL_SIZE,
+            "max_overflow": settings.SQL_MAX_OVERFLOW,
+        }
+    )
 
-    default_path = Path("./servantx_local.db").resolve()
-    return f"sqlite+aiosqlite:///{default_path}"
-
-
-DATABASE_URL = _normalize_database_url(os.getenv("DATABASE_URL"))
-IS_SQLITE = DATABASE_URL.startswith("sqlite+aiosqlite://")
-
-if IS_SQLITE:
-    sqlite_path = DATABASE_URL.replace("sqlite+aiosqlite:///", "", 1)
-    if sqlite_path and sqlite_path != ":memory:":
-        Path(sqlite_path).expanduser().resolve().parent.mkdir(parents=True, exist_ok=True)
-
-engine = create_async_engine(
-    DATABASE_URL,
-    pool_pre_ping=not IS_SQLITE,
-    echo=False,
-)
+engine = create_async_engine(DATABASE_URL, **engine_kwargs)
 
 AsyncSessionLocal = async_sessionmaker(
     engine,

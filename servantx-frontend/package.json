@@ -7,7 +7,8 @@
     "dev": "vite dev --port 5000",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "tsc"
+    "check": "tsc",
+    "smoke": "node smoke-test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

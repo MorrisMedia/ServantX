@@ -4,9 +4,12 @@ FastAPI backend for medical-claim audit workflows.
 
 ## What changed
 
-This foundation now includes:
+This rebuild now includes:
 - project-centered audit workspaces
-- presign-ready local storage abstraction
+- centralized env/config scaffolding for dev + production
+- Postgres-ready SQLAlchemy runtime with SQLite preserved for local dev
+- Redis/Celery-ready worker configuration
+- S3-compatible object storage support with local-storage fallback
 - DuckDB project workspace materialization
 - truth verification runs
 - formal audit runs layered on existing deterministic repricing
@@ -19,6 +22,7 @@ This foundation now includes:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.local.example .env
 alembic upgrade head
 uvicorn main:app --reload --port 8000
 ```
@@ -31,6 +35,16 @@ docker compose -f compose.dev.yaml up --build
 
 This starts Postgres, Redis, the API, and the Celery worker with uploads persisted to a named volume.
 
+## Production scaffold
+
+Copy `.env.production.example` to `.env`, fill in real values, then run:
+
+```bash
+docker compose -f compose.yaml up --build -d
+```
+
+The production compose scaffold includes Postgres, Redis, MinIO, the API, and a dedicated Celery worker.
+
 ## New core endpoints
 
 - `GET /projects`
@@ -42,12 +56,20 @@ This starts Postgres, Redis, the API, and the Celery worker with uploads persist
 - `GET /projects/{projectId}/verification-runs`
 - `POST /projects/{projectId}/audit-runs`
 - `GET /projects/{projectId}/audit-runs`
-- `POST /batches/upload-835` now auto-attaches to a project workspace
+- `POST /batches/upload-835` auto-attaches to a project workspace
 
 ## Storage + DuckDB
 
-Uploads remain local by default, but the API now returns presign metadata shaped for a future object-store swap. Each project gets a DuckDB file under `uploads/workspaces/<project-slug>/project.duckdb` containing materialized audit tables:
+### Local
+- `STORAGE_BACKEND=local`
+- files are served from `/files/*`
 
+### Production object storage
+- `STORAGE_BACKEND=s3`
+- supports AWS S3 and S3-compatible vendors (R2, MinIO, DO Spaces, etc.)
+- project presign metadata returns actual object-store presigned URLs
+
+Each project gets a DuckDB file under `DUCKDB_WORKSPACE_ROOT` (default `uploads/workspaces`) containing materialized audit tables:
 - `servantx.batch_runs`
 - `servantx.documents`
 - `servantx.parsed_claims`
@@ -62,6 +84,16 @@ alembic upgrade head
 ```
 
 The project spine migration adds projects, project artifacts, truth verification runs, formal audit runs, and project foreign keys on contracts/receipts/batches/documents.
+
+## Hosted smoke
+
+### Backend
+```bash
+API_BASE_URL=https://api.example.com ./scripts/smoke_hosted.sh
+```
+
+### Frontend
+See `../PRODUCTION.md` and `servantx-frontend/smoke-test.mjs`.
 
 ## Health
 

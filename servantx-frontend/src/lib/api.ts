@@ -3,6 +3,15 @@ const getApiUrl = (): string => {
   if (envUrl) {
     return envUrl;
   }
+
+  if (typeof window !== "undefined") {
+    const { protocol, hostname } = window.location;
+    const localHosts = new Set(["localhost", "127.0.0.1"]);
+    if (!localHosts.has(hostname)) {
+      return `${protocol}//${hostname.replace(/^app\./, "api.")}`;
+    }
+  }
+
   return "http://localhost:8000";
 };
 

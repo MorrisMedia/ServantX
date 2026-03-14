@@ -1,51 +1,49 @@
-import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pathlib import Path
-from dotenv import load_dotenv
-from routes.contact import router as contact_router
-from routes.contracts import router as contracts_router
-from routes.receipts import router as receipts_router
-from routes.rules import router as rules_router
-from routes.batches import router as batches_router
+from routes.admin_rates import router as admin_rates_router
 from routes.analysis import router as analysis_router
 from routes.appeals import router as appeals_router
-from routes.admin_rates import router as admin_rates_router
 from routes.auth import router as auth_router
+from routes.batches import router as batches_router
+from routes.contact import router as contact_router
+from routes.contracts import router as contracts_router
 from routes.documents import router as documents_router
 from routes.projects import router as projects_router
-from core_services.db_service import IS_SQLITE, bootstrap_schema_if_needed
+from routes.receipts import router as receipts_router
+from routes.rules import router as rules_router
+from sqlalchemy import text
+
+from config import settings
+from core_services.db_service import IS_SQLITE, bootstrap_schema_if_needed, engine
+from services.storage_service import storage_service
 
 load_dotenv()
 
 app = FastAPI(
-    title="ServantX API",
+    title=settings.APP_NAME,
     description="Backend API for ServantX",
-    version="1.0.0",
+    version=settings.APP_VERSION,
 )
 
 
 @app.on_event("startup")
 async def startup_bootstrap_local_db():
-    if IS_SQLITE and os.getenv("AUTO_BOOTSTRAP_SQLITE", "true").lower() == "true":
+    if IS_SQLITE and settings.AUTO_BOOTSTRAP_SQLITE:
         await bootstrap_schema_if_needed()
 
-cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:5000,http://localhost:3000,https://api.servantx.ai,http://localhost:5001")
-cors_origins = [origin.strip() for origin in cors_origins_str.split(",") if origin.strip()]
-
-print("CORS origins: ", cors_origins)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include routers
 app.include_router(auth_router)
 app.include_router(contact_router)
 app.include_router(contracts_router)
@@ -58,34 +56,53 @@ app.include_router(admin_rates_router)
 app.include_router(documents_router)
 app.include_router(projects_router)
 
-# Serve uploaded files
-uploads_dir = Path("uploads")
-uploads_dir.mkdir(exist_ok=True)
 
 @app.get("/files/{file_path:path}")
 async def serve_file(file_path: str):
-    """
-    Serve uploaded files (contracts and receipts)
-    """
-    full_path = uploads_dir / file_path
-    
-    if not full_path.exists() or not full_path.is_file():
+    if settings.STORAGE_BACKEND != "local":
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="File not found"
+            detail="Direct file serving is disabled for non-local storage backends.",
         )
-    
+
+    full_path = settings.resolved_storage_root / file_path
+    if not full_path.exists() or not full_path.is_file():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
     return FileResponse(full_path)
 
 
 @app.get("/")
 async def root():
-    return {"message": "ServantX API", "status": "ok"}
+    return {
+        "message": settings.APP_NAME,
+        "status": "ok",
+        "environment": settings.ENVIRONMENT,
+        "storageBackend": settings.STORAGE_BACKEND,
+    }
 
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy", "service": "servantx-api", "environment": os.getenv("ENVIRONMENT", "development")}
+    db_ok = True
+    db_error = None
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("SELECT 1"))
+    except Exception as exc:
+        db_ok = False
+        db_error = str(exc)
 
-
-
+    storage_status = storage_service.healthcheck()
+    overall_ok = db_ok and storage_status.get("ok", False)
+    return {
+        "status": "healthy" if overall_ok else "degraded",
+        "service": "servantx-api",
+        "environment": settings.ENVIRONMENT,
+        "database": {"ok": db_ok, "engine": "sqlite" if settings.is_sqlite else "postgres", "error": db_error},
+        "storage": storage_status,
+        "celery": {
+            "enabled": settings.ENABLE_CELERY_ASYNC,
+            "broker": settings.resolved_celery_broker_url,
+            "resultBackend": settings.resolved_celery_result_backend,
+        },
+    }

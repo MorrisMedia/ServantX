@@ -466,8 +466,10 @@ class StoragePresignResponse(BaseModel):
     storageKey: str
     operation: str
     expiresAt: int
-    token: str
+    token: Optional[str] = None
     url: str
+    backend: Optional[str] = None
+    bucket: Optional[str] = None
 
 
 class TruthVerificationRequest(BaseModel):

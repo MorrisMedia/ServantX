@@ -4,6 +4,7 @@ from typing import Optional
 
 from sqlalchemy import select
 
+from config import settings
 from core_services.db_service import AsyncSessionLocal
 from models import BatchRun, Project
 
@@ -90,6 +91,12 @@ async def resolve_project_for_batch(batch: BatchRun) -> Optional[Project]:
 
 
 def ensure_workspace_directory(relative_duckdb_path: str) -> Path:
-    path = Path("uploads") / relative_duckdb_path
+    root = settings.resolved_duckdb_workspace_root
+    relative = Path(relative_duckdb_path)
+    if relative.is_absolute():
+        path = relative
+    else:
+        workspace_relative = relative.relative_to("workspaces") if relative.parts and relative.parts[0] == "workspaces" else relative
+        path = root / workspace_relative
     path.parent.mkdir(parents=True, exist_ok=True)
     return path
