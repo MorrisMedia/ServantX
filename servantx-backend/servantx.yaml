@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+
+kind: Deployment
+metadata:
+  name: servantx-backend
+  labels:
+    app: servantx-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: servantx-backend
+  template:
+    metadata:
+      labels:
+        app: servantx-backend
+        tier: backend
+        network-access/shared-db: "true"
+        network-access/redis: "true"
+    spec:
+      containers:
+        - name: backend
+          image: asaasin/servantx-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - secretRef:
+                name: servantx-shared-secret
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 3600
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 3600
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "100m"
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: servantx-backend-service
+  labels:
+    app: servantx-backend
+spec:
+  selector:
+    app: servantx-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: servantx-backend-ingress-https
+  namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+spec:
+  tls:
+    - hosts:
+        - api.servantx.ai
+      secretName: servantx-backend-tls
+  rules:
+    - host: api.servantx.ai
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: servantx-backend-service
+                port:
+                  number: 8000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: servantx-backend-ingress-http
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+    - host: api.servantx.ai
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: servantx-backend-service
+                port:
+                  number: 8000

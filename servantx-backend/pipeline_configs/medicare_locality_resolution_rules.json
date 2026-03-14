@@ -1,0 +1,15 @@
+{
+  "order": [
+    "OVERRIDE",
+    "SERVICE_ZIP",
+    "BILLING_ZIP",
+    "UNKNOWN"
+  ],
+  "override_priority": [
+    "FACILITY_NPI",
+    "RENDERING_NPI",
+    "BILLING_NPI",
+    "TAX_ID"
+  ],
+  "unknown_confidence": 25
+}

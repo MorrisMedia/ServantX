@@ -1,0 +1,378 @@
+give me complete website prompt to build the Servant X website
+
+
+Absolutely. Below is the complete, final, copy-paste-ready Replit Agent prompt to build the ServantX one-page website, with brand, colors, UX, DVOB, and copy all locked.
+
+You can paste this verbatim into Replit.
+
+REPLIT AGENT PROMPT — SERVANTX (ONE-PAGE WEBSITE)
+ROLE
+
+You are a senior UX/UI designer and frontend engineer building a single-page website for a hospital-facing healthcare technology company.
+
+This site must feel credible, calm, established, and executive-grade.
+It should resemble an internal hospital system, not a startup or SaaS landing page.
+
+COMPANY
+
+ServantX
+A Servant Health company
+Disabled Veteran Owned Business
+
+PRODUCT
+
+ServantX Intelligence — revenue integrity and underpayment recovery for hospitals.
+
+CORE GOAL
+
+Build a single-page, CFO-safe website that positions ServantX as a trusted revenue integrity capability.
+
+The site must feel:
+
+Calm
+
+Serious
+
+Established
+
+Compliance-aware
+
+Boardroom-appropriate
+
+It must not feel like:
+
+A marketing funnel
+
+A flashy SaaS startup
+
+An AI-first product
+
+LOGO & BRAND (MANDATORY)
+
+Use the provided ServantX logo:
+
+“Servant” in deep navy
+
+Gradient “X” (teal → cyan → blue)
+
+White cross at the center of the X
+
+All UI decisions must visually derive from this logo.
+
+BRAND COLORS — EXACT VALUES (DO NOT DEVIATE)
+Primary Text (Headlines & Body)
+
+#0B2A4A
+
+Secondary UI / Accents
+
+#143A66
+
+Accent Gradient (FROM LOGO ONLY)
+
+Start (Teal): #19C6C1
+
+Mid (Cyan): #1FB3E6
+
+End (Blue): #1C7ED6
+
+CSS:
+
+linear-gradient(135deg, #19C6C1 0%, #1FB3E6 50%, #1C7ED6 100%)
+
+
+Use gradient only for:
+
+Primary CTA buttons
+
+Icons
+
+Focus states
+
+Subtle highlights
+
+🚫 Never for body text or full backgrounds
+
+Backgrounds
+
+White: #FFFFFF
+
+Light Gray: #F6F8FB
+
+Borders / Dividers
+
+#E2E8F0
+
+Muted Text
+
+#64748B
+
+🚫 Do not introduce new colors
+🚫 Do not adjust or reinterpret these values
+
+TYPOGRAPHY
+
+Clean, modern sans-serif
+
+Conservative weights
+
+High legibility
+
+No playful, rounded, or futuristic fonts
+
+Typography must feel appropriate for:
+
+Hospital CFOs
+
+Revenue Integrity leaders
+
+Compliance teams
+
+UX PRINCIPLES (NON-NEGOTIABLE)
+
+Strong visual hierarchy
+
+Generous white space
+
+Calm pacing between sections
+
+No flashy animations
+
+Subtle transitions only if necessary
+
+Trust must be felt within 3 seconds
+
+PAGE STRUCTURE — SINGLE SCROLL PAGE
+1. HERO
+
+Design:
+
+White background
+
+Centered content
+
+Logo visible but understated
+
+Headline:
+Quietly correcting hospital underpayments
+
+Subheadline:
+Revenue integrity technology from Servant Health that identifies and recovers underpaid claims using deterministic, contract-backed adjudication.
+
+Primary CTA (gradient button):
+Explore a Limited-Scope Pilot
+
+Secondary line (muted text):
+No upfront cost. Contingency-based.
+
+2. THE PROBLEM
+
+Title:
+Hospitals are systematically underpaid
+
+Bullets:
+
+Payer contracts are misapplied at scale
+
+Modifiers are ignored
+
+Bundling rules are misused
+
+Small underpayments go unchallenged
+
+Closing line:
+Most of this revenue is never pursued — not because it isn’t owed, but because it’s difficult to identify at scale.
+
+Design note:
+Use subtle dividers or iconography derived from the X shape.
+
+3. THE OPPORTUNITY
+
+Title:
+1–3%+ revenue leakage is common
+
+Content:
+Hospitals typically experience 1–3%+ revenue leakage tied to payer underpayments.
+
+This is not growth.
+This is correction of revenue already earned.
+
+Design:
+No charts. No graphs. Typography only.
+
+4. WHAT SERVANTX DOES
+
+Title:
+Deterministic revenue integrity
+
+Bullets:
+
+Audits paid claims (835 ERA)
+
+Applies contract and OPPS/APC logic
+
+Calculates expected vs paid amounts
+
+Flags high-confidence underpayments only
+
+Produces appeal-ready recovery packets
+
+Small note (muted):
+AI assists with extraction and explanation — never with dollar decisions.
+
+5. FOCUS AREA
+
+Title:
+Where we start
+
+Content:
+Outpatient facility claims where payment logic is rules-based and appeal success is highest.
+
+List:
+
+Modifier -25
+
+Modifier -59
+
+Modifier -XE / -XP / -XS / -XU
+
+Design:
+Use clean cards or pills with subtle gradient accents.
+
+6. HOW IT WORKS
+
+Title:
+How it works
+
+Steps:
+
+Ingest paid claims
+
+Normalize payment data
+
+Apply deterministic reimbursement logic
+
+Identify underpayments
+
+Generate appeal packets
+
+Human approval before submission
+
+Footer line:
+No billing workflow disruption. No system replacement.
+
+7. ENGAGEMENT MODEL
+
+Title:
+Aligned incentives
+
+Bullets:
+
+Contingency-based pricing
+
+We only get paid if recovery occurs
+
+No platform fees to start
+
+Limited-scope pilot engagement
+
+8. TRUST & GOVERNANCE
+
+Title:
+Built for CFOs and compliance
+
+Bullets:
+
+Fully auditable calculations
+
+Contract and citation transparency
+
+No medical necessity arguments
+
+No Medicare RAC exposure
+
+Human oversight built in
+
+This section should feel especially stable and authoritative.
+
+8.5 MISSION & OWNERSHIP
+
+Title:
+Mission-driven and veteran-led
+
+Content:
+ServantX is a Disabled Veteran Owned Business, built with a commitment to stewardship, accountability, and service.
+
+Our work reflects the same principles we bring to hospital partnerships:
+
+Integrity
+
+Discipline
+
+Responsibility
+
+Respect for systems and people
+
+Design note:
+No patriotic imagery. No flags. Keep understated and credible.
+
+9. FINAL CTA
+
+Title:
+Start with a pilot
+
+CTA (gradient button):
+Request a Pilot Review
+
+Supporting line:
+Focused. Measured. Contract-backed.
+
+FOOTER
+
+“ServantX is a Servant Health company”
+
+“Disabled Veteran Owned Business”
+
+Copyright
+
+Privacy placeholder
+
+Contact email placeholder
+
+Footer text should be muted and minimal.
+
+TECH REQUIREMENTS
+
+One-page layout
+
+React + Tailwind preferred
+
+Fully responsive
+
+WCAG-safe contrast
+
+Clean component structure
+
+Easy to edit copy later
+
+EXPLICIT DO-NOTS
+
+Do NOT mention AI in headlines
+
+Do NOT use buzzwords (disrupt, optimize, revolutionize)
+
+Do NOT show pricing tables
+
+Do NOT use robot or abstract tech imagery
+
+Do NOT oversell outcomes
+
+OUTPUT EXPECTATION
+
+Return a production-ready, one-page website that:
+
+Uses the exact color system above
+
+Visually aligns with the ServantX logo
+
+Feels appropriate for hospital CFOs, compliance leaders, and boards

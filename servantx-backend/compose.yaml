@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: .
+    container_name: servantx-backend
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - postgress_shared_net
+
+networks:
+  postgress_shared_net:
+    external: true

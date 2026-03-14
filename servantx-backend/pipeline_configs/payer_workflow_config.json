@@ -1,0 +1,45 @@
+{
+  "MEDICARE": {
+    "appeal_type": "REDETERMINATION",
+    "required_forms": [
+      "CMS-20027"
+    ],
+    "submission_method": "MAIL",
+    "destination": "MAC destination configured by client",
+    "deadline_days": 120,
+    "required_fields": [
+      "beneficiary_identifier",
+      "payer_claim_control_number",
+      "date_of_service",
+      "line_item_detail",
+      "disagreement_statement"
+    ],
+    "attachment_checklist": [
+      "variance_table",
+      "rate_evidence",
+      "raw_835_evidence",
+      "supporting_documentation"
+    ]
+  },
+  "TX_MEDICAID_FFS": {
+    "appeal_type": "CLAIM_PAYMENT_DISPUTE",
+    "required_forms": [
+      "TMHP_APPEAL_LETTER"
+    ],
+    "submission_method": "PORTAL",
+    "destination": "TMHP provider appeals routing",
+    "deadline_days": 95,
+    "required_fields": [
+      "provider_identifier",
+      "payer_claim_control_number",
+      "date_of_service",
+      "line_item_detail",
+      "dispute_reason"
+    ],
+    "attachment_checklist": [
+      "variance_table",
+      "fee_schedule_evidence",
+      "raw_835_evidence"
+    ]
+  }
+}

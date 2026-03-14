@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: servantx-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - postgress_shared_net
+
+  celery-worker:
+    build: .
+    container_name: servantx-celery-worker
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    command: celery -A celery_app.celery_app worker --loglevel=info -Q ingest,parse,review,synthesize,reconcile
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    networks:
+      - postgress_shared_net
+
+networks:
+  postgress_shared_net:
+    external: true

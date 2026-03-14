@@ -1,0 +1,13 @@
+{
+  "medicare": [
+    "MEDICARE",
+    "CMS",
+    "NATIONAL GOVERNMENT SERVICES"
+  ],
+  "tx_medicaid_ffs": [
+    "TX MEDICAID",
+    "TEXAS MEDICAID",
+    "TMHP",
+    "HHSC"
+  ]
+}

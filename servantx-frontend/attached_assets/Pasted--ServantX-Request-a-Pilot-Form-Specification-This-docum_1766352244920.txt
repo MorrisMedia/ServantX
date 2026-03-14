@@ -1,0 +1,209 @@
+# ServantX — Request a Pilot (Form Specification)
+
+This document defines the **exact copy, fields, and UX guidance** for the ServantX **Request a Pilot** page.
+It is designed to be **CFO-safe, low-friction, and non-salesy**.
+
+---
+
+## Page Purpose
+
+Allow hospital CFOs and Revenue Integrity leaders to request a **limited-scope pilot** without entering a sales funnel.
+
+Tone:
+
+* Measured
+* Professional
+* Time-conscious
+* Executive-grade
+
+---
+
+## Page Header
+
+### Title
+
+**Request a Limited-Scope Pilot**
+
+### Subheadline
+
+Evaluate ServantX Intelligence on a focused, contract-backed underpayment review — with no upfront cost.
+
+---
+
+## Intro Copy
+
+This pilot is designed to validate whether deterministic underpayment recovery applies to your organization.
+
+Scope is limited, findings are auditable, and participation does not require changes to your billing workflows.
+
+---
+
+## Form Fields
+
+### 1. Organization Information
+
+**Hospital / Health System Name**
+Text input (required)
+
+**State / Region**
+Text input or dropdown (required)
+
+---
+
+### 2. Contact Information
+
+**Primary Contact Name**
+Text input (required)
+
+**Title / Role**
+Dropdown (required)
+Options:
+
+* CFO
+* VP Finance
+* Revenue Integrity Director
+* Revenue Cycle Leader
+* Compliance
+* Other
+
+**Work Email Address**
+Email input (required)
+Helper text: We do not use personal email addresses.
+
+**Phone Number**
+Text input (optional)
+
+---
+
+### 3. Hospital Profile
+
+**Approximate Annual Net Patient Revenue**
+Dropdown (required)
+Options:
+
+* Under $20M
+* $20M–$40M
+* $40M–$75M
+* $75M+
+
+**Hospital Type**
+Checkboxes (select all that apply)
+
+* Rural
+* Critical Access
+* Community Hospital
+* Regional Health System
+
+---
+
+### 4. Pilot Interest & Scope
+
+**Primary Area of Interest**
+Checkboxes (required)
+
+* Outpatient facility claims
+* Modifier-related underpayments
+* Contract misapplication
+* Not sure (seeking assessment)
+
+**Primary Payer(s) of Interest**
+Text input (optional)
+Helper text: e.g., commercial payer or dominant plan
+
+**Timeframe for Pilot Review**
+Dropdown (required)
+Options:
+
+* Last 90 days
+* Last 180 days
+* Open to recommendation
+
+---
+
+### 5. Governance & Readiness
+
+**Do you have internal approval to explore a limited-scope pilot?**
+Radio buttons (required)
+
+* Yes
+* Not yet
+* In progress
+
+**Preferred Next Step**
+Radio buttons (required)
+
+* Introductory conversation
+* Technical overview
+* Written pilot outline
+
+---
+
+### 6. Optional Context
+
+**Anything else we should know?**
+Multiline text (optional)
+Helper text: This may include payer behavior, prior audits, or internal priorities.
+
+---
+
+## Submit Section
+
+### Primary Button
+
+**Request Pilot Review**
+
+### Supporting Text (Muted)
+
+No upfront cost. No obligation.
+All findings are contract-backed and require your approval before any submission.
+
+---
+
+## Post-Submission Confirmation
+
+### Message
+
+**Thank you.**
+
+A member of the ServantX team will review your request and follow up with next steps.
+
+This review is exploratory and does not obligate participation.
+
+---
+
+## UX / Design Notes
+
+* Single-column layout
+* Generous spacing
+* No progress bar
+* No urgency language
+* No marketing language
+* No file uploads
+* Footer remains minimal
+
+---
+
+## What Not to Include
+
+* No pricing
+* No scheduling automation
+* No sales language
+* No gated content
+
+This page captures **intent**, not onboarding.
+
+---
+
+## Footer Note (Optional)
+
+ServantX is a Servant Health company and a Disabled Veteran Owned Business.
+
+---
+
+## Next Phase (Not on This Page)
+
+* 1-page pilot outline
+* Sample data request
+* Working session scheduling
+
+These occur **after** initial review.
