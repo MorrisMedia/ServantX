@@ -34,6 +34,7 @@ interface DocumentListProps {
 const statusColors: Record<DocumentStatus, string> = {
   [DocumentStatus.NOT_SUBMITTED]: "bg-gray-100 text-gray-700 border-gray-300",
   [DocumentStatus.IN_PROGRESS]: "bg-yellow-100 text-yellow-800 border-yellow-300",
+  [DocumentStatus.FAILED]: "bg-red-100 text-red-700 border-red-300",
   [DocumentStatus.CANCELLED]: "bg-red-900 text-white border-red-900",
   [DocumentStatus.DECLINED]: "bg-red-100 text-red-700 border-red-300",
   [DocumentStatus.SUCCEEDED]: "bg-green-100 text-green-700 border-green-300",
@@ -42,6 +43,7 @@ const statusColors: Record<DocumentStatus, string> = {
 const statusLabels: Record<DocumentStatus, string> = {
   [DocumentStatus.SUCCEEDED]: "Succeeded",
   [DocumentStatus.IN_PROGRESS]: "In Progress",
+  [DocumentStatus.FAILED]: "Failed",
   [DocumentStatus.CANCELLED]: "Cancelled",
   [DocumentStatus.DECLINED]: "Declined",
   [DocumentStatus.NOT_SUBMITTED]: "Not Submitted",
@@ -79,6 +81,17 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
   const handleStatusChange = (documentId: string, newStatus: string) => {
     setUpdatingId(documentId);
     updateStatusMutation.mutate({ id: documentId, status: newStatus });
+  };
+
+  const getStatusMeta = (status: string) => {
+    const normalized = (Object.values(DocumentStatus) as string[]).includes(status)
+      ? (status as DocumentStatus)
+      : DocumentStatus.NOT_SUBMITTED;
+    return {
+      color: statusColors[normalized],
+      label: statusLabels[normalized],
+      value: normalized,
+    };
   };
 
   const handleDownloadPDF = async (document: any) => {
@@ -340,13 +353,13 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
                     </span>
                   ) : (
                     <Select
-                      value={document.status}
+                      value={getStatusMeta(document.status).value}
                       onValueChange={(value) => handleStatusChange(document.id, value)}
                       disabled={updateStatusMutation.isPending}
                     >
                       <SelectTrigger className="w-auto border-0 bg-transparent h-auto p-0 shadow-none focus:ring-0 [&>svg]:ml-1 [&>svg]:h-3 [&>svg]:w-3">
-                        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold cursor-pointer ${statusColors[document.status]}`}>
-                          {statusLabels[document.status]}
+                        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold cursor-pointer ${getStatusMeta(document.status).color}`}>
+                          {getStatusMeta(document.status).label}
                         </span>
                       </SelectTrigger>
                       <SelectContent>

@@ -34,5 +34,8 @@ servantx-frontend/dist/
 # Uploads (runtime data)
 servantx-backend/uploads/
 
+# Local runtime databases
+*.db
+
 # Logs
 *.log

@@ -1,12 +1,14 @@
 import os
 
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
 
@@ -38,8 +40,6 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
     CELERY_RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND", os.getenv("REDIS_URL", "redis://localhost:6379/0"))
 
-    class Config:
-        env_file = ".env"
 
 
 settings = Settings()

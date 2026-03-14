@@ -2,6 +2,7 @@ export enum DocumentStatus {
   NOT_SUBMITTED = "not_submitted",
   IN_PROGRESS = "in_progress",
   SUCCEEDED = "succeeded",
+  FAILED = "failed",
   CANCELLED = "cancelled",
   DECLINED = "declined",
 }
@@ -71,8 +72,9 @@ export interface DocumentStats {
   notSubmitted: number;
   inProgress: number;
   succeeded: number;
-  cancelled: number;
-  declined: number;
+  failed?: number;
+  cancelled?: number;
+  declined?: number;
   totalRevenue: number;
   totalUnderpayment?: number;
 }

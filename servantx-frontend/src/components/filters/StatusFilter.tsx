@@ -19,6 +19,7 @@ const allStatuses: DocumentStatus[] = [
   DocumentStatus.NOT_SUBMITTED,
   DocumentStatus.IN_PROGRESS,
   DocumentStatus.SUCCEEDED,
+  DocumentStatus.FAILED,
   DocumentStatus.CANCELLED,
   DocumentStatus.DECLINED,
 ];
@@ -27,6 +28,7 @@ const statusLabels: Record<DocumentStatus, string> = {
   [DocumentStatus.NOT_SUBMITTED]: "Not Submitted",
   [DocumentStatus.IN_PROGRESS]: "In Progress",
   [DocumentStatus.SUCCEEDED]: "Succeeded",
+  [DocumentStatus.FAILED]: "Failed",
   [DocumentStatus.CANCELLED]: "Cancelled",
   [DocumentStatus.DECLINED]: "Declined",
 };

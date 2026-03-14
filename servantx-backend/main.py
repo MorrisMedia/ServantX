@@ -16,6 +16,7 @@ from routes.admin_rates import router as admin_rates_router
 from routes.auth import router as auth_router
 from routes.documents import router as documents_router
 from routes.projects import router as projects_router
+from core_services.db_service import IS_SQLITE, bootstrap_schema_if_needed
 
 load_dotenv()
 
@@ -24,6 +25,12 @@ app = FastAPI(
     description="Backend API for ServantX",
     version="1.0.0",
 )
+
+
+@app.on_event("startup")
+async def startup_bootstrap_local_db():
+    if IS_SQLITE and os.getenv("AUTO_BOOTSTRAP_SQLITE", "true").lower() == "true":
+        await bootstrap_schema_if_needed()
 
 cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:5000,http://localhost:3000,https://api.servantx.ai,http://localhost:5001")
 cors_origins = [origin.strip() for origin in cors_origins_str.split(",") if origin.strip()]

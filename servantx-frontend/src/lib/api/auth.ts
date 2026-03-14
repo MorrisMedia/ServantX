@@ -51,8 +51,8 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
   
   return {
     user: mapped.user,
-    accessToken: mapped.accessToken,
-    refreshToken: mapped.refreshToken,
+    access_token: mapped.accessToken,
+    refresh_token: mapped.refreshToken,
   };
 }
 
@@ -131,8 +131,8 @@ export async function register(data: RegisterData): Promise<AuthResponse> {
     
     return {
       user: mapped.user,
-      accessToken: mapped.accessToken,
-      refreshToken: mapped.refreshToken,
+      access_token: mapped.accessToken,
+      refresh_token: mapped.refreshToken,
     };
   } catch (error) {
     console.error("🔴 [FRONTEND] Error in register function:", error);
