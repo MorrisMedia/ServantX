@@ -132,7 +132,10 @@ async def save_835_file(file: UploadFile, hospital_id: str, project_id: Optional
 def delete_file(file_path: str) -> bool:
     if settings.STORAGE_BACKEND != "local":
         return False
-    full_path = BASE_STORAGE_DIR / file_path
+    try:
+        full_path = storage_service.resolve_local_path(file_path)
+    except FileNotFoundError:
+        return False
     if full_path.exists() and full_path.is_file():
         full_path.unlink()
         return True

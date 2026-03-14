@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -17,6 +18,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "ServantX API"
     APP_VERSION: str = "1.0.0"
     ENVIRONMENT: Literal["development", "test", "staging", "production"] = "development"
+    DEPLOYMENT_TARGET: Literal["default", "vercel"] = "default"
     LOG_LEVEL: str = "INFO"
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 8000
@@ -42,6 +44,8 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
 
     DATABASE_URL: str = ""
+    POSTGRES_URL: str = ""
+    POSTGRES_URL_NON_POOLING: str = ""
     DB_HOST: str = "localhost"
     DB_PORT: int = 5432
     POSTGRES_USER: str = "postgres"
@@ -55,8 +59,9 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str | None = None
     CELERY_RESULT_BACKEND: str | None = None
     ENABLE_CELERY_ASYNC: bool = False
+    FORCE_INLINE_TASKS: bool = False
 
-    STORAGE_BACKEND: Literal["local", "s3"] = "local"
+    STORAGE_BACKEND: Literal["local", "s3", "vercel_blob"] = "local"
     STORAGE_ROOT: str = "uploads"
     STORAGE_PUBLIC_BASE_URL: str = ""
     STORAGE_BUCKET: str = ""
@@ -68,6 +73,9 @@ class Settings(BaseSettings):
     STORAGE_PRESIGN_SECRET: str = "dev-storage-secret"
     STORAGE_PRESIGN_TTL_SECONDS: int = 900
     DUCKDB_WORKSPACE_ROOT: str = "uploads/workspaces"
+    BLOB_READ_WRITE_TOKEN: str = ""
+    VERCEL_BLOB_ACCESS: Literal["private", "public"] = "private"
+    VERCEL_BLOB_ADD_RANDOM_SUFFIX: bool = True
 
     AUTO_BOOTSTRAP_SQLITE: bool = True
 
@@ -80,11 +88,19 @@ class Settings(BaseSettings):
 
     @computed_field  # type: ignore[prop-decorator]
     @property
+    def is_vercel(self) -> bool:
+        return self.DEPLOYMENT_TARGET == "vercel" or bool(os.getenv("VERCEL"))
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
     def resolved_database_url(self) -> str:
-        if self.DATABASE_URL:
-            if self.DATABASE_URL.startswith("sqlite:///") and "+aiosqlite" not in self.DATABASE_URL:
-                return self.DATABASE_URL.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
-            return self.DATABASE_URL
+        candidate = self.DATABASE_URL or self.POSTGRES_URL or self.POSTGRES_URL_NON_POOLING
+        if candidate:
+            if candidate.startswith("sqlite:///") and "+aiosqlite" not in candidate:
+                return candidate.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
+            if candidate.startswith("postgresql://") and "+asyncpg" not in candidate:
+                return candidate.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return candidate
         if self.ENVIRONMENT == "development":
             sqlite_path = Path("./servantx_local.db").resolve()
             return f"sqlite+aiosqlite:///{sqlite_path}"
@@ -101,7 +117,12 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def resolved_storage_root(self) -> Path:
-        return Path(self.STORAGE_ROOT).expanduser().resolve()
+        root = Path(self.STORAGE_ROOT)
+        if root.is_absolute():
+            return root.expanduser().resolve()
+        if self.is_vercel:
+            return (Path("/tmp") / root).resolve()
+        return root.expanduser().resolve()
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -109,6 +130,8 @@ class Settings(BaseSettings):
         root = Path(self.DUCKDB_WORKSPACE_ROOT)
         if root.is_absolute():
             return root.expanduser().resolve()
+        if self.is_vercel:
+            return (Path("/tmp") / root).resolve()
         return (Path.cwd() / root).resolve()
 
     @computed_field  # type: ignore[prop-decorator]
@@ -125,6 +148,16 @@ class Settings(BaseSettings):
     @property
     def has_s3_storage(self) -> bool:
         return self.STORAGE_BACKEND == "s3"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def has_vercel_blob_storage(self) -> bool:
+        return self.STORAGE_BACKEND == "vercel_blob"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def celery_async_enabled(self) -> bool:
+        return self.ENABLE_CELERY_ASYNC and not self.FORCE_INLINE_TASKS and not self.is_vercel
 
 
 @lru_cache(maxsize=1)

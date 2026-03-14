@@ -1,10 +1,10 @@
 from datetime import datetime
-import os
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy import select
 
+from config import settings
 from core_services.db_service import AsyncSessionLocal
 from models import AuditFinding, BatchRun as BatchRunModel
 from models import Document, DocumentRole, ParsedData, Project
@@ -141,7 +141,7 @@ async def upload_835_files(
         await db.refresh(batch)
 
     for document_id in file_document_ids:
-        if os.getenv("ENABLE_CELERY_ASYNC", "false").lower() == "true":
+        if settings.celery_async_enabled:
             try:
                 task_ingest_835_file.delay(document_id, batch.id)
                 continue

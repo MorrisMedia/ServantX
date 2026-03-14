@@ -21,7 +21,7 @@ async def process_contract_with_rules_engine(contract_id: str) -> None:
         await update_contract(contract_id, status="processing")
 
         raw_extracted_text = extract_contract_text(
-            contract.get("fileUrl") or "",
+            contract.get("filePath") or contract.get("fileUrl") or "",
             contract.get("fileName") or "",
         )
 

@@ -217,7 +217,7 @@ def _is_metadata_only_text(text: str) -> bool:
 
 
 def get_contract_text_with_fallback(contract: Dict[str, Any]) -> str:
-    file_path = contract.get("fileUrl") or ""
+    file_path = contract.get("filePath") or contract.get("fileUrl") or ""
     file_name = contract.get("fileName") or ""
     extracted_text = extract_contract_text(file_path, file_name) if file_path else ""
 

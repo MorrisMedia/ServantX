@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, UploadFile, File, Query, Depends, BackgroundTasks
+from config import settings
 from typing import List, Optional
 from datetime import datetime
 import zipfile
@@ -12,8 +13,9 @@ from services.file_service import (
     get_file_url,
     ALLOWED_RECEIPT_TYPES,
     ALLOWED_RECEIPT_EXTENSIONS,
-    RECEIPTS_DIR,
 )
+from services.storage_service import storage_service
+
 from services.receipt_service import (
     create_receipt,
     get_receipt,
@@ -228,17 +230,15 @@ async def _process_zip_contents(
                         errors.append(f"Skipped {file_name}: Unsupported content type ({content_type})")
                         continue
 
-                    # Save file
-                    file_id = str(uuid.uuid4())
                     original_filename = Path(file_name).name
-                    file_ext_save = Path(original_filename).suffix
-                    filename = f"{hospital_id}_{file_id}{file_ext_save}"
-                    file_path_obj = RECEIPTS_DIR / filename
-
-                    with open(file_path_obj, "wb") as f:
-                        f.write(file_data)
-
-                    relative_path = f"receipts/{filename}"
+                    saved = storage_service.save_bytes(
+                        content=file_data,
+                        filename=original_filename,
+                        prefix="receipts",
+                        content_type=content_type,
+                        namespace=hospital_id,
+                    )
+                    relative_path = saved["storage_key"]
 
                     receipt_data = await create_receipt(
                         hospital_id=hospital_id,
@@ -252,9 +252,12 @@ async def _process_zip_contents(
                     queued_receipt = await update_receipt(receipt_data["id"], status="processing")
                     if queued_receipt:
                         receipt_data = queued_receipt
-                    background_tasks.add_task(
-                        _run_rules_scan_for_receipt_background, receipt_data["id"], hospital_id
-                    )
+                    if settings.is_vercel:
+                        await _run_rules_scan_for_receipt_background(receipt_data["id"], hospital_id)
+                    else:
+                        background_tasks.add_task(
+                            _run_rules_scan_for_receipt_background, receipt_data["id"], hospital_id
+                        )
 
                     receipt_data["fileUrl"] = get_file_url(relative_path)
                     receipt = Receipt(**receipt_data)
@@ -348,7 +351,10 @@ async def upload_receipt(
         queued_receipt = await update_receipt(receipt_data["id"], status="processing")
         if queued_receipt:
             receipt_data = queued_receipt
-        background_tasks.add_task(_run_rules_scan_for_receipt_background, receipt_data["id"], hospital_id)
+        if settings.is_vercel:
+            await _run_rules_scan_for_receipt_background(receipt_data["id"], hospital_id)
+        else:
+            background_tasks.add_task(_run_rules_scan_for_receipt_background, receipt_data["id"], hospital_id)
         
         receipt_data["fileUrl"] = get_file_url(file_path)
         
@@ -414,10 +420,13 @@ async def upload_receipts_bulk(
             queued_receipt = await update_receipt(receipt_data["id"], status="processing")
             if queued_receipt:
                 receipt_data = queued_receipt
-            background_tasks.add_task(_run_rules_scan_for_receipt_background, receipt_data["id"], hospital_id)
-            
+            if settings.is_vercel:
+                await _run_rules_scan_for_receipt_background(receipt_data["id"], hospital_id)
+            else:
+                background_tasks.add_task(_run_rules_scan_for_receipt_background, receipt_data["id"], hospital_id)
+
             receipt_data["fileUrl"] = get_file_url(file_path)
-            
+
             document = None
             receipt = Receipt(**receipt_data)
             results.append(ReceiptUploadResponse(receipt=receipt, document=document))

@@ -1,11 +1,13 @@
 from pathlib import Path
 from typing import List
+import io
 import xml.etree.ElementTree as ET
 import zipfile
 
 from docx import Document as DocxDocument
 
 from services.pdf_extraction_service import extract_text_from_pdf
+from services.storage_service import storage_service
 
 
 WORD_XML_NAMES = (
@@ -21,18 +23,18 @@ WORD_XML_NAMES = (
 )
 
 
-def _full_path_from_relative(file_path: str) -> Path:
-    return Path("uploads") / file_path
+def _read_bytes(relative_path: str) -> bytes:
+    return storage_service.read_bytes(relative_path)
 
 
 def _extract_text_from_docx(relative_path: str) -> str:
-    full_path = _full_path_from_relative(relative_path)
-    if not full_path.exists():
+    try:
+        file_bytes = _read_bytes(relative_path)
+    except FileNotFoundError:
         return f"File not found: {relative_path}"
 
     try:
-        # Primary extractor: python-docx handles most real-world DOCX structures.
-        doc = DocxDocument(str(full_path))
+        doc = DocxDocument(io.BytesIO(file_bytes))
         paragraph_lines: List[str] = []
         for paragraph in doc.paragraphs:
             text = (paragraph.text or "").strip()
@@ -60,12 +62,11 @@ def _extract_text_from_docx(relative_path: str) -> str:
         if primary_output:
             return primary_output
     except Exception:
-        # Fall back to direct XML extraction below.
         pass
 
     try:
         collected_paragraphs: List[str] = []
-        with zipfile.ZipFile(full_path, "r") as archive:
+        with zipfile.ZipFile(io.BytesIO(file_bytes), "r") as archive:
             names = set(archive.namelist())
             xml_names = [name for name in WORD_XML_NAMES if name in names]
             if not xml_names:
@@ -90,9 +91,6 @@ def _extract_text_from_docx(relative_path: str) -> str:
 
 
 def extract_contract_text(relative_path: str, file_name: str = "") -> str:
-    """
-    Extract contract text from supported file types.
-    """
     extension = (Path(file_name).suffix or Path(relative_path).suffix).lower()
 
     if extension == ".pdf":
@@ -100,11 +98,10 @@ def extract_contract_text(relative_path: str, file_name: str = "") -> str:
     if extension == ".docx":
         return _extract_text_from_docx(relative_path)
     if extension in (".txt", ".md"):
-        full_path = _full_path_from_relative(relative_path)
-        if not full_path.exists():
-            return f"File not found: {relative_path}"
         try:
-            return full_path.read_text(encoding="utf-8", errors="ignore").strip()
+            return storage_service.read_text(relative_path).strip()
+        except FileNotFoundError:
+            return f"File not found: {relative_path}"
         except Exception as exc:
             return f"Error extracting text from text file: {str(exc)}"
 

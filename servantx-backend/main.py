@@ -65,7 +65,7 @@ async def serve_file(file_path: str):
             detail="Direct file serving is disabled for non-local storage backends.",
         )
 
-    full_path = settings.resolved_storage_root / file_path
+    full_path = storage_service.resolve_local_path(file_path)
     if not full_path.exists() or not full_path.is_file():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
     return FileResponse(full_path)
@@ -77,6 +77,7 @@ async def root():
         "message": settings.APP_NAME,
         "status": "ok",
         "environment": settings.ENVIRONMENT,
+        "deploymentTarget": settings.DEPLOYMENT_TARGET,
         "storageBackend": settings.STORAGE_BACKEND,
     }
 
@@ -101,7 +102,7 @@ async def health():
         "database": {"ok": db_ok, "engine": "sqlite" if settings.is_sqlite else "postgres", "error": db_error},
         "storage": storage_status,
         "celery": {
-            "enabled": settings.ENABLE_CELERY_ASYNC,
+            "enabled": settings.celery_async_enabled,
             "broker": settings.resolved_celery_broker_url,
             "resultBackend": settings.resolved_celery_result_backend,
         },

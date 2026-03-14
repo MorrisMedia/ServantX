@@ -1,4 +1,5 @@
 import hashlib
+import io
 import json
 import csv
 import uuid
@@ -35,7 +36,6 @@ CLAIM_SCHEMA_VERSION = "claim_835_v1"
 
 
 def _read_storage_file(relative_path: str) -> str:
-    from services.storage_service import storage_service
     return storage_service.read_text(relative_path)
 
 
@@ -602,8 +602,6 @@ async def run_stage5_build_appeals(
 ) -> Dict[str, Any]:
     minimum_variance = float(minimum_variance if minimum_variance is not None else 0.01)
     workflow_config = get_payer_workflow_config()
-    appeals_root = settings.resolved_storage_root / "appeals" / batch_id
-    appeals_root.mkdir(parents=True, exist_ok=True)
 
     async with AsyncSessionLocal() as db:
         batch_result = await db.execute(select(BatchRun).where(BatchRun.id == batch_id))
@@ -723,10 +721,9 @@ async def run_stage5_build_appeals(
         deadline_date = (datetime.utcnow() + timedelta(days=deadline_days)).date().isoformat()
 
         variance_table_name = f"{packet_id}_variance_table.csv"
-        variance_table_path = appeals_root / variance_table_name
-        with open(variance_table_path, "w", newline="", encoding="utf-8") as csv_file:
-            writer = csv.DictWriter(
-                csv_file,
+        csv_buffer = io.StringIO()
+        writer = csv.DictWriter(
+            csv_buffer,
                 fieldnames=[
                     "claim_document_id",
                     "payer_claim_control_number",
@@ -742,26 +739,39 @@ async def run_stage5_build_appeals(
                     "locality_source",
                 ],
             )
-            writer.writeheader()
-            for row in variance_rows:
-                writer.writerow(row)
+        writer.writeheader()
+        for row in variance_rows:
+            writer.writerow(row)
+        variance_saved = storage_service.save_bytes(
+            content=csv_buffer.getvalue().encode("utf-8"),
+            filename=variance_table_name,
+            prefix=f"appeals/{batch_id}",
+            content_type="text/csv",
+        )
 
         claim_evidence_name = f"{packet_id}_raw_835_evidence.txt"
-        claim_evidence_path = appeals_root / claim_evidence_name
-        claim_evidence_path.write_text("\n\n".join(raw_evidence_chunks), encoding="utf-8")
+        claim_evidence_saved = storage_service.save_bytes(
+            content="\n\n".join(raw_evidence_chunks).encode("utf-8"),
+            filename=claim_evidence_name,
+            prefix=f"appeals/{batch_id}",
+            content_type="text/plain",
+        )
 
         form_name = f"{packet_id}_forms.json"
-        form_path = appeals_root / form_name
         form_payload = {
             "forms": payer_cfg.get("required_forms", []),
             "required_fields": payer_cfg.get("required_fields", []),
             "appeal_type": payer_cfg.get("appeal_type"),
             "payer_key": payer_key,
         }
-        form_path.write_text(json.dumps(form_payload, indent=2), encoding="utf-8")
+        form_saved = storage_service.save_bytes(
+            content=json.dumps(form_payload, indent=2).encode("utf-8"),
+            filename=form_name,
+            prefix=f"appeals/{batch_id}",
+            content_type="application/json",
+        )
 
         cover_letter_name = f"{packet_id}_cover_letter.txt"
-        cover_letter_path = appeals_root / cover_letter_name
         cover_letter_text = (
             f"Appeal packet {packet_id}\n"
             f"Payer: {payer_key}\n"
@@ -770,7 +780,12 @@ async def run_stage5_build_appeals(
             f"Total variance: ${total_variance:,.2f}\n"
             f"Generated at: {datetime.utcnow().isoformat()}\n"
         )
-        cover_letter_path.write_text(cover_letter_text, encoding="utf-8")
+        cover_letter_saved = storage_service.save_bytes(
+            content=cover_letter_text.encode("utf-8"),
+            filename=cover_letter_name,
+            prefix=f"appeals/{batch_id}",
+            content_type="text/plain",
+        )
 
         packet = {
             "packet_id": packet_id,
@@ -785,29 +800,29 @@ async def run_stage5_build_appeals(
                 {
                     "form_id": form_id,
                     "format": "JSON",
-                    "storage_key": f"appeals/{batch_id}/{form_name}",
+                    "storage_key": form_saved["storage_key"],
                 }
                 for form_id in payer_cfg.get("required_forms", [])
             ],
             "cover_letter": {
                 "format": "TXT",
-                "storage_key": f"appeals/{batch_id}/{cover_letter_name}",
+                "storage_key": cover_letter_saved["storage_key"],
             },
             "variance_table": {
                 "format": "CSV",
-                "storage_key": f"appeals/{batch_id}/{variance_table_name}",
+                "storage_key": variance_saved["storage_key"],
             },
             "rate_evidence": [
                 {
                     "format": "CSV",
-                    "storage_key": f"appeals/{batch_id}/{variance_table_name}",
+                    "storage_key": variance_saved["storage_key"],
                     "version_label": "phase1_runtime",
                 }
             ],
             "claim_evidence": [
                 {
                     "format": "TXT",
-                    "storage_key": f"appeals/{batch_id}/{claim_evidence_name}",
+                    "storage_key": claim_evidence_saved["storage_key"],
                     "description": "835 CLP/SVC/CAS extracts",
                 }
             ],

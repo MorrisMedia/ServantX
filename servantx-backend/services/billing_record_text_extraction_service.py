@@ -2,14 +2,14 @@ from pathlib import Path
 import json
 
 from services.pdf_extraction_service import extract_text_from_pdf
+from services.storage_service import storage_service
 
 
 def _read_text_file(relative_path: str) -> str:
-    full_path = Path("uploads") / relative_path
-    if not full_path.exists():
-        return f"File not found: {relative_path}"
     try:
-        return full_path.read_text(encoding="utf-8", errors="ignore").strip()
+        return storage_service.read_text(relative_path).strip()
+    except FileNotFoundError:
+        return f"File not found: {relative_path}"
     except Exception as exc:
         return f"Error extracting text from file: {str(exc)}"
 
@@ -20,7 +20,7 @@ def extract_billing_record_text(relative_path: str, file_name: str = "") -> str:
     if extension == ".pdf":
         return extract_text_from_pdf(relative_path)
 
-    if extension in {".csv", ".edi", ".hl7", ".hlz", ".dat", ".txt"}:
+    if extension in {".csv", ".edi", ".hl7", ".hlz", ".dat", ".txt", ".835", ".837"}:
         return _read_text_file(relative_path)
 
     if extension == ".json":

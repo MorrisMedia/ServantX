@@ -4,6 +4,7 @@ import uuid
 import zipfile
 from pathlib import Path as _Path
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status, UploadFile, File, Depends
+from config import settings
 from typing import List
 from schemas import (
     Contract,
@@ -16,11 +17,11 @@ from services.file_service import (
     save_contract_file,
     delete_file,
     get_file_url,
-    CONTRACTS_DIR,
     ALLOWED_CONTRACT_EXTENSIONS,
     ALLOWED_CONTRACT_TYPES,
     MAX_FILE_SIZE,
 )
+from services.storage_service import storage_service
 from services.contract_service import (
     create_contract,
     get_contract,
@@ -129,27 +130,29 @@ async def _process_contract_zip(
                         errors.append(f"Skipped {entry}: File too large (max {MAX_FILE_SIZE // (1024*1024)}MB)")
                         continue
 
-                    file_id = str(uuid.uuid4())
                     original_name = _Path(entry).name
-                    save_ext = _Path(original_name).suffix or ext
-                    filename = f"{hospital_id}_{file_id}{save_ext}"
-                    file_path_obj = CONTRACTS_DIR / filename
-
-                    with open(file_path_obj, "wb") as fh:
-                        fh.write(data)
-
-                    relative_path = f"contracts/{filename}"
+                    saved = storage_service.save_bytes(
+                        content=data,
+                        filename=original_name,
+                        prefix="contracts",
+                        content_type=None,
+                        namespace=hospital_id,
+                    )
+                    relative_path = saved["storage_key"]
                     name = original_name.rsplit(".", 1)[0] if "." in original_name else original_name
 
                     contract_data = await create_contract(
                         hospital_id=hospital_id,
                         name=name,
                         file_name=original_name,
-                        file_path=relative_path,
+                        file_path=saved["storage_key"],
                         file_size=len(data),
                     )
                     contract_data["fileUrl"] = get_file_url(relative_path)
-                    background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
+                    if settings.is_vercel:
+                        await process_contract_with_rules_engine(contract_data["id"])
+                    else:
+                        background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
                     contracts.append(Contract(**contract_data))
 
                 except HTTPException as he:
@@ -213,7 +216,10 @@ async def upload_contract(
         )
         
         contract_data["fileUrl"] = get_file_url(file_path)
-        background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
+        if settings.is_vercel:
+            await process_contract_with_rules_engine(contract_data["id"])
+        else:
+            background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
         
         contract = Contract(**contract_data)
         
@@ -275,7 +281,10 @@ async def upload_contracts_bulk(
                 contract_data["fileUrl"] = get_file_url(file_path)
                 contract = Contract(**contract_data)
                 uploaded_contracts.append(contract)
-                background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
+                if settings.is_vercel:
+                    await process_contract_with_rules_engine(contract_data["id"])
+                else:
+                    background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
                 
             except Exception as e:
                 failed_uploads.append({
@@ -307,10 +316,6 @@ async def seed_synthetic_contract(
     """
     try:
         hospital_id = current_user["hospital_id"]
-        synthetic_id = str(uuid.uuid4())
-        filename = f"{hospital_id}_{synthetic_id}.pdf"
-        relative_path = f"contracts/{filename}"
-        file_path = CONTRACTS_DIR / filename
 
         contract_name = f"Synthetic Contract {datetime.utcnow().strftime('%Y-%m-%d')}"
         pdf_lines = [
@@ -323,14 +328,19 @@ async def seed_synthetic_contract(
         ]
         pdf_bytes = _build_synthetic_contract_pdf(pdf_lines)
 
-        with open(file_path, "wb") as seeded_file:
-            seeded_file.write(pdf_bytes)
+        saved = storage_service.save_bytes(
+            content=pdf_bytes,
+            filename="synthetic_contract.pdf",
+            prefix="contracts",
+            content_type="application/pdf",
+            namespace=hospital_id,
+        )
 
         contract_data = await create_contract(
             hospital_id=hospital_id,
             name=contract_name,
             file_name="synthetic_contract.pdf",
-            file_path=relative_path,
+            file_path=saved["storage_key"],
             file_size=len(pdf_bytes)
         )
 
@@ -341,9 +351,12 @@ async def seed_synthetic_contract(
         )
         if updated_contract_data:
             contract_data = updated_contract_data
-        background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
+        if settings.is_vercel:
+            await process_contract_with_rules_engine(contract_data["id"])
+        else:
+            background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
 
-        contract_data["fileUrl"] = get_file_url(contract_data.get("fileUrl", relative_path))
+        contract_data["fileUrl"] = get_file_url(contract_data.get("filePath", saved["storage_key"]))
         contract = Contract(**contract_data)
 
         return ContractUploadResponse(
@@ -390,8 +403,11 @@ async def reprocess_contract(
                 detail="Contract not found",
             )
 
-        background_tasks.add_task(process_contract_with_rules_engine, contract_id)
-        updated["fileUrl"] = get_file_url(updated.get("fileUrl", ""))
+        if settings.is_vercel:
+            await process_contract_with_rules_engine(contract_id)
+        else:
+            background_tasks.add_task(process_contract_with_rules_engine, contract_id)
+        updated["fileUrl"] = get_file_url(updated.get("filePath", ""))
         return ContractUploadResponse(
             contract=Contract(**updated),
             message="Contract reprocessing started. Engine is running in the background.",

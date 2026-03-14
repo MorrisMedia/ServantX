@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-import os
 from sqlalchemy import select
 
+from config import settings
 from core_services.db_service import AsyncSessionLocal
 from models import BatchRun
 from routes.auth import get_current_user
@@ -29,7 +29,7 @@ async def build_appeal_packet(
         if not batch:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Batch not found")
 
-    if os.getenv("ENABLE_CELERY_ASYNC", "false").lower() == "true":
+    if settings.celery_async_enabled:
         try:
             task_result = task_build_appeals.delay(
                 request.batchId,
