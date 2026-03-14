@@ -1,12 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "main.py": {
-      "runtime": "@vercel/python",
-      "maxDuration": 300,
-      "memory": 1024
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
