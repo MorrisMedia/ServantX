@@ -18,7 +18,8 @@ from routes.rules import router as rules_router
 from sqlalchemy import text
 
 from config import settings
-from core_services.db_service import IS_SQLITE, bootstrap_schema_if_needed, engine
+from core_services.db_service import IS_SQLITE, AsyncSessionLocal, bootstrap_schema_if_needed, engine
+from services.rate_seed_service import auto_seed_rate_data
 from services.storage_service import storage_service
 
 load_dotenv()
