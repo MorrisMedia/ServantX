@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from dotenv import load_dotenv
+import os
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -22,7 +22,6 @@ from core_services.db_service import IS_SQLITE, AsyncSessionLocal, bootstrap_sch
 from services.rate_seed_service import auto_seed_rate_data
 from services.storage_service import storage_service
 
-load_dotenv()
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -35,6 +34,9 @@ app = FastAPI(
 async def startup_bootstrap_local_db():
     if settings.AUTO_BOOTSTRAP_SQLITE and (IS_SQLITE or settings.is_vercel):
         await bootstrap_schema_if_needed(force=settings.is_vercel and not IS_SQLITE)
+        if settings.is_vercel:
+            async with AsyncSessionLocal() as db:
+                await auto_seed_rate_data(db)
 
 
 app.add_middleware(
