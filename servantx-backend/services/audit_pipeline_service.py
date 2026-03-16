@@ -347,9 +347,14 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
         claim_for_repricing["payer_key"] = effective_payer_key
         claim_for_repricing["provider"] = provider
         claim_for_repricing["service_lines"] = service_lines
-        if requested_scope == "CONTRACT_AUDIT" and any((line.get("cpt_hcpcs") or "").strip() for line in service_lines):
+        has_line_level_cpt = any((line.get("cpt_hcpcs") or "").strip() for line in service_lines)
+        has_institutional_markers = bool((claim.get("drg_code") or "").strip() or (claim.get("type_of_bill") or "").strip() or (claim.get("revenue_code") or "").strip())
+        if requested_scope == "CONTRACT_AUDIT" and has_line_level_cpt and not has_institutional_markers:
             claim_type = "PROFESSIONAL"
-            routing_reason = "Contract audit mode with CPT/HCPCS service lines present; routed to professional contract repricing."
+            routing_reason = "Contract audit mode with CPT/HCPCS service lines and no institutional markers; routed to professional contract repricing."
+        elif has_line_level_cpt and not has_institutional_markers:
+            claim_type = "PROFESSIONAL"
+            routing_reason = f"Line-level CPT/HCPCS codes were present without DRG/TOB/revenue-code institutional markers; routed to professional repricing under {requested_scope} mode."
         else:
             claim_type = detect_claim_type(claim_for_repricing)
             routing_reason = f"Detected claim type {claim_type} from parsed claim context under {requested_scope} mode."

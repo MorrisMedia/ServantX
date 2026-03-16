@@ -231,10 +231,8 @@ async def reprice_medicare_line(
     errors: List[str] = []
     if ambiguous:
         errors.append("AMBIGUOUS_RATE_MATCH")
-    if not line.get("place_of_service") and selected_context in {"FACILITY", "NONFACILITY"}:
+    if not line.get("place_of_service"):
         errors.append("MISSING_POS")
-    if selected_context in {"URBAN", "RURAL"} and not tx_region:
-        errors.append("TX_REGION_ASSUMED")
 
     return {
         "errors": errors,

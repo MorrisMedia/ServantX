@@ -73,7 +73,7 @@ class Project(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
     hospital = relationship("Hospital", back_populates="projects")
-    creator = relationship("User", foreign_keys=[created_by])
+    creator = relationship("User", foreign_keys=[created_by], overlaps="created_projects")
     contracts = relationship("Contract", back_populates="project")
     receipts = relationship("Receipt", back_populates="project")
     batch_runs = relationship("BatchRun", back_populates="project")
@@ -163,7 +163,7 @@ class User(Base):
 
     hospital = relationship("Hospital", back_populates="users")
     oauth_tokens = relationship("OAuthToken", back_populates="user")
-    created_projects = relationship("Project", foreign_keys=[Project.created_by])
+    created_projects = relationship("Project", foreign_keys=[Project.created_by], overlaps="creator")
 
 
 class Contract(Base):
