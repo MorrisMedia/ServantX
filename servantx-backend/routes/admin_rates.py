@@ -1,9 +1,3 @@
-import csv
-import hashlib
-import io
-from datetime import date, datetime
-from typing import Optional
-
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy import func, select
 
@@ -16,6 +10,7 @@ from models import (
     RateVersion,
     TxMedicaidFfsFeeSchedule,
 )
+from services.rate_import_service import import_rate_rows, load_csv_rows
 from routes.auth import get_current_user
 from schemas import RateImportResponse, RateStatusResponse
 
@@ -23,36 +18,7 @@ from schemas import RateImportResponse, RateStatusResponse
 router = APIRouter(prefix="/admin/rates", tags=["admin-rates"])
 
 
-def _parse_date(value: Optional[str]) -> Optional[date]:
-    if not value:
-        return None
-    value = value.strip()
-    if not value:
-        return None
-    try:
-        return datetime.fromisoformat(value).date()
-    except ValueError:
-        if len(value) == 8 and value.isdigit():
-            return date(int(value[0:4]), int(value[4:6]), int(value[6:8]))
-    return None
 
-
-def _parse_float(value: Optional[str], default: float = 0.0) -> float:
-    if value is None:
-        return default
-    try:
-        return float(str(value).strip())
-    except ValueError:
-        return default
-
-
-def _parse_int(value: Optional[str], default: int = 0) -> int:
-    if value is None:
-        return default
-    try:
-        return int(float(str(value).strip()))
-    except ValueError:
-        return default
 
 
 @router.post("/import", response_model=RateImportResponse)
@@ -67,108 +33,35 @@ async def import_rates(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
 
     file_content = await file.read()
-    if not file_content:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File is empty")
-
-    sha256 = hashlib.sha256(file_content).hexdigest()
-    decoded = file_content.decode("utf-8", errors="ignore")
-    reader = csv.DictReader(io.StringIO(decoded))
-    rows = list(reader)
-    if not rows:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No rows found in CSV")
+    try:
+        rows, sha256 = load_csv_rows(file_content)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
     async with AsyncSessionLocal() as db:
-        imported_count = 0
-
-        if payer_key == "MEDICARE_MPFS":
-            for row in rows:
-                db.add(
-                    MedicareRvuRate(
-                        year=_parse_int(row.get("year")),
-                        cpt_hcpcs=(row.get("cpt_hcpcs") or row.get("cpt") or "").strip(),
-                        work_rvu=_parse_float(row.get("work_rvu")),
-                        pe_rvu_facility=_parse_float(row.get("pe_rvu_facility")),
-                        pe_rvu_nonfacility=_parse_float(row.get("pe_rvu_nonfacility")),
-                        mp_rvu=_parse_float(row.get("mp_rvu")),
-                        status_indicator=(row.get("status_indicator") or None),
-                        global_days=(row.get("global_days") or None),
-                    )
-                )
-                imported_count += 1
-            count_query = select(func.count(MedicareRvuRate.id))
-        elif payer_key == "MEDICARE_GPCI":
-            for row in rows:
-                db.add(
-                    MedicareGpci(
-                        year=_parse_int(row.get("year")),
-                        locality_code=(row.get("locality_code") or "").strip(),
-                        locality_name=(row.get("locality_name") or "").strip(),
-                        work_gpci=_parse_float(row.get("work_gpci")),
-                        pe_gpci=_parse_float(row.get("pe_gpci")),
-                        mp_gpci=_parse_float(row.get("mp_gpci")),
-                    )
-                )
-                imported_count += 1
-            count_query = select(func.count(MedicareGpci.id))
-        elif payer_key == "MEDICARE_ZIP_LOCALITY":
-            for row in rows:
-                db.add(
-                    MedicareZipLocality(
-                        zip_code=(row.get("zip_code") or "").strip()[:5],
-                        locality_code=(row.get("locality_code") or "").strip(),
-                    )
-                )
-                imported_count += 1
-            count_query = select(func.count(MedicareZipLocality.id))
-        elif payer_key == "MEDICARE_CONVERSION_FACTOR":
-            for row in rows:
-                db.add(
-                    MedicareConversionFactor(
-                        year=_parse_int(row.get("year")),
-                        conversion_factor=_parse_float(row.get("conversion_factor")),
-                    )
-                )
-                imported_count += 1
-            count_query = select(func.count(MedicareConversionFactor.id))
-        elif payer_key == "TX_MEDICAID_FFS":
-            for row in rows:
-                db.add(
-                    TxMedicaidFfsFeeSchedule(
-                        effective_start=_parse_date(row.get("effective_start")) or date.today(),
-                        effective_end=_parse_date(row.get("effective_end")),
-                        cpt_hcpcs=(row.get("cpt_hcpcs") or row.get("cpt") or "").strip(),
-                        modifier=(row.get("modifier") or None),
-                        allowed_amount=_parse_float(row.get("allowed_amount")),
-                    )
-                )
-                imported_count += 1
-            count_query = select(func.count(TxMedicaidFfsFeeSchedule.id))
-        else:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Unsupported payerKey: {payer_key}")
-
-        version = RateVersion(
-            payer_key=payer_key,
-            version_label=version_label,
-            effective_start=None,
-            effective_end=None,
-            source_url=source_url,
-            imported_at=datetime.utcnow(),
-            row_count=imported_count,
-            sha256=sha256,
-        )
-        db.add(version)
-        await db.commit()
-
-        count_result = await db.execute(count_query)
-        row_count_total = int(count_result.scalar() or 0)
+        try:
+            result = await import_rate_rows(
+                db,
+                payer_key=payer_key,
+                version_label=version_label,
+                source_url=source_url,
+                rows=rows,
+                sha256=sha256,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
     return RateImportResponse(
-        payerKey=payer_key,
-        versionLabel=version_label,
-        rowsImported=imported_count,
-        rowCountTotal=row_count_total,
-        sha256=sha256,
-        message=f"Imported {imported_count} rows for {payer_key}.",
+        payerKey=result.payer_key,
+        versionLabel=result.version_label,
+        rowsImported=result.rows_imported,
+        rowCountTotal=result.row_count_total,
+        sha256=result.sha256,
+        message=(
+            f"Skipped import for {result.payer_key}; identical file already loaded."
+            if result.skipped
+            else f"Imported {result.rows_imported} rows for {result.payer_key}."
+        ),
     )
 
 
