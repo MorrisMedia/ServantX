@@ -16,6 +16,27 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 
+
+function getRepricingMeta(doc: any) {
+  const repricing = (doc?.repricingSummary || {}) as Record<string, any>;
+  return {
+    auditMode: repricing.audit_mode || '-',
+    detectedPayerKey: repricing.detected_payer_key || doc?.payerKey || '-',
+    effectivePayerKey: repricing.effective_payer_key || '-',
+    claimType: repricing.claim_type || '-',
+    benchmarkLabel: repricing.benchmark_label || '-',
+    routingReason: repricing.routing_reason || '-',
+    contractName: repricing.contract_name || '-',
+  };
+}
+
+function humanizeAuditMode(mode: string) {
+  if (mode === 'CONTRACT_AUDIT') return 'Negotiated contracts';
+  if (mode === 'MEDICARE') return 'Medicare';
+  if (mode === 'TX_MEDICAID_FFS') return 'Texas Medicaid';
+  return mode || '-';
+}
+
 function parseBatchIdFromLocation(location: string): string {
   const query = location.includes("?") ? location.split("?")[1] : "";
   const params = new URLSearchParams(query);
@@ -94,7 +115,7 @@ export default function AuditWorkflowPage() {
 
   const serviceLineRows = useMemo(() => {
     const docs = batchDocumentsQuery.data?.items || [];
-    const flattened: Array<{ docId: string; cpt: string; modifier: string; pos: string; locality: string; expected: number; paid: number; variance: number }> = [];
+    const flattened: Array<{ docId: string; cpt: string; modifier: string; pos: string; locality: string; expected: number; paid: number; variance: number; rateSource: string; auditMode: string }> = [];
     docs.forEach((doc) => {
       const repricing = doc.repricingSummary as { line_results?: any[] } | undefined;
       (repricing?.line_results || []).forEach((line: any) => {
@@ -107,6 +128,8 @@ export default function AuditWorkflowPage() {
           expected: Number(line.expected_allowed || 0),
           paid: Number(line.actual_paid || 0),
           variance: Number(line.variance_amount || 0),
+          rateSource: line.rate_source || "-",
+          auditMode: String((repricing as any)?.audit_mode || "-"),
         });
       });
     });
@@ -174,16 +197,16 @@ export default function AuditWorkflowPage() {
                 <Card><CardHeader><CardTitle>Total Recoverable</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{formatCurrency(summaryQuery.data?.totalVariance || 0)}</CardContent></Card>
                 <Card><CardHeader><CardTitle>Claims Flagged</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{summaryQuery.data?.claimsFlagged || 0}</CardContent></Card>
                 <Card><CardHeader><CardTitle>Batch Status</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{batchStatusQuery.data?.status || "Unknown"}</CardContent></Card>
-                <Card><CardHeader><CardTitle>Project</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{projectQuery.data?.slug || "-"}</CardContent></Card>
+                <Card><CardHeader><CardTitle>Audit Mode</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{humanizeAuditMode(batchStatusQuery.data?.payerScope || "-")}</CardContent></Card>
               </div>
             </TabsContent>
 
             <TabsContent value="claims">
-              <Card><CardHeader><CardTitle>Claims</CardTitle><CardDescription>Claim-level documents generated from CLP loops.</CardDescription></CardHeader><CardContent className="space-y-3">{(batchDocumentsQuery.data?.items || []).map((doc) => <div key={doc.id} className="rounded border p-3 text-sm"><div className="font-medium">{doc.name || doc.id}</div><div className="text-muted-foreground">Status: {doc.status} | Project: {doc.projectId || "-"} | Payer: {doc.payerKey || "-"} | Variance: {formatCurrency(doc.underpaymentAmount || 0)}</div></div>)}{(batchDocumentsQuery.data?.items || []).length === 0 && <div className="text-sm text-muted-foreground">No claim documents returned for this batch.</div>}</CardContent></Card>
+              <Card><CardHeader><CardTitle>Claims</CardTitle><CardDescription>Claim-level documents generated from CLP loops.</CardDescription></CardHeader><CardContent className="space-y-3">{(batchDocumentsQuery.data?.items || []).map((doc) => { const meta = getRepricingMeta(doc); return <div key={doc.id} className="rounded border p-3 text-sm"><div className="font-medium">{doc.name || doc.id}</div><div className="text-muted-foreground">Status: {doc.status} | Project: {doc.projectId || "-"} | Detected payer: {meta.detectedPayerKey} | Benchmark mode: {humanizeAuditMode(meta.auditMode)} | Variance: {formatCurrency(doc.underpaymentAmount || 0)}</div><div className="mt-2 text-xs text-muted-foreground">Claim type: {meta.claimType} | Effective benchmark: {meta.benchmarkLabel}</div><div className="mt-1 text-xs text-muted-foreground">Routing: {meta.routingReason}</div></div>; })}{(batchDocumentsQuery.data?.items || []).length === 0 && <div className="text-sm text-muted-foreground">No claim documents returned for this batch.</div>}</CardContent></Card>
             </TabsContent>
 
             <TabsContent value="service-lines">
-              <Card><CardHeader><CardTitle>Service Lines</CardTitle><CardDescription>Grouped repricing output by CPT / modifier / POS / locality.</CardDescription></CardHeader><CardContent className="space-y-2">{serviceLineRows.slice(0, 100).map((line, idx) => <div key={`${line.docId}-${idx}`} className="rounded border p-2 text-sm">{line.cpt} {line.modifier !== "-" ? `-${line.modifier}` : ""} | POS {line.pos} | Locality {line.locality} | Paid {formatCurrency(line.paid)} | Expected {formatCurrency(line.expected)} | Variance {formatCurrency(line.variance)}</div>)}{serviceLineRows.length === 0 && <div className="text-sm text-muted-foreground">No service-line repricing data yet.</div>}</CardContent></Card>
+              <Card><CardHeader><CardTitle>Service Lines</CardTitle><CardDescription>Grouped repricing output by CPT / modifier / POS / locality.</CardDescription></CardHeader><CardContent className="space-y-2">{serviceLineRows.slice(0, 100).map((line, idx) => <div key={`${line.docId}-${idx}`} className="rounded border p-2 text-sm">{line.cpt} {line.modifier !== "-" ? `-${line.modifier}` : ""} | POS {line.pos} | Locality {line.locality} | Paid {formatCurrency(line.paid)} | Expected {formatCurrency(line.expected)} | Variance {formatCurrency(line.variance)}<div className="mt-1 text-xs text-muted-foreground">Mode: {humanizeAuditMode(line.auditMode)} | Rate source: {line.rateSource}</div></div>)}{serviceLineRows.length === 0 && <div className="text-sm text-muted-foreground">No service-line repricing data yet.</div>}</CardContent></Card>
             </TabsContent>
 
             <TabsContent value="patterns">

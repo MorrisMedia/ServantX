@@ -347,7 +347,21 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
         claim_for_repricing["payer_key"] = effective_payer_key
         claim_for_repricing["provider"] = provider
         claim_for_repricing["service_lines"] = service_lines
-        claim_type = detect_claim_type(claim_for_repricing)
+        if requested_scope == "CONTRACT_AUDIT" and any((line.get("cpt_hcpcs") or "").strip() for line in service_lines):
+            claim_type = "PROFESSIONAL"
+            routing_reason = "Contract audit mode with CPT/HCPCS service lines present; routed to professional contract repricing."
+        else:
+            claim_type = detect_claim_type(claim_for_repricing)
+            routing_reason = f"Detected claim type {claim_type} from parsed claim context under {requested_scope} mode."
+
+        if requested_scope == "MEDICARE":
+            benchmark_label = "CMS Medicare benchmark"
+        elif requested_scope == "TX_MEDICAID_FFS":
+            benchmark_label = "Texas Medicaid FFS benchmark"
+        elif selected_contract:
+            benchmark_label = f"Negotiated contract: {selected_contract.get('name')}"
+        else:
+            benchmark_label = "Negotiated contract benchmark (no matched rule library)"
 
         claim_result = await reprice_single_claim(
             parsed_claim=claim_for_repricing,
@@ -433,8 +447,11 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
                 "variance_total": round(total_variance, 2),
             },
             "audit_mode": requested_scope,
+            "detected_payer_key": detected_payer_key,
             "effective_payer_key": effective_payer_key,
             "claim_type": claim_type,
+            "benchmark_label": benchmark_label,
+            "routing_reason": routing_reason,
             "contract_id": selected_contract.get("id") if selected_contract else None,
             "contract_name": selected_contract.get("name") if selected_contract else None,
         }
