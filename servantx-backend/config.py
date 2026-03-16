@@ -9,11 +9,12 @@ from dotenv import load_dotenv
 from pydantic import Field, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-load_dotenv()
+if not os.getenv("VERCEL"):
+    load_dotenv()
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore", case_sensitive=True)
+    model_config = SettingsConfigDict(extra="ignore", case_sensitive=True)
 
     APP_NAME: str = "ServantX API"
     APP_VERSION: str = "1.0.0"
@@ -78,6 +79,27 @@ class Settings(BaseSettings):
     VERCEL_BLOB_ADD_RANDOM_SUFFIX: bool = True
 
     AUTO_BOOTSTRAP_SQLITE: bool = True
+
+    @field_validator("ENVIRONMENT", mode="before")
+    @classmethod
+    def _normalize_environment(cls, value):
+        if os.getenv("VERCEL") and (value is None or value == "development"):
+            return "production"
+        return value
+
+    @field_validator("DEPLOYMENT_TARGET", mode="before")
+    @classmethod
+    def _normalize_deployment_target(cls, value):
+        if os.getenv("VERCEL") and (value is None or value == "default"):
+            return "vercel"
+        return value
+
+    @field_validator("STORAGE_BACKEND", mode="before")
+    @classmethod
+    def _normalize_storage_backend(cls, value):
+        if os.getenv("VERCEL") and (value is None or value == "local"):
+            return "vercel_blob"
+        return value
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
