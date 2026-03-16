@@ -8,7 +8,6 @@ import {
   FileCheck,
   Settings,
   Receipt,
-  BookOpen,
   BarChart3,
   HelpCircle,
   Lock,
@@ -23,12 +22,12 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { title: "Overview", href: "/dashboard", icon: LayoutDashboard, requiresContract: true },
-  { title: "Documents", href: "/dashboard/documents", icon: FileText, requiresContract: true },
   { title: "Billing Records", href: "/dashboard/billing-records", icon: Receipt, requiresContract: true },
+  { title: "Documents", href: "/dashboard/documents", icon: FileText, requiresContract: true },
   { title: "Contracts", href: "/dashboard/contracts", icon: FileCheck, requiresContract: false },
-  { title: "Rules", href: "/dashboard/rules", icon: BookOpen, requiresContract: true },
   { title: "Audit Workflow", href: "/dashboard/audit-workflow", icon: BarChart3, requiresContract: true },
-  { title: "User Guide", href: "/dashboard/user-guide", icon: HelpCircle, requiresContract: false },
+  { title: "Reports", href: "/dashboard/reports", icon: BarChart3, requiresContract: true },
+  { title: "Operations Guide", href: "/dashboard/user-guide", icon: HelpCircle, requiresContract: false },
   { title: "Settings", href: "/dashboard/settings", icon: Settings, requiresContract: false },
 ];
 
@@ -55,7 +54,7 @@ export function DashboardSidebar() {
           const Icon = item.icon;
           const isActive = location === item.href || (item.href !== "/dashboard" && location.startsWith(item.href));
           const isDisabled = item.requiresContract && !hasContract && !isLoading;
-          
+
           if (isDisabled) {
             return (
               <button
@@ -72,7 +71,7 @@ export function DashboardSidebar() {
               </button>
             );
           }
-          
+
           return (
             <Link
               key={item.href}

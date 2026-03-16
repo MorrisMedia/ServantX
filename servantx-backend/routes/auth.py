@@ -5,12 +5,28 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import Optional
 from datetime import datetime
+from sqlalchemy import delete, select
 from schemas import (
     LoginRequest,
     RegisterRequest,
     AuthResponse,
     User,
     UpdateHasContractRequest,
+)
+from config import settings
+from core_services.db_service import AsyncSessionLocal
+from models import (
+    AuditFinding,
+    AuditNote,
+    BatchRun,
+    Contract,
+    Document,
+    FormalAuditRun,
+    ParsedData,
+    Project,
+    ProjectArtifact,
+    Receipt,
+    TruthVerificationRun,
 )
 from core_services.auth_service import (
     get_password_hash as hash_password,
@@ -380,4 +396,50 @@ async def update_has_contract(
         has_contract=updated_user.get("has_contract", False),
         created_at=created_at,
     )
+
+
+@router.post("/reset-demo-data")
+async def reset_demo_data(current_user: dict = Depends(get_current_user)):
+    """Clear hospital-scoped demo/smoke artifacts for the current authenticated tenant."""
+    if settings.ENVIRONMENT == "production":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Demo reset is disabled in production",
+        )
+
+    hospital_id = current_user["hospital_id"]
+
+    async with AsyncSessionLocal() as db:
+        result = {}
+        hospital_documents = select(Document.id).where(Document.hospital_id == hospital_id)
+        hospital_batches = select(BatchRun.id).where(BatchRun.hospital_id == hospital_id)
+        hospital_projects = select(Project.id).where(Project.hospital_id == hospital_id)
+
+        delete_plan = [
+            (ProjectArtifact, delete(ProjectArtifact).where(ProjectArtifact.hospital_id == hospital_id), "projectArtifacts"),
+            (FormalAuditRun, delete(FormalAuditRun).where(FormalAuditRun.hospital_id == hospital_id), "formalAuditRuns"),
+            (TruthVerificationRun, delete(TruthVerificationRun).where(TruthVerificationRun.hospital_id == hospital_id), "truthVerificationRuns"),
+            (AuditFinding, delete(AuditFinding).where(AuditFinding.document_id.in_(hospital_documents)), "auditFindings"),
+            (AuditNote, delete(AuditNote).where((AuditNote.document_id.in_(hospital_documents)) | (AuditNote.batch_id.in_(hospital_batches))), "auditNotes"),
+            (ParsedData, delete(ParsedData).where((ParsedData.document_id.in_(hospital_documents)) | (ParsedData.batch_id.in_(hospital_batches))), "parsedData"),
+            (Document, delete(Document).where(Document.hospital_id == hospital_id), "documents"),
+            (Receipt, delete(Receipt).where(Receipt.hospital_id == hospital_id), "receipts"),
+            (BatchRun, delete(BatchRun).where(BatchRun.hospital_id == hospital_id), "batchRuns"),
+            (Contract, delete(Contract).where(Contract.hospital_id == hospital_id), "contracts"),
+            (Project, delete(Project).where(Project.hospital_id == hospital_id), "projects"),
+        ]
+
+        for _model, stmt, key in delete_plan:
+            deleted = await db.execute(stmt)
+            result[key] = deleted.rowcount or 0
+
+        await db.commit()
+
+    await update_user(current_user["id"], has_contract=False)
+
+    return {
+        "message": "Demo data cleared",
+        "hospitalId": hospital_id,
+        "deleted": result,
+    }
 
