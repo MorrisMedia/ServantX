@@ -24,7 +24,11 @@ def main() -> None:
         download_url = dataset.get('downloadUrl')
         if not download_url:
             continue
-        filename = download_url.rstrip('/').split('/')[-1]
+        filename = dataset.get('sourceFilename') or dataset.get('id')
+        if '.' not in filename:
+            tail = download_url.split('?')[0].rstrip('/').split('/')[-1]
+            if '.' in tail:
+                filename = f"{filename}_{tail}"
         target = OUTDIR / filename
         print(f"Downloading {dataset['id']} -> {target}")
         with urllib.request.urlopen(download_url, timeout=120) as resp:

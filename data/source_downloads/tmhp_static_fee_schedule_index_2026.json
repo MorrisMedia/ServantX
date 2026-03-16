@@ -1,0 +1,702 @@
+[
+  {
+    "description": "AMBULANCE",
+    "file_name": "PRCR416C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR416C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR416C.pdf"
+  },
+  {
+    "description": "AMBULATORY SURGICAL CENTER (ASC) / HOSPITAL - BASED AMBULATORY SURGICAL CENTER (HASC)",
+    "file_name": "PRCR405C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR405C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR405C.pdf"
+  },
+  {
+    "description": "AUDIOLOGIST",
+    "file_name": "PRCR437C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR437C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR437C.pdf"
+  },
+  {
+    "description": "AUTISM SERVICES",
+    "file_name": "PRCR615C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR615C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR615C.pdf"
+  },
+  {
+    "description": "BIRTHING CENTER",
+    "file_name": "PRCR447C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR447C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR447C.pdf"
+  },
+  {
+    "description": "CASE MANAGEMENT AND REHABILITATIVE SERVICES - BLIND CHILDREN'S VOCATIONAL DISCOVERY AND DEVELOPMENT PROGRAM",
+    "file_name": "PRCR425C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR425C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR425C.pdf"
+  },
+  {
+    "description": "CASE MANAGEMENT AND REHABILITATIVE SERVICES - CHILDREN AND PREGNANT WOMEN",
+    "file_name": "PRCR424C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR424C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR424C.pdf"
+  },
+  {
+    "description": "CASE MANAGEMENT AND REHABILITATIVE SERVICES - EARLY CHILD INTERVENTION",
+    "file_name": "PRCR427C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR427C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR427C.pdf"
+  },
+  {
+    "description": "CASE MANAGEMENT AND REHABILITATIVE SERVICES - MENTAL HEALTH",
+    "file_name": "PRCR423C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR423C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR423C.pdf"
+  },
+  {
+    "description": "CASE MANAGEMENT AND REHABILITATIVE SERVICES - MENTAL RETARDATION",
+    "file_name": "PRCR422C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR422C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR422C.pdf"
+  },
+  {
+    "description": "CERTIFIED NURSE MIDWIFE (CNM)",
+    "file_name": "PRCR434C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR434C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR434C.pdf"
+  },
+  {
+    "description": "CERTIFIED REGISTERED NURSE ANESTHETIST (CRNA) / ANESTHESIOLOGIST ASSISTANT (AA)",
+    "file_name": "PRCR400C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR400C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR400C.pdf"
+  },
+  {
+    "description": "CHIROPRACTOR",
+    "file_name": "PRCR420C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR420C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR420C.pdf"
+  },
+  {
+    "description": "CLINICAL DIAGNOSTIC LABORATORY",
+    "file_name": "PRCR494I",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR494I.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR494I.pdf"
+  },
+  {
+    "description": "CLINICAL LABORATORY",
+    "file_name": "PRCR494C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR494C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR494C.pdf"
+  },
+  {
+    "description": "COMPREHENSIVE CARE PROGRAM - PERSONAL CARE SERVICES",
+    "file_name": "PRCR498C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR498C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR498C.pdf"
+  },
+  {
+    "description": "COMPREHENSIVE CARE PROGRAM - PRIVATE DUTY NURSING",
+    "file_name": "PRCR499C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR499C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR499C.pdf"
+  },
+  {
+    "description": "COMPREHENSIVE OUTPATIENT REHABILITATION FACILITY (CORF) / OUTPATIENT REHABILITATION FACILITY (ORF)",
+    "file_name": "PRCR411C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR411C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR411C.pdf"
+  },
+  {
+    "description": "DENTAL",
+    "file_name": "PRCR496C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR496C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR496C.pdf"
+  },
+  {
+    "description": "DENTAL (THSTEPS AND ICF/MR)",
+    "file_name": "PRCR407C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR407C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR407C.pdf"
+  },
+  {
+    "description": "DMEPOS - TOS 9, E, J, L, AND R",
+    "file_name": "PRCR704C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR704C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR704C.pdf"
+  },
+  {
+    "description": "FAMILY PLANNING CLINIC",
+    "file_name": "PRCR454C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR454C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR454C.pdf"
+  },
+  {
+    "description": "HEALTHY TEXAS WOMEN",
+    "file_name": "PRCR612C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR612C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR612C.pdf"
+  },
+  {
+    "description": "HEARING AID AND AUDIOMETRIC SERVICES",
+    "file_name": "PRCR414C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR414C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR414C.pdf"
+  },
+  {
+    "description": "HHSC FAMILY PLANNING PROGRAM",
+    "file_name": "PRCR707C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR707C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR707C.pdf"
+  },
+  {
+    "description": "HOME HEALTH AGENCY",
+    "file_name": "PRCR408C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR408C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR408C.pdf"
+  },
+  {
+    "description": "HOSPITAL OUTPATIENT IMAGING SERVICES",
+    "file_name": "PRCR604C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR604C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR604C.pdf"
+  },
+  {
+    "description": "IN HOME TOTAL PARENTERAL NUTRITION (TPN) SERVICES",
+    "file_name": "PRCR448C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR448C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR448C.pdf"
+  },
+  {
+    "description": "INDIAN HEALTH SERVICES",
+    "file_name": "PRCR453C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR453C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR453C.pdf"
+  },
+  {
+    "description": "LABORATORY INDEPENDENT",
+    "file_name": "PRCR429C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR429C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR429C.pdf"
+  },
+  {
+    "description": "LICENSED CLINICAL SOCIAL WORKER (LCSW)",
+    "file_name": "PRCR428C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR428C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR428C.pdf"
+  },
+  {
+    "description": "LICENSED MIDWIFE",
+    "file_name": "PRCR611C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR611C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR611C.pdf"
+  },
+  {
+    "description": "LOCAL HEALTH DEPARTMENT SERVICES",
+    "file_name": "PRCR617C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR617C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR617C.pdf"
+  },
+  {
+    "description": "MEDICAL TRANSPORTATION - DEMAND RESPONSE TRANSPORTATION SERVICES PROVIDER",
+    "file_name": "PRCR706C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR706C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR706C.pdf"
+  },
+  {
+    "description": "MEDICAL TRANSPORTATION - INDIVIDUAL TRANSPORTATION PARTICIPANT",
+    "file_name": "PRCR705C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR705C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR705C.pdf"
+  },
+  {
+    "description": "MISCELLANEOUS OTHER PROFESSIONALS - CERTIFIED RESPIRATORY CARE PRACTITIONER",
+    "file_name": "PRCR487C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR487C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR487C.pdf"
+  },
+  {
+    "description": "MISCELLANEOUS OTHER PROFESSIONALS - COMPREHENSIVE HEALTH CENTER (CHC)",
+    "file_name": "PRCR450C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR450C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR450C.pdf"
+  },
+  {
+    "description": "MISCELLANEOUS OTHER PROFESSIONALS - MATERNITY SERVICE CLINIC",
+    "file_name": "PRCR449C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR449C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR449C.pdf"
+  },
+  {
+    "description": "MISCELLANEOUS OTHER PROFESSIONALS - OPTICIAN",
+    "file_name": "PRCR432C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR432C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR432C.pdf"
+  },
+  {
+    "description": "MISCELLANEOUS OTHER PROFESSIONALS - PORTABLE X-RAY, RADIOLOGICAL LAB, PHYSIOLOGICAL LAB",
+    "file_name": "PRCR455C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR455C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR455C.pdf"
+  },
+  {
+    "description": "MISCELLANEOUS OTHER PROFESSIONALS - RADIATION TREATMENT CENTER",
+    "file_name": "PRCR441C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR441C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR441C.pdf"
+  },
+  {
+    "description": "NATIONAL DRUG CODES",
+    "file_name": "PRCR708C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR708C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR708C.pdf"
+  },
+  {
+    "description": "NEPHROLOGY (HEMODIALYSIS, RENAL DIALYSIS)",
+    "file_name": "PRCR417C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR417C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR417C.pdf"
+  },
+  {
+    "description": "NEPHROLOGY (HEMODIALYSIS, RENAL DIALYSIS) COMPOSITE RATES",
+    "file_name": "PRCR417I",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR417I.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR417I.pdf"
+  },
+  {
+    "description": "NURSE PRACTITIONER/CLINICAL NURSE SPECIALIST",
+    "file_name": "PRCR609C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR609C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR609C.pdf"
+  },
+  {
+    "description": "OCCUPATIONAL THERAPIST",
+    "file_name": "PRCR436C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR436C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR436C.pdf"
+  },
+  {
+    "description": "OPTOMETRIST",
+    "file_name": "PRCR403C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR403C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR403C.pdf"
+  },
+  {
+    "description": "ORAL MAXILLOFACIAL SURGEON",
+    "file_name": "PRCR457C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR457C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR457C.pdf"
+  },
+  {
+    "description": "ORTHODONTIST",
+    "file_name": "PRCR456C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR456C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR456C.pdf"
+  },
+  {
+    "description": "ORTHOTIST",
+    "file_name": "PRCR439C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR439C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR439C.pdf"
+  },
+  {
+    "description": "OUTPATIENT BEHAVIORAL HEALTH",
+    "file_name": "PRCR605C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR605C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR605C.pdf"
+  },
+  {
+    "description": "OUTPATIENT BEHAVIORAL HEALTH - CHEMICAL DEPENDENCYTREATMENT FACILITY",
+    "file_name": "PRCR426C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR426C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR426C.pdf"
+  },
+  {
+    "description": "OUTPATIENT BEHAVIORAL HEALTH - OPIOID TREATMENT PROVIDER",
+    "file_name": "PRCR462C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR462C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR462C.pdf"
+  },
+  {
+    "description": "OUTPATIENT BEHAVIORAL HEALTH - PSYCHOLOGIST",
+    "file_name": "PRCR433C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR433C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR433C.pdf"
+  },
+  {
+    "description": "PHYSICAL THERAPIST",
+    "file_name": "PRCR435C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR435C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR435C.pdf"
+  },
+  {
+    "description": "PHYSICIAN",
+    "file_name": "PRCR402C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR402C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR402C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - ADMINISTERED DRUG/BIOLOGICAL",
+    "file_name": "PRCR495C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR495C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR495C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - ALLERGY",
+    "file_name": "PRCR464C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR464C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR464C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - ANESTHESIOLOGY",
+    "file_name": "PRCR466C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR466C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR466C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - CARDIOVASCULAR DISEASE",
+    "file_name": "PRCR467C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR467C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR467C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - DERMATOLOGY",
+    "file_name": "PRCR468C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR468C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR468C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - DOCTOR OF DENTISTRY",
+    "file_name": "PRCR431C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR431C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR431C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - GASTROENTEROLOGY",
+    "file_name": "PRCR469C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR469C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR469C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - GENERAL SURGERY",
+    "file_name": "PRCR463C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR463C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR463C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - GENETICS",
+    "file_name": "PRCR452C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR452C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR452C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - GERIATRICS",
+    "file_name": "PRCR486C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR486C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR486C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - INTERNAL MEDICINE",
+    "file_name": "PRCR470C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR470C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR470C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - NEPHROLOGY",
+    "file_name": "PRCR461C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR461C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR461C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - NEUROLOGY",
+    "file_name": "PRCR471C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR471C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR471C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - NEUROSURGERY",
+    "file_name": "PRCR472C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR472C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR472C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - NUCLEAR MEDICINE",
+    "file_name": "PRCR484C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR484C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR484C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - OB/GYN",
+    "file_name": "PRCR473C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR473C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR473C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - OPHTHALMOLOGY",
+    "file_name": "PRCR474C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR474C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR474C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - ORTHOPEDIC SURGERY",
+    "file_name": "PRCR475C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR475C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR475C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - OTHER",
+    "file_name": "PRCR488C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR488C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR488C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - OTORHINOLARYNGOLOGY",
+    "file_name": "PRCR465C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR465C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR465C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - PATHOLOGIST",
+    "file_name": "PRCR412C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR412C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR412C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - PEDIATRICS",
+    "file_name": "PRCR485C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR485C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR485C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - PHYSICAL MEDICINE AND REHABILITATION",
+    "file_name": "PRCR477C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR477C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR477C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - PLASTIC SURGERY",
+    "file_name": "PRCR476C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR476C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR476C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - PROCTOLOGY",
+    "file_name": "PRCR479C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR479C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR479C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - PULMONARY DISEASE",
+    "file_name": "PRCR480C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR480C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR480C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - RADIATION THERAPY",
+    "file_name": "PRCR481C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR481C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR481C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - RADIOLOGIST",
+    "file_name": "PRCR413C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR413C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR413C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - THORACIC SURGERY",
+    "file_name": "PRCR482C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR482C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR482C.pdf"
+  },
+  {
+    "description": "PHYSICIAN - UROLOGY",
+    "file_name": "PRCR483C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR483C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR483C.pdf"
+  },
+  {
+    "description": "PHYSICIAN ASSISTANT",
+    "file_name": "PRCR607C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR607C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR607C.pdf"
+  },
+  {
+    "description": "PODIATRIST",
+    "file_name": "PRCR404C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR404C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR404C.pdf"
+  },
+  {
+    "description": "PRESCRIBED PEDIATRIC EXTENDED CARE CENTER",
+    "file_name": "PRCR613C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR613C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR613C.pdf"
+  },
+  {
+    "description": "PROSTHETIST",
+    "file_name": "PRCR438C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR438C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR438C.pdf"
+  },
+  {
+    "description": "RENAL DIALYSIS FACILITY",
+    "file_name": "PRCR430C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR430C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR430C.pdf"
+  },
+  {
+    "description": "RENAL DIALYSIS FACILITY COMPOSITE RATES",
+    "file_name": "PRCR430I",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR430I.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR430I.pdf"
+  },
+  {
+    "description": "THERAPIES",
+    "file_name": "PRCR492C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR492C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR492C.pdf"
+  },
+  {
+    "description": "THSTEPS - OTHER",
+    "file_name": "PRCR451C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR451C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR451C.pdf"
+  },
+  {
+    "description": "THSTEPS LICENSED VOCATIONAL NURSE",
+    "file_name": "PRCR445C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR445C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR445C.pdf"
+  },
+  {
+    "description": "THSTEPS MEDICAL",
+    "file_name": "PRCR415C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR415C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR415C.pdf"
+  },
+  {
+    "description": "THSTEPS OTHER",
+    "file_name": "PRCR442C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR442C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR442C.pdf"
+  },
+  {
+    "description": "THSTEPS REGISTERED NURSE",
+    "file_name": "PRCR444C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR444C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR444C.pdf"
+  },
+  {
+    "description": "TUBERCULOSIS (TB) CLINIC",
+    "file_name": "PRCR459C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR459C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR459C.pdf"
+  },
+  {
+    "description": "TUBERCULOSIS (TB) CLINIC GROUP",
+    "file_name": "PRCR460C",
+    "modified_date": "3/13/2026",
+    "excel_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR460C.xls",
+    "pdf_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR460C.pdf"
+  }
+]

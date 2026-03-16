@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-16T03:30:00Z",
+  "generatedAt": "2026-03-16T04:25:00Z",
   "purpose": "Authoritative 2026 reimbursement-source manifest for ServantX ingestion planning",
   "datasets": [
     {
@@ -46,7 +46,9 @@
       "servantxTargets": [
         "medicare_zip_locality"
       ],
-      "notes": "CMS general fee schedule page that references ZIPCODE TO CARRIER LOCALITY FILE."
+      "notes": "CMS fee schedule page with confirmed 2026 ZIP-to-carrier/locality ZIP download used to normalize medicare_zip_locality rows.",
+      "downloadUrl": "https://www.cms.gov/files/zip/zip-code-carrier-locality-file-revised-02-18-2026.zip",
+      "expectedFormat": "zip (TXT layouts + ZIP5/ZIP9 data)"
     },
     {
       "id": "cms_2026_pfs_final_rule",
@@ -128,10 +130,43 @@
         "tx_medicaid_ffs_fee_schedule",
         "rate_versions"
       ],
-      "notes": "Operational fee lookup and static fee-schedule starting point for Texas Medicaid.",
+      "notes": "Operational fee lookup and static fee-schedule starting point for Texas Medicaid. Exact static XLS download paths confirmed for PRCR405C/604C/402C/475C and indexed locally.",
       "staticIndexUrl": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx",
       "searchUrl": "https://public.tmhp.com/FeeSchedules/OnlineFeeLookup/FeeScheduleSearch.aspx",
-      "expectedFormat": "html + downloadable static schedules"
+      "expectedFormat": "html + downloadable static schedules",
+      "verifiedStaticFiles": [
+        {
+          "fileName": "PRCR405C",
+          "description": "ASC / HASC",
+          "downloadUrl": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR405C.xls",
+          "normalizedOutput": "data/normalized_rate_imports/tx_medicaid_ffs_prcr405c_2026.csv",
+          "importReady": true
+        },
+        {
+          "fileName": "PRCR604C",
+          "description": "Hospital outpatient imaging services",
+          "downloadUrl": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR604C.xls",
+          "normalizedOutput": "data/normalized_rate_imports/tx_medicaid_ffs_prcr604c_2026_detail.csv",
+          "importReady": false,
+          "schemaGap": "Current tx_medicaid_ffs_fee_schedule table cannot represent urban vs rural outpatient amounts."
+        },
+        {
+          "fileName": "PRCR402C",
+          "description": "Physician",
+          "downloadUrl": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR402C.xls",
+          "normalizedOutput": "data/normalized_rate_imports/tx_medicaid_ffs_prcr402c_2026_detail.csv",
+          "importReady": false,
+          "schemaGap": "Current tx_medicaid_ffs_fee_schedule table cannot represent facility vs non-facility physician amounts."
+        },
+        {
+          "fileName": "PRCR475C",
+          "description": "Physician - Orthopedic Surgery",
+          "downloadUrl": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR475C.xls",
+          "normalizedOutput": "data/normalized_rate_imports/tx_medicaid_ffs_prcr475c_2026_detail.csv",
+          "importReady": false,
+          "schemaGap": "Current tx_medicaid_ffs_fee_schedule table cannot represent facility vs non-facility physician amounts."
+        }
+      ]
     },
     {
       "id": "tx_hhsc_rate_tables",
@@ -148,9 +183,9 @@
     }
   ],
   "recommendedNextSteps": [
-    "Capture exact downloadable file URLs for CMS 2026 RVU/GPCI/CF/ZIP sources.",
-    "Capture TMHP static fee-schedule endpoints for Texas Medicaid CPT/HCPCS adjudication.",
-    "Create versioned loader configs keyed by effective year and payerKey.",
-    "Map future OPPS/ASC addenda into dedicated outpatient/ASC target tables once schema is expanded."
+    "Wire import-ready normalized CSVs into the admin import path and/or seed path (MEDICARE_MPFS, MEDICARE_GPCI, MEDICARE_CONVERSION_FACTOR, MEDICARE_ZIP_LOCALITY, TX_MEDICAID_FFS for PRCR405C).",
+    "Expand the Texas Medicaid schema/import contract to preserve urban vs rural outpatient rates and facility vs non-facility physician rates before importing PRCR604C/402C/475C.",
+    "Map future OPPS/ASC addenda into dedicated outpatient/ASC target tables once schema is expanded.",
+    "Add versioned loader configs keyed by effective year and payerKey."
   ]
 }
