@@ -16,8 +16,10 @@ export async function getDocuments(filters?: DocumentFilters): Promise<Paginated
   if (filters?.amountMin !== undefined) params.append("amountMin", filters.amountMin.toString());
   if (filters?.amountMax !== undefined) params.append("amountMax", filters.amountMax.toString());
   if (filters?.hospitalId) params.append("hospitalId", filters.hospitalId);
+  if ((filters as any)?.projectId) params.append("projectId", (filters as any).projectId);
   if (filters?.contractId) params.append("contractId", filters.contractId);
   if (filters?.receiptId) params.append("receiptId", filters.receiptId);
+  if ((filters as any)?.projectId) params.append("projectId", (filters as any).projectId);
   if (filters?.search) params.append("search", filters.search);
   if (filters?.sortBy) params.append("sortBy", filters.sortBy);
   if (filters?.sortOrder) params.append("sortOrder", filters.sortOrder);
@@ -90,6 +92,7 @@ export async function getDocumentStats(filters?: DocumentFilters): Promise<Docum
   if (filters?.dateFrom) params.append("dateFrom", filters.dateFrom);
   if (filters?.dateTo) params.append("dateTo", filters.dateTo);
   if (filters?.hospitalId) params.append("hospitalId", filters.hospitalId);
+  if ((filters as any)?.projectId) params.append("projectId", (filters as any).projectId);
 
   const queryString = params.toString();
   const url = `${API_BASE_URL}/documents/stats${queryString ? `?${queryString}` : ""}`;

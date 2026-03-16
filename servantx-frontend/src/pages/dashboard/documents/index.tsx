@@ -4,6 +4,7 @@ import { FilterBar } from "@/components/filters/FilterBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getDocuments, getDocumentStats, markDocumentsBulkDownloaded } from "@/lib/api/documents";
+import { getActiveProjectId, setActiveProjectId } from "@/lib/activeProject";
 import { useDocumentFilters } from "@/lib/hooks/useFilters";
 import { formatCurrency } from "@/lib/utils/currency";
 import { formatDateTime } from "@/lib/utils/date";
@@ -15,12 +16,16 @@ import { toast } from "sonner";
 export default function DocumentsPage() {
   const queryClient = useQueryClient();
   const { filters, updateFilters, clearFilters } = useDocumentFilters();
+  const search = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const queryProjectId = search.get("projectId");
+  const activeProjectId = queryProjectId || getActiveProjectId();
+  if (queryProjectId) setActiveProjectId(queryProjectId);
   const [page, setPage] = useState(0);
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
 
   const { data: stats } = useQuery({
-    queryKey: ["/documents/stats", filters],
-    queryFn: () => getDocumentStats(filters),
+    queryKey: ["/documents/stats", filters, activeProjectId],
+    queryFn: () => getDocumentStats({ ...(filters as any), projectId: activeProjectId || undefined } as any),
   });
 
   const { data: notDownloadedCount } = useQuery({
@@ -32,7 +37,7 @@ export default function DocumentsPage() {
       let hasMore = true;
 
       while (hasMore) {
-        const batch = await getDocuments({ ...filters, limit: batchSize, offset });
+        const batch = await getDocuments({ ...(filters as any), projectId: activeProjectId || undefined, limit: batchSize, offset } as any);
         const items = Array.isArray(batch) ? batch : (batch?.items || []);
         allDocuments.push(...items);
         
@@ -77,7 +82,7 @@ export default function DocumentsPage() {
       let hasMore = true;
 
       while (hasMore) {
-        const batch = await getDocuments({ ...filters, limit: batchSize, offset });
+        const batch = await getDocuments({ ...(filters as any), projectId: activeProjectId || undefined, limit: batchSize, offset } as any);
         const items = Array.isArray(batch) ? batch : (batch?.items || []);
         allDocuments.push(...items);
         

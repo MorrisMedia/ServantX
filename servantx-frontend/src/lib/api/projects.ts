@@ -43,3 +43,10 @@ export function createFormalAuditRun(
     body: JSON.stringify(payload),
   });
 }
+
+export function createProject(payload: { name: string; description?: string; payerScope?: string }): Promise<Project> {
+  return authedFetch("/projects", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

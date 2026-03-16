@@ -13,9 +13,11 @@ const MAX_FILE_SIZE_MB = 500;
 
 interface BillingRecord835UploadProps {
   onBatchQueued?: (batchId: string) => void;
+  projectId?: string;
+  projectName?: string | null;
 }
 
-export function BillingRecord835Upload({ onBatchQueued }: BillingRecord835UploadProps) {
+export function BillingRecord835Upload({ onBatchQueued, projectId, projectName }: BillingRecord835UploadProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
@@ -76,6 +78,7 @@ export function BillingRecord835Upload({ onBatchQueued }: BillingRecord835Upload
         <CardDescription>
           Upload one or more 835 remittance files for claim-level underpayment detection.
           Supported: .835, .edi, .txt (max {MAX_FILE_SIZE_MB}MB each).
+          {projectName ? ` Active client: ${projectName}.` : " Select a client workspace before queueing a batch."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -153,7 +156,7 @@ export function BillingRecord835Upload({ onBatchQueued }: BillingRecord835Upload
         </div>
 
         {files.length > 0 && (
-          <Button className="w-full" onClick={() => uploadMutation.mutate({ files, payerScope })} disabled={uploadMutation.isPending}>
+          <Button className="w-full" onClick={() => uploadMutation.mutate({ files, payerScope, projectId })} disabled={uploadMutation.isPending || !projectId}>
             {uploadMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />

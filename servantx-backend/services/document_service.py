@@ -103,6 +103,7 @@ async def get_documents_by_receipt(receipt_id: str) -> List[dict]:
                 "receiptId": doc.receipt_id,
                 "hospitalId": doc.hospital_id,
                 "contractId": doc.contract_id,
+                "projectId": doc.project_id,
                 "name": doc.name,
                 "status": doc.status,
                 "amount": doc.amount,
@@ -130,6 +131,7 @@ async def get_all_documents(
     receipt_id: Optional[str] = None,
     date_from: Optional[datetime] = None,
     date_to: Optional[datetime] = None,
+    project_id: Optional[str] = None,
     limit: int = 15,
     offset: int = 0,
     document_roles: Optional[List[str]] = None
@@ -200,6 +202,7 @@ async def get_all_documents(
                 "receiptId": doc.receipt_id,
                 "hospitalId": doc.hospital_id,
                 "contractId": doc.contract_id,
+                "projectId": doc.project_id,
                 "name": doc.name,
                 "status": doc.status,
                 "amount": doc.amount,

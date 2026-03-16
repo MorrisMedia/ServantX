@@ -6,6 +6,7 @@ export type AuditPayerScope = "CONTRACT_AUDIT" | "MEDICARE" | "TX_MEDICAID_FFS";
 export interface BatchUploadRequest {
   files: File[];
   payerScope?: AuditPayerScope;
+  projectId?: string;
 }
 
 export interface BatchRun {

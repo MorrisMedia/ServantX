@@ -7,6 +7,7 @@ export async function upload835Batch(payload: BatchUploadRequest): Promise<Batch
   const formData = new FormData();
   payload.files.forEach((file) => formData.append("files", file));
   if (payload.payerScope) formData.append("payerScope", payload.payerScope);
+  if (payload.projectId) formData.append("project_id", payload.projectId);
 
   const response = await fetch(`${API_BASE_URL}/batches/upload-835`, {
     method: "POST",

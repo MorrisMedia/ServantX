@@ -25,11 +25,12 @@ router = APIRouter(prefix="/documents", tags=["documents"])
 
 @router.get("/stats")
 async def get_document_statistics(
+    project_id: Optional[str] = Query(None, alias="projectId"),
     current_user: dict = Depends(get_current_user)
 ):
     try:
         hospital_id = current_user["hospital_id"]
-        documents, _ = await get_all_documents(hospital_id=hospital_id, limit=10000, offset=0)
+        documents, _ = await get_all_documents(hospital_id=hospital_id, project_id=project_id, limit=10000, offset=0)
         
         total = len(documents)
         not_submitted = sum(1 for doc in documents if doc.get("status") == "not_submitted")
@@ -63,6 +64,7 @@ async def get_documents(
     receipt_id: Optional[str] = Query(None, alias="receiptId"),
     date_from: Optional[str] = Query(None, alias="dateFrom"),
     date_to: Optional[str] = Query(None, alias="dateTo"),
+    project_id: Optional[str] = Query(None, alias="projectId"),
     limit: int = Query(15, ge=1, le=100),
     offset: int = Query(0, ge=0)
 ):
@@ -89,6 +91,7 @@ async def get_documents(
             receipt_id=receipt_id,
             date_from=parsed_date_from,
             date_to=parsed_date_to,
+            project_id=project_id,
             limit=limit,
             offset=offset
         )
