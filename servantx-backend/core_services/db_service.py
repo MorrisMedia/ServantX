@@ -39,8 +39,8 @@ async def get_db():
             await session.close()
 
 
-async def bootstrap_schema_if_needed() -> None:
-    if not IS_SQLITE:
+async def bootstrap_schema_if_needed(force: bool = False) -> None:
+    if not IS_SQLITE and not force:
         return
 
     from models import Base as ModelsBase

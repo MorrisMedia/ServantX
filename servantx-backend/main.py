@@ -32,8 +32,8 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup_bootstrap_local_db():
-    if IS_SQLITE and settings.AUTO_BOOTSTRAP_SQLITE:
-        await bootstrap_schema_if_needed()
+    if settings.AUTO_BOOTSTRAP_SQLITE and (IS_SQLITE or settings.is_vercel):
+        await bootstrap_schema_if_needed(force=settings.is_vercel and not IS_SQLITE)
 
 
 app.add_middleware(
