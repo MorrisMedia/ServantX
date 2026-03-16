@@ -231,8 +231,10 @@ async def reprice_medicare_line(
     errors: List[str] = []
     if ambiguous:
         errors.append("AMBIGUOUS_RATE_MATCH")
-    if not line.get("place_of_service"):
+    if not line.get("place_of_service") and selected_context in {"FACILITY", "NONFACILITY"}:
         errors.append("MISSING_POS")
+    if selected_context in {"URBAN", "RURAL"} and not tx_region:
+        errors.append("TX_REGION_ASSUMED")
 
     return {
         "errors": errors,
@@ -267,6 +269,17 @@ async def reprice_tx_medicaid_line(
     modifiers = [modifier for modifier in line.get("modifiers", []) if modifier]
     modifier = modifiers[0] if modifiers else None
 
+    context_priority: List[str] = []
+    if _is_facility_pos(line.get("place_of_service")):
+        context_priority.append("FACILITY")
+    elif line.get("place_of_service"):
+        context_priority.append("NONFACILITY")
+
+    tx_region = (context.get("tx_medicaid_region") or "").strip().upper()
+    if tx_region in {"URBAN", "RURAL"}:
+        context_priority.insert(0, tx_region)
+    context_priority.append("STANDARD")
+
     base_query = select(TxMedicaidFfsFeeSchedule).where(
         TxMedicaidFfsFeeSchedule.cpt_hcpcs == cpt,
         TxMedicaidFfsFeeSchedule.effective_start <= dos,
@@ -276,18 +289,34 @@ async def reprice_tx_medicaid_line(
         ),
     )
 
-    selected_rows: List[TxMedicaidFfsFeeSchedule] = []
+    rows: List[TxMedicaidFfsFeeSchedule] = []
     if modifier:
-        modifier_result = await db.execute(
-            base_query.where(TxMedicaidFfsFeeSchedule.modifier == modifier)
-        )
-        selected_rows = list(modifier_result.scalars().all())
+        modifier_result = await db.execute(base_query.where(TxMedicaidFfsFeeSchedule.modifier == modifier))
+        rows = list(modifier_result.scalars().all())
+
+    if not rows:
+        fallback_result = await db.execute(base_query.where(TxMedicaidFfsFeeSchedule.modifier.is_(None)))
+        rows = list(fallback_result.scalars().all())
+
+    if not rows:
+        return {"errors": ["MISSING_RATE_MATCH"], "expected_allowed": None, "confidence_score": 25.0}
+
+    grouped: Dict[str, List[TxMedicaidFfsFeeSchedule]] = {}
+    for row in rows:
+        key = (row.pricing_context or "STANDARD").upper()
+        grouped.setdefault(key, []).append(row)
+
+    selected_rows: List[TxMedicaidFfsFeeSchedule] = []
+    selected_context = "STANDARD"
+    for key in context_priority:
+        if grouped.get(key):
+            selected_rows = grouped[key]
+            selected_context = key
+            break
 
     if not selected_rows:
-        fallback_result = await db.execute(
-            base_query.where(TxMedicaidFfsFeeSchedule.modifier.is_(None))
-        )
-        selected_rows = list(fallback_result.scalars().all())
+        selected_rows = grouped.get("STANDARD", [])
+        selected_context = "STANDARD"
 
     if not selected_rows:
         return {"errors": ["MISSING_RATE_MATCH"], "expected_allowed": None, "confidence_score": 25.0}
@@ -303,8 +332,10 @@ async def reprice_tx_medicaid_line(
     errors: List[str] = []
     if ambiguous:
         errors.append("AMBIGUOUS_RATE_MATCH")
-    if not line.get("place_of_service"):
+    if not line.get("place_of_service") and selected_context in {"FACILITY", "NONFACILITY"}:
         errors.append("MISSING_POS")
+    if selected_context in {"URBAN", "RURAL"} and not tx_region:
+        errors.append("TX_REGION_ASSUMED")
 
     return {
         "errors": errors,
@@ -312,7 +343,7 @@ async def reprice_tx_medicaid_line(
         "actual_paid": round(actual_paid, 2),
         "variance_amount": round(variance, 2),
         "variance_percent": round(variance_percent, 2),
-        "rate_source": "TX_MEDICAID_FFS_FEE_SCHEDULE",
+        "rate_source": f"TX_MEDICAID_FFS_{selected_context}_{fee_row.source_code or 'SOURCE'}",
         "locality_code": None,
         "locality_source": "N/A",
         "confidence_score": 85.0 if not ambiguous else 70.0,

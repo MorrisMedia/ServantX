@@ -127,9 +127,10 @@ For each source we try to confirm all three:
   - PRCR402C (physician): `https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR402C.xls`
   - PRCR475C (physician / orthopedic surgery): `https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR475C.xls`
 - **Current local outputs:**
-  - Import-ready under current schema: `data/normalized_rate_imports/tx_medicaid_ffs_prcr405c_2026.csv` and combined `data/normalized_rate_imports/tx_medicaid_ffs_2026.csv`
-  - Detail extracts requiring schema expansion before DB import: `tx_medicaid_ffs_prcr604c_2026_detail.csv`, `tx_medicaid_ffs_prcr402c_2026_detail.csv`, `tx_medicaid_ffs_prcr475c_2026_detail.csv`
-- **Status:** verified as operational fee source with confirmed static/search entry points and validated XLS parsing; only PRCR405C is import-ready under the current narrow Texas Medicaid table design
+  - Legacy narrow import: `data/normalized_rate_imports/tx_medicaid_ffs_2026.csv`
+  - Expanded import with pricing contexts: `data/normalized_rate_imports/tx_medicaid_ffs_expanded_2026.csv`
+  - Detail extracts retained for traceability: `tx_medicaid_ffs_prcr604c_2026_detail.csv`, `tx_medicaid_ffs_prcr402c_2026_detail.csv`, `tx_medicaid_ffs_prcr475c_2026_detail.csv`
+- **Status:** verified as operational fee source with confirmed static/search entry points, validated XLS parsing, and expanded normalized import rows for STANDARD / FACILITY / NONFACILITY / URBAN / RURAL contexts
 
 ### 10) Texas HHSC Provider Finance Department rate tables
 - **Primary URL:** https://pfd.hhs.texas.gov/rate-tables
@@ -175,7 +176,7 @@ These are valuable for market and program context, but **they are not the core l
 
 ## Gaps still to close before calling this fully production-ready
 - wire the normalized CSVs into the admin import path and/or seed path end-to-end
-- expand the Texas Medicaid schema/import contract to preserve urban vs rural outpatient rates and facility vs non-facility physician rates
+- finish wiring Texas Medicaid context selection for urban vs rural outpatient rows when provider-level rural/urban metadata is available
 - map future OPPS/ASC addenda into dedicated outpatient/ASC target tables
 - distinguish FFS source-of-truth tables from managed-care contextual references
 - confirm whether additional state-specific Medicaid datasets are needed beyond Texas for launch

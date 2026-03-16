@@ -64,6 +64,11 @@ function csvEscape(value) {
   return s;
 }
 
+function hasPositiveAmount(value) {
+  const n = Number(String(value ?? '').replace(/[$,\s]/g, ''));
+  return Number.isFinite(n) && n > 0;
+}
+
 async function loadXLSX() {
   const bundle = await fetch('https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js').then(r => r.text());
   const context = { console, globalThis: {}, window: {}, self: {} };
@@ -191,10 +196,88 @@ function normalizeSheetRows(rows, source) {
   return normalizeGenericRows(rows, source);
 }
 
+function toExpandedRows(source, rows) {
+  if (!source.kind) {
+    return rows.filter((row) => hasPositiveAmount(row.allowed_amount)).map((row) => ({
+      effective_start: row.effective_start,
+      effective_end: row.effective_end,
+      cpt_hcpcs: row.cpt_hcpcs,
+      modifier: row.modifier,
+      allowed_amount: row.allowed_amount,
+      pricing_context: 'STANDARD',
+      source_code: row.source_code,
+      source_description: row.source_description,
+    }));
+  }
+  if (source.kind === 'facility_nonfacility') {
+    const out = [];
+    for (const row of rows) {
+      const modifier = [row.modifier_1, row.modifier_2].filter(Boolean).join(':');
+      if (hasPositiveAmount(row.nonfacility_allowed_amount) && row.nonfacility_effective_start) {
+        out.push({
+          effective_start: row.nonfacility_effective_start,
+          effective_end: '',
+          cpt_hcpcs: row.cpt_hcpcs,
+          modifier,
+          allowed_amount: row.nonfacility_allowed_amount,
+          pricing_context: 'NONFACILITY',
+          source_code: row.source_code,
+          source_description: row.source_description,
+        });
+      }
+      if (hasPositiveAmount(row.facility_allowed_amount) && row.facility_effective_start) {
+        out.push({
+          effective_start: row.facility_effective_start,
+          effective_end: '',
+          cpt_hcpcs: row.cpt_hcpcs,
+          modifier,
+          allowed_amount: row.facility_allowed_amount,
+          pricing_context: 'FACILITY',
+          source_code: row.source_code,
+          source_description: row.source_description,
+        });
+      }
+    }
+    return out;
+  }
+  if (source.kind === 'urban_rural_outpatient') {
+    const out = [];
+    for (const row of rows) {
+      if (hasPositiveAmount(row.urban_allowed_amount) && row.urban_effective_start) {
+        out.push({
+          effective_start: row.urban_effective_start,
+          effective_end: '',
+          cpt_hcpcs: row.cpt_hcpcs,
+          modifier: '',
+          allowed_amount: row.urban_allowed_amount,
+          pricing_context: 'URBAN',
+          source_code: row.source_code,
+          source_description: row.source_description,
+        });
+      }
+      if (hasPositiveAmount(row.rural_allowed_amount) && row.rural_effective_start) {
+        out.push({
+          effective_start: row.rural_effective_start,
+          effective_end: '',
+          cpt_hcpcs: row.cpt_hcpcs,
+          modifier: '',
+          allowed_amount: row.rural_allowed_amount,
+          pricing_context: 'RURAL',
+          source_code: row.source_code,
+          source_description: row.source_description,
+        });
+      }
+    }
+    return out;
+  }
+  return [];
+}
+
 async function main() {
   await fs.mkdir(OUT_DIR, { recursive: true });
   const XLSX = await loadXLSX();
   const combined = [];
+  const expandedCombined = [];
 
   for (const source of SOURCES) {
     const buffer = Buffer.from(await fetch(source.url).then(r => r.arrayBuffer()));
@@ -203,6 +286,7 @@ async function main() {
     const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, raw: false, defval: '' });
     const normalized = normalizeSheetRows(rows, source);
     if (!source.kind) combined.push(...normalized);
+    expandedCombined.push(...toExpandedRows(source, normalized));
 
     const suffix = source.kind ? '_detail' : '';
     const perFile = path.join(OUT_DIR, `tx_medicaid_ffs_${source.code.toLowerCase()}_2026${suffix}.csv`);
@@ -232,6 +316,23 @@ async function main() {
   const combinedLines = [combinedHeader.join(',')].concat(deduped.map(row => combinedHeader.map(k => csvEscape(row[k])).join(',')));
   await fs.writeFile(combinedOut, combinedLines.join('\n') + '\n', 'utf8');
   console.log(`Wrote ${deduped.length} combined rows to ${combinedOut}`);
+
+  const expandedMap = new Map();
+  for (const row of expandedCombined) {
+    const key = [row.effective_start, row.cpt_hcpcs, row.modifier, row.allowed_amount, row.pricing_context, row.source_code].join('|');
+    if (!expandedMap.has(key)) expandedMap.set(key, row);
+  }
+  const expandedRows = [...expandedMap.values()].sort((a, b) =>
+    a.effective_start.localeCompare(b.effective_start) ||
+    a.cpt_hcpcs.localeCompare(b.cpt_hcpcs) ||
+    a.pricing_context.localeCompare(b.pricing_context) ||
+    a.source_code.localeCompare(b.source_code)
+  );
+  const expandedOut = path.join(OUT_DIR, 'tx_medicaid_ffs_expanded_2026.csv');
+  const expandedHeader = Object.keys(expandedRows[0]);
+  const expandedLines = [expandedHeader.join(',')].concat(expandedRows.map(row => expandedHeader.map(k => csvEscape(row[k])).join(',')));
+  await fs.writeFile(expandedOut, expandedLines.join('\n') + '\n', 'utf8');
+  console.log(`Wrote ${expandedRows.length} expanded rows to ${expandedOut}`);
 }
 
 main().catch((err) => {

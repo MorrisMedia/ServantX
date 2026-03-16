@@ -43,9 +43,9 @@ RATE_FILES = [
     },
     {
         "payer_key": "TX_MEDICAID_FFS",
-        "version_label": "TMHP PRCR405C / import-ready 2026",
+        "version_label": "TMHP expanded fee schedule 2026",
         "source_url": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx?fn=%5c%5ctmhp.net%5cFeeSchedule%5cPROD%5cStatic%5cTexas_Medicaid_Fee_Schedule_PRCR405C.xls",
-        "path": REPO_ROOT / "data" / "normalized_rate_imports" / "tx_medicaid_ffs_2026.csv",
+        "path": REPO_ROOT / "data" / "normalized_rate_imports" / "tx_medicaid_ffs_expanded_2026.csv",
     },
 ]
 

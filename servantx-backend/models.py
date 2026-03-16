@@ -427,4 +427,6 @@ class TxMedicaidFfsFeeSchedule(Base):
     effective_end = Column(Date, nullable=True, index=True)
     cpt_hcpcs = Column(String, nullable=False, index=True)
     modifier = Column(String, nullable=True, index=True)
+    pricing_context = Column(String, nullable=False, default="STANDARD", index=True)
+    source_code = Column(String, nullable=True, index=True)
     allowed_amount = Column(Numeric(12, 2), nullable=False)

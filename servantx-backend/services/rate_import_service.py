@@ -168,6 +168,8 @@ async def import_rate_rows(
                     effective_end=parse_date(row.get("effective_end")),
                     cpt_hcpcs=(row.get("cpt_hcpcs") or row.get("cpt") or "").strip(),
                     modifier=(row.get("modifier") or None),
+                    pricing_context=(row.get("pricing_context") or "STANDARD").strip().upper(),
+                    source_code=(row.get("source_code") or None),
                     allowed_amount=parse_float(row.get("allowed_amount")),
                 )
             )
