@@ -1,0 +1,122 @@
+{
+  "generatedAt": "2026-03-16T03:30:00Z",
+  "purpose": "Authoritative 2026 reimbursement-source manifest for ServantX ingestion planning",
+  "datasets": [
+    {
+      "id": "cms_pfs_documentation_2026",
+      "payerKey": "MEDICARE_PFS",
+      "owner": "CMS",
+      "category": "medicare-physician-fee-schedule",
+      "url": "https://www.cms.gov/medicare/physician-fee-schedule/search/documentation",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["medicare_rvu_rates", "medicare_gpci", "medicare_conversion_factor", "medicare_zip_locality", "rate_versions"],
+      "notes": "Core documentation page describing RVU/GPCI/CF payment formula and related files."
+    },
+    {
+      "id": "cms_rvu26a",
+      "payerKey": "MEDICARE_PFS",
+      "owner": "CMS",
+      "category": "medicare-rvu-file",
+      "url": "https://www.cms.gov/medicare/payment/fee-schedules/physician/pfs-relative-value-files/rvu26a",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["medicare_rvu_rates", "rate_versions"],
+      "notes": "Year-specific PFS relative value page for 2026."
+    },
+    {
+      "id": "cms_fee_schedule_zip_locality_reference",
+      "payerKey": "MEDICARE_PFS",
+      "owner": "CMS",
+      "category": "zip-locality-reference",
+      "url": "https://www.cms.gov/medicare/payment/fee-schedules",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["medicare_zip_locality"],
+      "notes": "CMS general fee schedule page that references ZIPCODE TO CARRIER LOCALITY FILE."
+    },
+    {
+      "id": "cms_2026_pfs_final_rule",
+      "payerKey": "MEDICARE_PFS",
+      "owner": "CMS",
+      "category": "policy-rule",
+      "url": "https://www.cms.gov/newsroom/fact-sheets/calendar-year-cy-2026-medicare-physician-fee-schedule-final-rule-cms-1832-f",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["rate_versions"],
+      "notes": "Policy/effective-date governance source, not a raw pricing file."
+    },
+    {
+      "id": "cms_opps_home",
+      "payerKey": "MEDICARE_OPPS",
+      "owner": "CMS",
+      "category": "hospital-outpatient",
+      "url": "https://www.cms.gov/medicare/payment/prospective-payment-systems/hospital-outpatient",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["future_opps_tables", "rate_versions"],
+      "notes": "Primary OPPS landing page for hospital outpatient pricing context and quarterly updates."
+    },
+    {
+      "id": "cms_asc_annual_policy_files",
+      "payerKey": "MEDICARE_ASC",
+      "owner": "CMS",
+      "category": "asc-policy-files",
+      "url": "https://www.cms.gov/medicare/payment/prospective-payment-systems/ambulatory-surgical-center-asc/annual-policy-files",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["future_asc_tables", "rate_versions"],
+      "notes": "Primary ASC annual policy-file index."
+    },
+    {
+      "id": "cms_2026_opps_asc_final_rule",
+      "payerKey": "MEDICARE_OPPS_ASC",
+      "owner": "CMS",
+      "category": "policy-rule",
+      "url": "https://www.cms.gov/newsroom/fact-sheets/calendar-year-2026-hospital-outpatient-prospective-payment-system-opps-ambulatory-surgical-center",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["rate_versions"],
+      "notes": "2026 OPPS/ASC final rule context and effective-date governance."
+    },
+    {
+      "id": "tx_hhsc_asc_hasc_rules",
+      "payerKey": "TX_MEDICAID_FFS",
+      "owner": "Texas HHSC Provider Finance Department",
+      "category": "texas-medicaid-asc-hasp",
+      "url": "https://pfd.hhs.texas.gov/hospitals-clinic/clinic-facility-services/ambulatory-surgical-centerhospital-ambulatory-surgical-center",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["tx_medicaid_ffs_fee_schedule", "rate_versions"],
+      "notes": "Primary reimbursement-rule page that points to TMHP fee schedules and TAC rules."
+    },
+    {
+      "id": "tmhp_fee_schedules",
+      "payerKey": "TX_MEDICAID_FFS",
+      "owner": "TMHP",
+      "category": "texas-medicaid-fee-schedule",
+      "url": "https://public.tmhp.com/FeeSchedules/Default.aspx",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["tx_medicaid_ffs_fee_schedule", "rate_versions"],
+      "notes": "Operational fee lookup and static fee-schedule starting point for Texas Medicaid."
+    },
+    {
+      "id": "tx_hhsc_rate_tables",
+      "payerKey": "TX_MEDICAID_FFS",
+      "owner": "Texas HHSC Provider Finance Department",
+      "category": "rate-governance",
+      "url": "https://pfd.hhs.texas.gov/rate-tables",
+      "verificationStatus": "verified-primary-page",
+      "effectiveYear": 2026,
+      "servantxTargets": ["rate_versions"],
+      "notes": "FFS vs managed-care reimbursement context and rate governance reference."
+    }
+  ],
+  "recommendedNextSteps": [
+    "Capture exact downloadable file URLs for CMS 2026 RVU/GPCI/CF/ZIP sources.",
+    "Capture TMHP static fee-schedule endpoints for Texas Medicaid CPT/HCPCS adjudication.",
+    "Create versioned loader configs keyed by effective year and payerKey.",
+    "Map future OPPS/ASC addenda into dedicated outpatient/ASC target tables once schema is expanded."
+  ]
+}
