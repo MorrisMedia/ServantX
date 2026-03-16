@@ -37,10 +37,11 @@ For each source we try to confirm all three:
 - **Owning agency:** CMS
 - **Why it matters:** This is the year-specific 2026 PFS relative value file page.
 - **Verification notes:** CMS states that beginning January 1, 2026 a differential conversion factor applies for QP vs non-QP contexts and references year-specific files.
+- **Confirmed download URL:** https://www.cms.gov/files/zip/rvu26a-updated-12-29-2025.zip
 - **ServantX targets:**
   - `medicare_rvu_rates`
   - `rate_versions`
-- **Status:** verified as a year-specific source page; download-level column validation still required during ingest
+- **Status:** verified as a year-specific source page with confirmed downloadable ZIP; column validation still required during ingest
 
 ### 3) CMS 2026 PFS final rule / fact sheet
 - **Primary URL:** https://www.cms.gov/newsroom/fact-sheets/calendar-year-cy-2026-medicare-physician-fee-schedule-final-rule-cms-1832-f
@@ -108,10 +109,13 @@ For each source we try to confirm all three:
 - **Owning agency:** Texas Medicaid & Healthcare Partnership (TMHP)
 - **Why it matters:** operational fee lookup for Texas Medicaid and related programs; states that fees displayed are allowable rates and supports static fee schedules by procedure/date/provider context.
 - **Verification notes:** page states the online fee lookup provides fee information for Texas Medicaid and that users can search by procedure code, date of service, provider type, and specialty.
+- **Confirmed entry points:**
+  - Static fee schedules: https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx
+  - Fee search: https://public.tmhp.com/FeeSchedules/OnlineFeeLookup/FeeScheduleSearch.aspx
 - **ServantX targets:**
   - `tx_medicaid_ffs_fee_schedule`
   - future reconciliation tooling for DOS-sensitive pricing
-- **Status:** verified as operational fee source; static file download paths still need capture and parser validation
+- **Status:** verified as operational fee source with confirmed static/search entry points; individual schedule download paths still need parser validation
 
 ### 10) Texas HHSC Provider Finance Department rate tables
 - **Primary URL:** https://pfd.hhs.texas.gov/rate-tables

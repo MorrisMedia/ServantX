@@ -10,7 +10,13 @@
       "url": "https://www.cms.gov/medicare/physician-fee-schedule/search/documentation",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["medicare_rvu_rates", "medicare_gpci", "medicare_conversion_factor", "medicare_zip_locality", "rate_versions"],
+      "servantxTargets": [
+        "medicare_rvu_rates",
+        "medicare_gpci",
+        "medicare_conversion_factor",
+        "medicare_zip_locality",
+        "rate_versions"
+      ],
       "notes": "Core documentation page describing RVU/GPCI/CF payment formula and related files."
     },
     {
@@ -21,8 +27,13 @@
       "url": "https://www.cms.gov/medicare/payment/fee-schedules/physician/pfs-relative-value-files/rvu26a",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["medicare_rvu_rates", "rate_versions"],
-      "notes": "Year-specific PFS relative value page for 2026."
+      "servantxTargets": [
+        "medicare_rvu_rates",
+        "rate_versions"
+      ],
+      "notes": "Year-specific PFS relative value page for 2026.",
+      "downloadUrl": "https://www.cms.gov/files/zip/rvu26a-updated-12-29-2025.zip",
+      "expectedFormat": "zip"
     },
     {
       "id": "cms_fee_schedule_zip_locality_reference",
@@ -32,7 +43,9 @@
       "url": "https://www.cms.gov/medicare/payment/fee-schedules",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["medicare_zip_locality"],
+      "servantxTargets": [
+        "medicare_zip_locality"
+      ],
       "notes": "CMS general fee schedule page that references ZIPCODE TO CARRIER LOCALITY FILE."
     },
     {
@@ -43,7 +56,9 @@
       "url": "https://www.cms.gov/newsroom/fact-sheets/calendar-year-cy-2026-medicare-physician-fee-schedule-final-rule-cms-1832-f",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["rate_versions"],
+      "servantxTargets": [
+        "rate_versions"
+      ],
       "notes": "Policy/effective-date governance source, not a raw pricing file."
     },
     {
@@ -54,7 +69,10 @@
       "url": "https://www.cms.gov/medicare/payment/prospective-payment-systems/hospital-outpatient",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["future_opps_tables", "rate_versions"],
+      "servantxTargets": [
+        "future_opps_tables",
+        "rate_versions"
+      ],
       "notes": "Primary OPPS landing page for hospital outpatient pricing context and quarterly updates."
     },
     {
@@ -65,7 +83,10 @@
       "url": "https://www.cms.gov/medicare/payment/prospective-payment-systems/ambulatory-surgical-center-asc/annual-policy-files",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["future_asc_tables", "rate_versions"],
+      "servantxTargets": [
+        "future_asc_tables",
+        "rate_versions"
+      ],
       "notes": "Primary ASC annual policy-file index."
     },
     {
@@ -76,7 +97,9 @@
       "url": "https://www.cms.gov/newsroom/fact-sheets/calendar-year-2026-hospital-outpatient-prospective-payment-system-opps-ambulatory-surgical-center",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["rate_versions"],
+      "servantxTargets": [
+        "rate_versions"
+      ],
       "notes": "2026 OPPS/ASC final rule context and effective-date governance."
     },
     {
@@ -87,7 +110,10 @@
       "url": "https://pfd.hhs.texas.gov/hospitals-clinic/clinic-facility-services/ambulatory-surgical-centerhospital-ambulatory-surgical-center",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["tx_medicaid_ffs_fee_schedule", "rate_versions"],
+      "servantxTargets": [
+        "tx_medicaid_ffs_fee_schedule",
+        "rate_versions"
+      ],
       "notes": "Primary reimbursement-rule page that points to TMHP fee schedules and TAC rules."
     },
     {
@@ -98,8 +124,14 @@
       "url": "https://public.tmhp.com/FeeSchedules/Default.aspx",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["tx_medicaid_ffs_fee_schedule", "rate_versions"],
-      "notes": "Operational fee lookup and static fee-schedule starting point for Texas Medicaid."
+      "servantxTargets": [
+        "tx_medicaid_ffs_fee_schedule",
+        "rate_versions"
+      ],
+      "notes": "Operational fee lookup and static fee-schedule starting point for Texas Medicaid.",
+      "staticIndexUrl": "https://public.tmhp.com/FeeSchedules/StaticFeeSchedule/FeeSchedules.aspx",
+      "searchUrl": "https://public.tmhp.com/FeeSchedules/OnlineFeeLookup/FeeScheduleSearch.aspx",
+      "expectedFormat": "html + downloadable static schedules"
     },
     {
       "id": "tx_hhsc_rate_tables",
@@ -109,7 +141,9 @@
       "url": "https://pfd.hhs.texas.gov/rate-tables",
       "verificationStatus": "verified-primary-page",
       "effectiveYear": 2026,
-      "servantxTargets": ["rate_versions"],
+      "servantxTargets": [
+        "rate_versions"
+      ],
       "notes": "FFS vs managed-care reimbursement context and rate governance reference."
     }
   ],
