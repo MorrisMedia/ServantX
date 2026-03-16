@@ -528,12 +528,22 @@ async def run_stage4_summarize_batch(batch_id: str) -> Dict[str, Any]:
         cpt_variance: Dict[str, float] = {}
         provider_variance: Dict[str, float] = {}
         pattern_variance: Dict[str, Dict[str, Any]] = {}
+        audit_mode_counts: Dict[str, int] = {}
+        claim_type_counts: Dict[str, int] = {}
+        benchmark_counts: Dict[str, int] = {}
+        rate_source_counts: Dict[str, int] = {}
 
         for doc in claim_docs:
             payload = parsed_by_doc_id.get(doc.id, {})
             repricing = payload.get("repricing", {})
             line_results = repricing.get("line_results", []) or []
             totals = repricing.get("totals", {}) or {}
+            audit_mode = repricing.get("audit_mode") or batch.payer_scope or "UNKNOWN"
+            claim_type = repricing.get("claim_type") or "UNKNOWN"
+            benchmark_label = repricing.get("benchmark_label") or "UNKNOWN"
+            audit_mode_counts[audit_mode] = audit_mode_counts.get(audit_mode, 0) + 1
+            claim_type_counts[claim_type] = claim_type_counts.get(claim_type, 0) + 1
+            benchmark_counts[benchmark_label] = benchmark_counts.get(benchmark_label, 0) + 1
 
             total_service_lines += len(line_results)
             total_paid += float(totals.get("actual_paid_total") or 0.0)
@@ -553,6 +563,8 @@ async def run_stage4_summarize_batch(batch_id: str) -> Dict[str, Any]:
 
                 modifiers = line.get("modifiers", []) or []
                 modifier_value = modifiers[0] if modifiers else ""
+                rate_source = line.get("rate_source") or "UNKNOWN"
+                rate_source_counts[rate_source] = rate_source_counts.get(rate_source, 0) + 1
                 pattern_key = (
                     f"{doc.payer_key or 'OTHER'}|{cpt}|{modifier_value}|"
                     f"{line.get('place_of_service') or 'UNK'}|{line.get('locality_code') or 'UNK'}"
@@ -618,10 +630,14 @@ async def run_stage4_summarize_batch(batch_id: str) -> Dict[str, Any]:
             "top_cpts": top_cpts,
             "top_providers": top_providers,
             "top_patterns": top_patterns,
+            "audit_mode_counts": audit_mode_counts,
+            "claim_type_counts": claim_type_counts,
+            "benchmark_counts": benchmark_counts,
+            "rate_source_counts": rate_source_counts,
             "synthesized_at": datetime.utcnow().isoformat(),
         }
         executive_summary = (
-            f"Processed {total_claims} claims and {total_service_lines} service lines. "
+            f"Processed {total_claims} claims and {total_service_lines} service lines in {batch.payer_scope or 'UNKNOWN'} mode. "
             f"Expected ${total_expected:,.2f}, paid ${total_paid:,.2f}, total variance ${total_variance:,.2f}. "
             f"{claims_flagged} claims were flagged for possible underpayment."
         )

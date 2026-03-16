@@ -30,6 +30,12 @@ function getRepricingMeta(doc: any) {
   };
 }
 
+function renderCountMap(map: Record<string, number> | undefined) {
+  const entries = Object.entries(map || {});
+  if (!entries.length) return <div className="text-xs text-muted-foreground">No summary yet.</div>;
+  return <div className="flex flex-wrap gap-2">{entries.map(([label, count]) => <span key={label} className="rounded-full border px-2 py-1 text-xs">{label}: {count}</span>)}</div>;
+}
+
 function humanizeAuditMode(mode: string) {
   if (mode === 'CONTRACT_AUDIT') return 'Negotiated contracts';
   if (mode === 'MEDICARE') return 'Medicare';
@@ -198,6 +204,10 @@ export default function AuditWorkflowPage() {
                 <Card><CardHeader><CardTitle>Claims Flagged</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{summaryQuery.data?.claimsFlagged || 0}</CardContent></Card>
                 <Card><CardHeader><CardTitle>Batch Status</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{batchStatusQuery.data?.status || "Unknown"}</CardContent></Card>
                 <Card><CardHeader><CardTitle>Audit Mode</CardTitle></CardHeader><CardContent className="text-2xl font-bold">{humanizeAuditMode(batchStatusQuery.data?.payerScope || "-")}</CardContent></Card>
+              </div>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <Card><CardHeader><CardTitle>Claim Mix</CardTitle><CardDescription>How the batch was routed at a claim level.</CardDescription></CardHeader><CardContent className="space-y-3 text-sm"><div><div className="mb-1 font-medium">Claim types</div>{renderCountMap((batchStatusQuery.data?.reconciliationJson as any)?.claim_type_counts)}</div><div><div className="mb-1 font-medium">Audit modes</div>{renderCountMap((batchStatusQuery.data?.reconciliationJson as any)?.audit_mode_counts)}</div></CardContent></Card>
+                <Card><CardHeader><CardTitle>Benchmarks & Sources</CardTitle><CardDescription>What benchmarks and rate sources were actually used.</CardDescription></CardHeader><CardContent className="space-y-3 text-sm"><div><div className="mb-1 font-medium">Benchmarks</div>{renderCountMap((batchStatusQuery.data?.reconciliationJson as any)?.benchmark_counts)}</div><div><div className="mb-1 font-medium">Rate sources</div>{renderCountMap((batchStatusQuery.data?.reconciliationJson as any)?.rate_source_counts)}</div></CardContent></Card>
               </div>
             </TabsContent>
 
