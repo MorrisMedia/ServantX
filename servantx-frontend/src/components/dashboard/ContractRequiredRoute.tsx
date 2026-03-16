@@ -8,23 +8,18 @@ import { Link } from "wouter";
 
 interface ContractRequiredRouteProps {
   children: React.ReactNode;
-  allowOnContractsPage?: boolean; // Allow access to contracts page even without contract
+  allowWithoutContractOn?: string[];
 }
 
 /**
  * Route guard that requires a contract to be uploaded before accessing protected routes.
  * Redirects to /dashboard/contracts if no contract exists.
  */
-export function ContractRequiredRoute({ 
-  children, 
-  allowOnContractsPage = true 
-}: ContractRequiredRouteProps) {
+export function ContractRequiredRoute({ children, allowWithoutContractOn = ["/dashboard/contracts"] }: ContractRequiredRouteProps) {
   const { hasContract, isLoading } = useContractCheck();
   const [location, setLocation] = useLocation();
 
-  // Allow access to contracts page if allowOnContractsPage is true
-  const isContractsPage = location === "/dashboard/contracts";
-  const shouldAllowAccess = isContractsPage && allowOnContractsPage;
+    const shouldAllowAccess = allowWithoutContractOn.includes(location);
 
   useEffect(() => {
     // Don't redirect if we're already on contracts page or if still loading
@@ -50,7 +45,7 @@ export function ContractRequiredRoute({
     );
   }
 
-  // Allow access to contracts page even without contract
+  // Allow access to explicitly whitelisted routes even without contract
   if (shouldAllowAccess) {
     return <>{children}</>;
   }

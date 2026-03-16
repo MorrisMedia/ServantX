@@ -42,7 +42,7 @@ function Router() {
       {/* Contracts page - accessible without contract (to allow upload) */}
       <Route path="/dashboard/contracts">
         <ProtectedRoute>
-          <ContractRequiredRoute allowOnContractsPage={true}>
+          <ContractRequiredRoute allowWithoutContractOn={["/dashboard/contracts"]}>
             <ContractsPage />
           </ContractRequiredRoute>
         </ProtectedRoute>
@@ -51,7 +51,7 @@ function Router() {
       {/* All other dashboard routes require contract */}
       <Route path="/dashboard/billing-records/upload">
         <ProtectedRoute>
-          <ContractRequiredRoute>
+          <ContractRequiredRoute allowWithoutContractOn={["/dashboard/receipts/upload", "/dashboard/billing-records/upload", "/dashboard/contracts", "/dashboard"]}>
             <BillingRecordUploadPage />
           </ContractRequiredRoute>
         </ProtectedRoute>
@@ -73,7 +73,7 @@ function Router() {
       {/* Legacy aliases while route rename rolls out */}
       <Route path="/dashboard/receipts/upload">
         <ProtectedRoute>
-          <ContractRequiredRoute>
+          <ContractRequiredRoute allowWithoutContractOn={["/dashboard/receipts/upload", "/dashboard/billing-records/upload", "/dashboard/contracts", "/dashboard"]}>
             <BillingRecordUploadPage />
           </ContractRequiredRoute>
         </ProtectedRoute>
@@ -134,7 +134,7 @@ function Router() {
       </Route>
       <Route path="/dashboard">
         <ProtectedRoute>
-          <ContractRequiredRoute>
+          <ContractRequiredRoute allowWithoutContractOn={["/dashboard", "/dashboard/contracts", "/dashboard/receipts/upload", "/dashboard/billing-records/upload"]}>
             <DashboardPage />
           </ContractRequiredRoute>
         </ProtectedRoute>
