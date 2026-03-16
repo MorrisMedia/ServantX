@@ -75,6 +75,7 @@ def _serialize_document(doc: Document) -> dict:
 async def upload_835_files(
     files: List[UploadFile] = File(...),
     project_id: Optional[str] = Form(default=None),
+    payer_scope: Optional[str] = Form(default=None, alias="payerScope"),
     current_user: dict = Depends(get_current_user),
 ):
     if not files:
@@ -96,11 +97,13 @@ async def upload_835_files(
         else:
             project = await ensure_default_project(hospital_id, current_user.get("id"))
 
+        effective_payer_scope = payer_scope or (project.payer_scope if project and project.payer_scope else None) or "CONTRACT_AUDIT"
+
         batch = BatchRunModel(
             hospital_id=hospital_id,
             project_id=project.id if project else None,
             status="queued",
-            payer_scope=project.payer_scope if project and project.payer_scope else "MEDICARE_TX_MEDICAID_FFS",
+            payer_scope=effective_payer_scope,
             source_file_count=len(files),
             claim_document_count=0,
             processed_claim_count=0,

@@ -5,6 +5,7 @@ import { formatFileSize, validateFileSize } from "@/lib/utils/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Archive, Loader2, Upload, X } from "lucide-react";
 import { DragEvent, useRef, useState } from "react";
+import type { AuditPayerScope } from "@/lib/types/audit";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 
@@ -18,6 +19,7 @@ export function BillingRecord835Upload({ onBatchQueued }: BillingRecord835Upload
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
+  const [payerScope, setPayerScope] = useState<AuditPayerScope>("CONTRACT_AUDIT");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
@@ -132,8 +134,26 @@ export function BillingRecord835Upload({ onBatchQueued }: BillingRecord835Upload
 
         {error && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
 
+        <div className="space-y-2 rounded-lg border p-4">
+          <div className="text-sm font-medium">Pricing benchmark for this 835 batch</div>
+          <div className="grid gap-2 md:grid-cols-3">
+            <button type="button" className={`rounded border px-3 py-2 text-sm text-left ${payerScope === "CONTRACT_AUDIT" ? "border-primary bg-primary/5" : "border-border"}`} onClick={() => setPayerScope("CONTRACT_AUDIT")}>
+              <div className="font-medium">Negotiated contracts</div>
+              <div className="text-xs text-muted-foreground">Default. Use the hospital's uploaded contracts / rule libraries.</div>
+            </button>
+            <button type="button" className={`rounded border px-3 py-2 text-sm text-left ${payerScope === "MEDICARE" ? "border-primary bg-primary/5" : "border-border"}`} onClick={() => setPayerScope("MEDICARE")}>
+              <div className="font-medium">Medicare</div>
+              <div className="text-xs text-muted-foreground">Force CMS public-rate repricing for this batch.</div>
+            </button>
+            <button type="button" className={`rounded border px-3 py-2 text-sm text-left ${payerScope === "TX_MEDICAID_FFS" ? "border-primary bg-primary/5" : "border-border"}`} onClick={() => setPayerScope("TX_MEDICAID_FFS")}>
+              <div className="font-medium">Texas Medicaid</div>
+              <div className="text-xs text-muted-foreground">Force TX Medicaid FFS fee-schedule repricing for this batch.</div>
+            </button>
+          </div>
+        </div>
+
         {files.length > 0 && (
-          <Button className="w-full" onClick={() => uploadMutation.mutate(files)} disabled={uploadMutation.isPending}>
+          <Button className="w-full" onClick={() => uploadMutation.mutate({ files, payerScope })} disabled={uploadMutation.isPending}>
             {uploadMutation.isPending ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />

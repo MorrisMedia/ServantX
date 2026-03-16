@@ -1,5 +1,13 @@
 import type { Document } from "./document";
 
+
+export type AuditPayerScope = "CONTRACT_AUDIT" | "MEDICARE" | "TX_MEDICAID_FFS";
+
+export interface BatchUploadRequest {
+  files: File[];
+  payerScope?: AuditPayerScope;
+}
+
 export interface BatchRun {
   id: string;
   hospitalId: string;

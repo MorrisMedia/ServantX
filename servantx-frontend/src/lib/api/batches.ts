@@ -1,11 +1,12 @@
 import { API_BASE_URL } from "../api";
-import type { BatchDocumentsResponse, BatchRun, BatchUploadResponse } from "../types/audit";
+import type { BatchDocumentsResponse, BatchRun, BatchUploadResponse, BatchUploadRequest } from "../types/audit";
 import { getAccessToken } from "./token";
 
-export async function upload835Batch(files: File[]): Promise<BatchUploadResponse> {
+export async function upload835Batch(payload: BatchUploadRequest): Promise<BatchUploadResponse> {
   const token = getAccessToken();
   const formData = new FormData();
-  files.forEach((file) => formData.append("files", file));
+  payload.files.forEach((file) => formData.append("files", file));
+  if (payload.payerScope) formData.append("payerScope", payload.payerScope);
 
   const response = await fetch(`${API_BASE_URL}/batches/upload-835`, {
     method: "POST",

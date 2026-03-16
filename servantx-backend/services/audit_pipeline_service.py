@@ -14,11 +14,7 @@ from config import settings
 from core_services.db_service import AsyncSessionLocal
 from models import AuditFinding, BatchRun, Document, DocumentRole, ParsedData
 from services.edi_835_parser import parse_claim_835
-from services.repricing_service import (
-    build_line_findings,
-    reprice_medicare_line,
-    reprice_tx_medicaid_line,
-)
+from services.repricing_service import build_line_findings
 from services.pipeline_config_service import get_payer_workflow_config
 from services.storage_service import storage_service
 
@@ -30,10 +26,38 @@ from services.claim_adjudication_service import (
     normalize_payer_key as _normalize_payer_key,
     split_835_claim_loops as _split_claim_loops,
     _split_segments,
+    detect_claim_type,
+    match_contract_for_claim,
+    reprice_single_claim,
 )
+from services.contract_service import get_all_contracts
 
 
 CLAIM_SCHEMA_VERSION = "claim_835_v1"
+
+
+def _normalize_batch_payer_scope(raw_scope: Optional[str]) -> str:
+    scope = (raw_scope or "").strip().upper()
+    if scope in {"MEDICARE", "TX_MEDICAID_FFS", "CONTRACT_AUDIT"}:
+        return scope
+    if scope == "MEDICARE_TX_MEDICAID_FFS":
+        return "CONTRACT_AUDIT"
+    return "CONTRACT_AUDIT"
+
+
+def _build_contract_candidates(raw_contracts: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    candidates: List[Dict[str, Any]] = []
+    for contract in raw_contracts:
+        rule_library = contract.get("ruleLibrary") or contract.get("rule_library") or {}
+        if not isinstance(rule_library, dict) or rule_library.get("rule_count", 0) <= 0:
+            continue
+        candidates.append({
+            "id": contract.get("id"),
+            "name": contract.get("name"),
+            "text": contract.get("text") or "",
+            "rule_library": rule_library,
+        })
+    return candidates
 
 
 def _read_storage_file(relative_path: str) -> str:
@@ -281,78 +305,88 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
             await db.commit()
             return {"status": "error", "stage": 3, "message": "ParsedData missing", "document_id": document_id}
 
+        batch = None
+        if document.batch_run_id:
+            batch_result = await db.execute(select(BatchRun).where(BatchRun.id == document.batch_run_id))
+            batch = batch_result.scalar_one_or_none()
+
         payload = parsed_data.payload or {}
         payer = payload.get("payer", {}) or {}
         claim = payload.get("claim", {}) or {}
         provider = payload.get("provider", {}) or {}
         service_lines = payload.get("service_lines", []) or []
-        payer_key = payer.get("payer_key") or document.payer_key or "OTHER"
+        detected_payer_key = payer.get("payer_key") or document.payer_key or "OTHER"
+        requested_scope = _normalize_batch_payer_scope(batch.payer_scope if batch else None)
+        effective_payer_key = detected_payer_key
+        matching_payer_key = detected_payer_key
+        if requested_scope == "MEDICARE":
+            effective_payer_key = "MEDICARE"
+            matching_payer_key = "MEDICARE"
+        elif requested_scope == "TX_MEDICAID_FFS":
+            effective_payer_key = "TX_MEDICAID_FFS"
+            matching_payer_key = "TX_MEDICAID_FFS"
+        elif requested_scope == "CONTRACT_AUDIT":
+            effective_payer_key = "CONTRACT_AUDIT"
 
-        existing_findings_result = await db.execute(
-            select(AuditFinding).where(AuditFinding.document_id == document.id)
-        )
+        existing_findings_result = await db.execute(select(AuditFinding).where(AuditFinding.document_id == document.id))
         for finding in existing_findings_result.scalars().all():
             await db.delete(finding)
 
+        selected_contract: Optional[Dict[str, Any]] = None
+        selected_rule_library: Dict[str, Any] = {}
+        if requested_scope == "CONTRACT_AUDIT":
+            contract_candidates = _build_contract_candidates(await get_all_contracts(hospital_id=document.hospital_id))
+            claim_for_matching = dict(claim)
+            claim_for_matching["payer_key"] = matching_payer_key
+            selected_contract = match_contract_for_claim(claim_for_matching, contract_candidates)
+            selected_rule_library = (selected_contract or {}).get("rule_library") or {}
+            if selected_contract:
+                document.contract_id = selected_contract.get("id")
+
+        claim_for_repricing = dict(claim)
+        claim_for_repricing["payer_key"] = effective_payer_key
+        claim_for_repricing["provider"] = provider
+        claim_for_repricing["service_lines"] = service_lines
+        claim_type = detect_claim_type(claim_for_repricing)
+
+        claim_result = await reprice_single_claim(
+            parsed_claim=claim_for_repricing,
+            claim_type=claim_type,
+            rule_library=selected_rule_library,
+            service_lines=service_lines,
+        )
+
         repricing_lines: List[Dict[str, Any]] = []
         findings_written = 0
-        total_expected = 0.0
-        total_paid = 0.0
-        total_variance = 0.0
+        total_expected = float(claim_result.get("expected_payment") or 0.0)
+        total_paid = float(claim_result.get("actual_paid") or 0.0)
+        total_variance = float(claim_result.get("variance_amount") or 0.0)
 
-        for line in service_lines:
-            context = {
-                "provider": provider,
-                "service_date_start": claim.get("service_date_start"),
+        per_line_results = claim_result.get("per_line_results") or []
+        for idx, line in enumerate(service_lines):
+            line_result = per_line_results[idx] if idx < len(per_line_results) else {}
+            expected_allowed = line_result.get("expected_allowed")
+            actual_paid = float(line_result.get("actual_paid") or float(line.get("line_payment_amount") or 0.0))
+            variance_amount = float(line_result.get("variance_amount")) if line_result.get("variance_amount") is not None else ((float(expected_allowed) - actual_paid) if expected_allowed is not None else 0.0)
+            variance_percent = float(line_result.get("variance_percent")) if line_result.get("variance_percent") is not None else ((variance_amount / float(expected_allowed) * 100.0) if expected_allowed else 0.0)
+            repricing_result = {
+                "errors": line_result.get("errors", claim_result.get("errors", [])),
+                "expected_allowed": expected_allowed,
+                "actual_paid": actual_paid,
+                "variance_amount": variance_amount,
+                "variance_percent": variance_percent,
+                "rate_source": line_result.get("rate_source") or claim_result.get("rate_source"),
+                "locality_code": line_result.get("locality_code"),
+                "locality_source": line_result.get("locality_source"),
+                "confidence_score": line_result.get("confidence_score") or claim_result.get("confidence_score") or 0.0,
             }
-            if payer_key == "MEDICARE":
-                repricing_result = await reprice_medicare_line(db=db, line=line, context=context)
-            elif payer_key == "TX_MEDICAID_FFS":
-                repricing_result = await reprice_tx_medicaid_line(db=db, line=line, context=context)
-            else:
-                repricing_result = {
-                    "errors": ["MISSING_RATE_MATCH"],
-                    "expected_allowed": None,
-                    "actual_paid": float(line.get("line_payment_amount") or 0.0),
-                    "variance_amount": None,
-                    "variance_percent": None,
-                    "rate_source": "UNSUPPORTED_PAYER_PHASE1",
-                    "locality_code": None,
-                    "locality_source": "UNKNOWN",
-                    "confidence_score": 10.0,
-                }
-
-            expected_allowed = repricing_result.get("expected_allowed")
-            actual_paid = float(repricing_result.get("actual_paid") or float(line.get("line_payment_amount") or 0.0))
-            variance_amount = (
-                float(repricing_result.get("variance_amount"))
-                if repricing_result.get("variance_amount") is not None
-                else (float(expected_allowed) - actual_paid if expected_allowed is not None else 0.0)
-            )
-            variance_percent = (
-                float(repricing_result.get("variance_percent"))
-                if repricing_result.get("variance_percent") is not None
-                else ((variance_amount / float(expected_allowed) * 100.0) if expected_allowed else 0.0)
-            )
-
-            if expected_allowed is not None:
-                total_expected += float(expected_allowed)
-            total_paid += actual_paid
-            if variance_amount > 0:
-                total_variance += variance_amount
 
             line_findings = build_line_findings(line=line, repricing_result=repricing_result)
             finding_codes = {finding["finding_code"] for finding in line_findings}
             if "ALLOWED_MISMATCH" in finding_codes:
-                repricing_result["confidence_score"] = max(
-                    0.0,
-                    float(repricing_result.get("confidence_score") or 0.0) - 20.0,
-                )
+                repricing_result["confidence_score"] = max(0.0, float(repricing_result.get("confidence_score") or 0.0) - 20.0)
             elif "LOCALITY_UNKNOWN" in finding_codes:
-                repricing_result["confidence_score"] = max(
-                    0.0,
-                    float(repricing_result.get("confidence_score") or 0.0) - 10.0,
-                )
+                repricing_result["confidence_score"] = max(0.0, float(repricing_result.get("confidence_score") or 0.0) - 10.0)
             for finding_payload in line_findings:
                 finding = AuditFinding(
                     batch_id=document.batch_run_id or "",
@@ -372,25 +406,23 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
                 db.add(finding)
                 findings_written += 1
 
-            repricing_lines.append(
-                {
-                    "line_number": line.get("line_number"),
-                    "cpt_hcpcs": line.get("cpt_hcpcs"),
-                    "modifiers": line.get("modifiers", []),
-                    "units": line.get("units"),
-                    "place_of_service": line.get("place_of_service"),
-                    "line_service_date": line.get("line_service_date"),
-                    "expected_allowed": round(float(expected_allowed), 2) if expected_allowed is not None else None,
-                    "actual_paid": round(actual_paid, 2),
-                    "variance_amount": round(variance_amount, 2),
-                    "variance_percent": round(variance_percent, 2),
-                    "rate_source": repricing_result.get("rate_source"),
-                    "locality_code": repricing_result.get("locality_code"),
-                    "locality_source": repricing_result.get("locality_source"),
-                    "confidence_score": repricing_result.get("confidence_score"),
-                    "errors": repricing_result.get("errors", []),
-                }
-            )
+            repricing_lines.append({
+                "line_number": line.get("line_number"),
+                "cpt_hcpcs": line.get("cpt_hcpcs"),
+                "modifiers": line.get("modifiers", []),
+                "units": line.get("units"),
+                "place_of_service": line.get("place_of_service"),
+                "line_service_date": line.get("line_service_date"),
+                "expected_allowed": round(float(expected_allowed), 2) if expected_allowed is not None else None,
+                "actual_paid": round(actual_paid, 2),
+                "variance_amount": round(variance_amount, 2),
+                "variance_percent": round(variance_percent, 2),
+                "rate_source": repricing_result.get("rate_source"),
+                "locality_code": repricing_result.get("locality_code"),
+                "locality_source": repricing_result.get("locality_source"),
+                "confidence_score": repricing_result.get("confidence_score"),
+                "errors": repricing_result.get("errors", []),
+            })
 
         payload_with_repricing = dict(payload)
         payload_with_repricing["repricing"] = {
@@ -400,12 +432,13 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
                 "actual_paid_total": round(total_paid, 2),
                 "variance_total": round(total_variance, 2),
             },
+            "audit_mode": requested_scope,
+            "effective_payer_key": effective_payer_key,
+            "claim_type": claim_type,
+            "contract_id": selected_contract.get("id") if selected_contract else None,
+            "contract_name": selected_contract.get("name") if selected_contract else None,
         }
-        await db.execute(
-            update(ParsedData)
-            .where(ParsedData.id == parsed_data.id)
-            .values(payload=payload_with_repricing, updated_at=datetime.utcnow())
-        )
+        await db.execute(update(ParsedData).where(ParsedData.id == parsed_data.id).values(payload=payload_with_repricing, updated_at=datetime.utcnow()))
         parsed_data.payload = payload_with_repricing
 
         document.amount = round(total_variance, 2)
@@ -417,24 +450,17 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
 
         if document.batch_run_id:
             batch_id_for_summary = document.batch_run_id
-            batch_result = await db.execute(select(BatchRun).where(BatchRun.id == document.batch_run_id))
-            batch = batch_result.scalar_one_or_none()
             if batch:
-                reviewed_count_result = await db.execute(
-                    select(func.count(Document.id)).where(
-                        Document.batch_run_id == batch.id,
-                        Document.document_role == DocumentRole.CLAIM,
-                        Document.status.in_(["reviewed", "synthesized", "appeal_ready"]),
-                    )
-                )
+                reviewed_count_result = await db.execute(select(func.count(Document.id)).where(Document.batch_run_id == batch.id, Document.document_role == DocumentRole.CLAIM, Document.status.in_(["reviewed", "synthesized", "appeal_ready"])))
                 reviewed_count = int(reviewed_count_result.scalar() or 0)
+                claim_count_result = await db.execute(select(func.count(Document.id)).where(Document.batch_run_id == batch.id, Document.document_role == DocumentRole.CLAIM))
+                claim_count = int(claim_count_result.scalar() or 0)
+                batch.claim_document_count = claim_count
                 batch.processed_claim_count = reviewed_count
-                batch.status = "reviewing"
+                batch.failed_claim_count = max(claim_count - reviewed_count, 0)
+                batch.status = "reviewing" if reviewed_count < claim_count else "reviewed"
                 batch.updated_at = datetime.utcnow()
-
-                if batch.claim_document_count > 0 and reviewed_count >= batch.claim_document_count:
-                    batch.status = "synthesizing"
-                    should_enqueue_summary = True
+                should_enqueue_summary = reviewed_count >= claim_count and claim_count > 0
 
         await db.commit()
 
@@ -445,9 +471,15 @@ async def run_stage3_reprice_claim(document_id: str) -> Dict[str, Any]:
         "status": "ok",
         "stage": 3,
         "document_id": document_id,
-        "findings_created": findings_written,
-        "variance_total": round(total_variance, 2),
+        "findings_written": findings_written,
+        "totals": {
+            "expected_allowed_total": round(total_expected, 2),
+            "actual_paid_total": round(total_paid, 2),
+            "variance_total": round(total_variance, 2),
+        },
     }
+
+
 
 
 async def run_stage4_summarize_batch(batch_id: str) -> Dict[str, Any]:
