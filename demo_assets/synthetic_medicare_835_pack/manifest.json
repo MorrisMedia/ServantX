@@ -1,0 +1,962 @@
+[
+  {
+    "file_name": "medicare_synthetic_001_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 45.67
+  },
+  {
+    "file_name": "medicare_synthetic_002_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 214.9
+  },
+  {
+    "file_name": "medicare_synthetic_003_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 31.64
+  },
+  {
+    "file_name": "medicare_synthetic_004_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 59.7
+  },
+  {
+    "file_name": "medicare_synthetic_005_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 13.46,
+    "expected_total_payment": 154.78
+  },
+  {
+    "file_name": "medicare_synthetic_006_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 41.86,
+    "expected_total_payment": 481.38
+  },
+  {
+    "file_name": "medicare_synthetic_007_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 7.6,
+    "expected_total_payment": 87.34
+  },
+  {
+    "file_name": "medicare_synthetic_008_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 22.26,
+    "expected_total_payment": 255.9
+  },
+  {
+    "file_name": "medicare_synthetic_009_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 299.34,
+    "expected_total_payment": 698.48
+  },
+  {
+    "file_name": "medicare_synthetic_010_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 156.97,
+    "expected_total_payment": 366.27
+  },
+  {
+    "file_name": "medicare_synthetic_011_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 25.93,
+    "expected_total_payment": 60.5
+  },
+  {
+    "file_name": "medicare_synthetic_012_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 62.9,
+    "expected_total_payment": 146.79
+  },
+  {
+    "file_name": "medicare_synthetic_013_overpay.835",
+    "scenario": "overpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": -8.42,
+    "expected_total_payment": 176.66
+  },
+  {
+    "file_name": "medicare_synthetic_014_overpay.835",
+    "scenario": "overpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": -7.99,
+    "expected_total_payment": 167.72
+  },
+  {
+    "file_name": "medicare_synthetic_015_overpay.835",
+    "scenario": "overpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": -5.02,
+    "expected_total_payment": 105.48
+  },
+  {
+    "file_name": "medicare_synthetic_016_overpay.835",
+    "scenario": "overpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": -12.57,
+    "expected_total_payment": 263.93
+  },
+  {
+    "file_name": "medicare_synthetic_017_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 52.42,
+    "expected_total_payment": 157.27
+  },
+  {
+    "file_name": "medicare_synthetic_018_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 62.84,
+    "expected_total_payment": 188.52
+  },
+  {
+    "file_name": "medicare_synthetic_019_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 56.08,
+    "expected_total_payment": 467.16
+  },
+  {
+    "file_name": "medicare_synthetic_020_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 12.16,
+    "expected_total_payment": 36.5
+  },
+  {
+    "file_name": "medicare_synthetic_021_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 24.65,
+    "expected_total_payment": 98.62
+  },
+  {
+    "file_name": "medicare_synthetic_022_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 17.28,
+    "expected_total_payment": 69.15
+  },
+  {
+    "file_name": "medicare_synthetic_023_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 50.27,
+    "expected_total_payment": 201.09
+  },
+  {
+    "file_name": "medicare_synthetic_024_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 33.65,
+    "expected_total_payment": 134.59
+  },
+  {
+    "file_name": "medicare_synthetic_025_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 62.79,
+    "expected_total_payment": 460.45
+  },
+  {
+    "file_name": "medicare_synthetic_026_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 19.61,
+    "expected_total_payment": 143.8
+  },
+  {
+    "file_name": "medicare_synthetic_027_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 61.77,
+    "expected_total_payment": 452.96
+  },
+  {
+    "file_name": "medicare_synthetic_028_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 29.58,
+    "expected_total_payment": 216.95
+  },
+  {
+    "file_name": "medicare_synthetic_029_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 2.71,
+    "expected_total_payment": 51.47
+  },
+  {
+    "file_name": "medicare_synthetic_030_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 32.15,
+    "expected_total_payment": 610.67
+  },
+  {
+    "file_name": "medicare_synthetic_031_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 14.4,
+    "expected_total_payment": 273.42
+  },
+  {
+    "file_name": "medicare_synthetic_032_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 4.32,
+    "expected_total_payment": 82.11
+  },
+  {
+    "file_name": "medicare_synthetic_033_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 3,
+    "expected_total_variance": 117.96,
+    "expected_total_payment": 1267.61
+  },
+  {
+    "file_name": "medicare_synthetic_034_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 3,
+    "expected_total_variance": 52.79,
+    "expected_total_payment": 854.52
+  },
+  {
+    "file_name": "medicare_synthetic_035_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 3,
+    "expected_total_variance": 27.33,
+    "expected_total_payment": 566.03
+  },
+  {
+    "file_name": "medicare_synthetic_036_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 3,
+    "expected_total_variance": 37.24,
+    "expected_total_payment": 561.11
+  },
+  {
+    "file_name": "medicare_synthetic_037_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 528.76
+  },
+  {
+    "file_name": "medicare_synthetic_038_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 131.78
+  },
+  {
+    "file_name": "medicare_synthetic_039_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 131.78
+  },
+  {
+    "file_name": "medicare_synthetic_040_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 251.36
+  },
+  {
+    "file_name": "medicare_synthetic_041_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 32.69,
+    "expected_total_payment": 294.11
+  },
+  {
+    "file_name": "medicare_synthetic_042_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 34.75,
+    "expected_total_payment": 312.75
+  },
+  {
+    "file_name": "medicare_synthetic_043_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 17.29,
+    "expected_total_payment": 155.58
+  },
+  {
+    "file_name": "medicare_synthetic_044_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 127.6,
+    "expected_total_payment": 1148.36
+  },
+  {
+    "file_name": "medicare_synthetic_045_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 159.73,
+    "expected_total_payment": 0.0
+  },
+  {
+    "file_name": "medicare_synthetic_046_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 154.9,
+    "expected_total_payment": 0.0
+  },
+  {
+    "file_name": "medicare_synthetic_047_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 569.52,
+    "expected_total_payment": 0.0
+  },
+  {
+    "file_name": "medicare_synthetic_048_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "78701",
+    "locality_code": "31",
+    "locality_name": "AUSTIN",
+    "claim_count": 2,
+    "expected_total_variance": 246.53,
+    "expected_total_payment": 0.0
+  },
+  {
+    "file_name": "medicare_synthetic_049_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 126.52
+  },
+  {
+    "file_name": "medicare_synthetic_050_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 150.53
+  },
+  {
+    "file_name": "medicare_synthetic_051_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 167.19
+  },
+  {
+    "file_name": "medicare_synthetic_052_exact_pay.835",
+    "scenario": "exact_pay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 206.37
+  },
+  {
+    "file_name": "medicare_synthetic_053_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 10.92,
+    "expected_total_payment": 125.62
+  },
+  {
+    "file_name": "medicare_synthetic_054_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 22.1,
+    "expected_total_payment": 254.1
+  },
+  {
+    "file_name": "medicare_synthetic_055_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 13.75,
+    "expected_total_payment": 158.13
+  },
+  {
+    "file_name": "medicare_synthetic_056_mild_underpay.835",
+    "scenario": "mild_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 22.1,
+    "expected_total_payment": 254.1
+  },
+  {
+    "file_name": "medicare_synthetic_057_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 184.72,
+    "expected_total_payment": 431.0
+  },
+  {
+    "file_name": "medicare_synthetic_058_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 29.21,
+    "expected_total_payment": 68.15
+  },
+  {
+    "file_name": "medicare_synthetic_059_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 152.02,
+    "expected_total_payment": 354.69
+  },
+  {
+    "file_name": "medicare_synthetic_060_severe_underpay.835",
+    "scenario": "severe_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 150.16,
+    "expected_total_payment": 350.37
+  },
+  {
+    "file_name": "medicare_synthetic_061_overpay.835",
+    "scenario": "overpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": -8.21,
+    "expected_total_payment": 172.55
+  },
+  {
+    "file_name": "medicare_synthetic_062_overpay.835",
+    "scenario": "overpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": -4.86,
+    "expected_total_payment": 102.22
+  },
+  {
+    "file_name": "medicare_synthetic_063_overpay.835",
+    "scenario": "overpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": -8.21,
+    "expected_total_payment": 172.55
+  },
+  {
+    "file_name": "medicare_synthetic_064_overpay.835",
+    "scenario": "overpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": -4.17,
+    "expected_total_payment": 87.72
+  },
+  {
+    "file_name": "medicare_synthetic_065_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 14.54,
+    "expected_total_payment": 43.64
+  },
+  {
+    "file_name": "medicare_synthetic_066_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 57.27,
+    "expected_total_payment": 449.44
+  },
+  {
+    "file_name": "medicare_synthetic_067_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 57.27,
+    "expected_total_payment": 449.44
+  },
+  {
+    "file_name": "medicare_synthetic_068_deductible_split.835",
+    "scenario": "deductible_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 41.08,
+    "expected_total_payment": 123.26
+  },
+  {
+    "file_name": "medicare_synthetic_069_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 41.27,
+    "expected_total_payment": 165.1
+  },
+  {
+    "file_name": "medicare_synthetic_070_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 55.24,
+    "expected_total_payment": 220.96
+  },
+  {
+    "file_name": "medicare_synthetic_071_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 109.17,
+    "expected_total_payment": 436.72
+  },
+  {
+    "file_name": "medicare_synthetic_072_coinsurance_split.835",
+    "scenario": "coinsurance_split",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 98.58,
+    "expected_total_payment": 394.32
+  },
+  {
+    "file_name": "medicare_synthetic_073_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 60.06,
+    "expected_total_payment": 440.47
+  },
+  {
+    "file_name": "medicare_synthetic_074_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 60.06,
+    "expected_total_payment": 440.47
+  },
+  {
+    "file_name": "medicare_synthetic_075_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 60.8,
+    "expected_total_payment": 445.91
+  },
+  {
+    "file_name": "medicare_synthetic_076_modifier_25.835",
+    "scenario": "modifier_25",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 5.5,
+    "expected_total_payment": 40.32
+  },
+  {
+    "file_name": "medicare_synthetic_077_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 29.06,
+    "expected_total_payment": 552.17
+  },
+  {
+    "file_name": "medicare_synthetic_078_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 2.21,
+    "expected_total_payment": 42.16
+  },
+  {
+    "file_name": "medicare_synthetic_079_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 2.9,
+    "expected_total_payment": 55.28
+  },
+  {
+    "file_name": "medicare_synthetic_080_modifier_59.835",
+    "scenario": "modifier_59",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 6.33,
+    "expected_total_payment": 120.19
+  },
+  {
+    "file_name": "medicare_synthetic_081_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 3,
+    "expected_total_variance": 76.23,
+    "expected_total_payment": 760.52
+  },
+  {
+    "file_name": "medicare_synthetic_082_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 3,
+    "expected_total_variance": 101.25,
+    "expected_total_payment": 1176.4
+  },
+  {
+    "file_name": "medicare_synthetic_083_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 3,
+    "expected_total_variance": 91.16,
+    "expected_total_payment": 1058.98
+  },
+  {
+    "file_name": "medicare_synthetic_084_multi_line_mixed.835",
+    "scenario": "multi_line_mixed",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 3,
+    "expected_total_variance": 51.62,
+    "expected_total_payment": 704.34
+  },
+  {
+    "file_name": "medicare_synthetic_085_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 118.89
+  },
+  {
+    "file_name": "medicare_synthetic_086_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 132.7
+  },
+  {
+    "file_name": "medicare_synthetic_087_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 150.53
+  },
+  {
+    "file_name": "medicare_synthetic_088_missing_line_dos.835",
+    "scenario": "missing_line_dos",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 0.0,
+    "expected_total_payment": 38.19
+  },
+  {
+    "file_name": "medicare_synthetic_089_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 32.2,
+    "expected_total_payment": 289.82
+  },
+  {
+    "file_name": "medicare_synthetic_090_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 6.12,
+    "expected_total_payment": 55.02
+  },
+  {
+    "file_name": "medicare_synthetic_091_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 26.54,
+    "expected_total_payment": 238.87
+  },
+  {
+    "file_name": "medicare_synthetic_092_units_2_underpay.835",
+    "scenario": "units_2_underpay",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 8.88,
+    "expected_total_payment": 79.87
+  },
+  {
+    "file_name": "medicare_synthetic_093_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 207.22,
+    "expected_total_payment": 0.0
+  },
+  {
+    "file_name": "medicare_synthetic_094_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 500.53,
+    "expected_total_payment": 0.0
+  },
+  {
+    "file_name": "medicare_synthetic_095_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 52.0,
+    "expected_total_payment": 0.0
+  },
+  {
+    "file_name": "medicare_synthetic_096_zero_pay_denial.835",
+    "scenario": "zero_pay_denial",
+    "zip": "75201",
+    "locality_code": "11",
+    "locality_name": "DALLAS",
+    "claim_count": 2,
+    "expected_total_variance": 492.9,
+    "expected_total_payment": 0.0
+  }
+]
