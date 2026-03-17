@@ -191,9 +191,30 @@ class Settings(BaseSettings):
         return self.ENABLE_CELERY_ASYNC and not self.FORCE_INLINE_TASKS and not self.is_vercel
 
 
+def _validate_runtime_requirements(settings: Settings) -> None:
+    requires_durable_database = settings.ENVIRONMENT != "development" or settings.is_vercel
+    requires_durable_storage = settings.ENVIRONMENT != "development" or settings.is_vercel
+
+    if requires_durable_database and settings.is_sqlite:
+        raise RuntimeError(
+            "SQLite is only allowed in local development. Configure DATABASE_URL/POSTGRES_URL for staging, production, or Vercel deployments."
+        )
+
+    if requires_durable_storage and settings.STORAGE_BACKEND == "local":
+        raise RuntimeError(
+            "Local filesystem storage is only allowed in local development. Configure STORAGE_BACKEND=s3 or STORAGE_BACKEND=vercel_blob for staging, production, or Vercel deployments."
+        )
+
+    if settings.is_vercel and settings.STORAGE_BACKEND == "vercel_blob" and not settings.BLOB_READ_WRITE_TOKEN:
+        raise RuntimeError(
+            "BLOB_READ_WRITE_TOKEN is required when deploying to Vercel with STORAGE_BACKEND=vercel_blob."
+        )
+
+
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     settings = Settings()
+    _validate_runtime_requirements(settings)
     settings.resolved_storage_root.mkdir(parents=True, exist_ok=True)
     settings.resolved_duckdb_workspace_root.mkdir(parents=True, exist_ok=True)
     if settings.is_sqlite:
