@@ -79,6 +79,7 @@ class Settings(BaseSettings):
     VERCEL_BLOB_ADD_RANDOM_SUFFIX: bool = True
 
     AUTO_BOOTSTRAP_SQLITE: bool = True
+    AUTO_SEED_RATE_DATA: bool = False
 
     @field_validator("ENVIRONMENT", mode="before")
     @classmethod

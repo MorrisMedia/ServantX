@@ -34,9 +34,10 @@ app = FastAPI(
 async def startup_bootstrap_local_db():
     if settings.AUTO_BOOTSTRAP_SQLITE and (IS_SQLITE or settings.is_vercel):
         await bootstrap_schema_if_needed(force=settings.is_vercel and not IS_SQLITE)
-        if settings.is_vercel:
-            async with AsyncSessionLocal() as db:
-                await auto_seed_rate_data(db)
+
+    if settings.AUTO_SEED_RATE_DATA:
+        async with AsyncSessionLocal() as db:
+            await auto_seed_rate_data(db)
 
 
 app.add_middleware(
