@@ -37,8 +37,11 @@ function Router() {
       <Route path="/privacy" component={Privacy} />
       <Route path="/terms" component={Terms} />
       <Route path="/auth/login" component={LoginPage} />
+      <Route path="/login" component={LoginPage} />
       <Route path="/auth/register" component={RegisterPage} />
+      <Route path="/register" component={RegisterPage} />
       <Route path="/auth/forgot-password" component={ForgotPasswordPage} />
+      <Route path="/forgot-password" component={ForgotPasswordPage} />
       {/* Contracts page - accessible without contract (to allow upload) */}
       <Route path="/dashboard/contracts">
         <ProtectedRoute>

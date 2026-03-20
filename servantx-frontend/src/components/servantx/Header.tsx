@@ -38,7 +38,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href="/auth/login" className="hidden sm:inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm font-medium text-[#0B2A4A] hover:bg-accent">
+          <Link href="/login" className="hidden sm:inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm font-medium text-[#0B2A4A] hover:bg-accent">
             Login
           </Link>
           <Link

@@ -1,4 +1,21 @@
 {
+  "redirects": [
+    {
+      "source": "/auth/login",
+      "destination": "/login",
+      "permanent": false
+    },
+    {
+      "source": "/auth/register",
+      "destination": "/register",
+      "permanent": false
+    },
+    {
+      "source": "/auth/forgot-password",
+      "destination": "/forgot-password",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

@@ -97,7 +97,7 @@ export function LoginForm() {
           </div>
 
           <div className="text-right">
-            <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
+            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
               Forgot password?
             </Link>
           </div>
@@ -115,7 +115,7 @@ export function LoginForm() {
           <span className="text-muted-foreground">Don't have an account? </span>
           <button
             type="button"
-            onClick={() => setLocation("/auth/register")}
+            onClick={() => setLocation("/register")}
             className="text-primary hover:underline"
           >
             Register

@@ -8,7 +8,13 @@ const getApiUrl = (): string => {
     const { protocol, hostname } = window.location;
     const localHosts = new Set(["localhost", "127.0.0.1"]);
     if (!localHosts.has(hostname)) {
-      return `${protocol}//${hostname.replace(/^app\./, "api.")}`;
+      if (hostname === "www.servantx.ai" || hostname === "servantx.ai") {
+        return `${protocol}//api.servantx.ai`;
+      }
+
+      if (hostname.startsWith("app.")) {
+        return `${protocol}//${hostname.replace(/^app\./, "api.")}`;
+      }
     }
   }
 
