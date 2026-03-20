@@ -208,7 +208,7 @@ export function RegisterForm() {
           <span className="text-muted-foreground">Already have an account? </span>
           <button
             type="button"
-            onClick={() => setLocation("/auth/login")}
+            onClick={() => setLocation("/login")}
             className="text-primary hover:underline"
           >
             Login

@@ -11,10 +11,17 @@ from typing import Optional, Dict
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT Configuration
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
+_raw_secret = os.getenv("JWT_SECRET_KEY", "")
+if not _raw_secret or _raw_secret == "your-secret-key-change-in-production":
+    if os.getenv("ENVIRONMENT", "development") == "production":
+        raise RuntimeError("JWT_SECRET_KEY must be set to a strong random value in production")
+    # Development fallback only
+    _raw_secret = "dev-only-insecure-secret-do-not-use-in-production"
+SECRET_KEY = _raw_secret
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
-REFRESH_TOKEN_EXPIRE_DAYS = 30  # 30 days
+# HIPAA: short-lived access tokens (60 min idle timeout); refresh tokens 8h
+ACCESS_TOKEN_EXPIRE_MINUTES = 60  # 1 hour
+REFRESH_TOKEN_EXPIRE_DAYS = 1     # 24 hours (absolute session limit)
 
 
 def hash_password(password: str) -> str:

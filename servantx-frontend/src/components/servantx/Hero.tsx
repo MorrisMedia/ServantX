@@ -47,7 +47,7 @@ export function Hero() {
               Request a Pilot
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-            <Link href="/auth/login" className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-md border px-8 text-base font-semibold text-[#0B2A4A] hover:bg-accent">
+            <Link href="/login" className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-md border px-8 text-base font-semibold text-[#0B2A4A] hover:bg-accent">
               Login to smoke UI
             </Link>
           </div>

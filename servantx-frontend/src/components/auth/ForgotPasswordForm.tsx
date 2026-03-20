@@ -64,7 +64,7 @@ export function ForgotPasswordForm() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => setLocation("/auth/login")}
+            onClick={() => setLocation("/login")}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Login
@@ -106,7 +106,7 @@ export function ForgotPasswordForm() {
             type="button"
             variant="ghost"
             className="w-full"
-            onClick={() => setLocation("/auth/login")}
+            onClick={() => setLocation("/login")}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Login

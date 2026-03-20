@@ -28,7 +28,7 @@ async function main() {
 
     // 1) Login
     console.log("1) Login...");
-    await page.goto(`${BASE}/auth/login`, { waitUntil: "networkidle" });
+    await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
     const loginVisible = await page.locator('input[type="email"], input[name="email"]').first().isVisible().catch(() => false);
     if (!loginVisible) {
       log("Login page loads", false, "No email input found");
@@ -42,7 +42,7 @@ async function main() {
       if (hasError) {
         const errText = await page.locator('text=/invalid|error|incorrect/i').first().textContent().catch(() => "");
         log("Login", false, errText || "Error message shown");
-      } else if (url.includes("/dashboard") || url.includes("/auth/login")) {
+      } else if (url.includes("/dashboard") || url.includes("/login")) {
         log("Login", true, url.includes("/dashboard") ? "Redirected to dashboard" : "Stayed on login (check credentials)");
       } else {
         log("Login", true, `Landed at ${url}`);
