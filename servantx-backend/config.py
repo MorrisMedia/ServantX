@@ -4,6 +4,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from dotenv import load_dotenv
 from pydantic import Field, computed_field, field_validator
@@ -121,8 +122,15 @@ class Settings(BaseSettings):
         if candidate:
             if candidate.startswith("sqlite:///") and "+aiosqlite" not in candidate:
                 return candidate.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
-            if candidate.startswith("postgresql://") and "+asyncpg" not in candidate:
-                return candidate.replace("postgresql://", "postgresql+asyncpg://", 1)
+            if candidate.startswith("postgres") and "+asyncpg" not in candidate:
+                # Ensure asyncpg driver prefix
+                candidate = candidate.replace("postgresql://", "postgresql+asyncpg://", 1)
+                candidate = candidate.replace("postgres://", "postgresql+asyncpg://", 1)
+            # Strip sslmode query param — asyncpg uses connect_args ssl instead
+            parsed = urlparse(candidate)
+            qs = parse_qs(parsed.query, keep_blank_values=True)
+            qs.pop("sslmode", None)
+            candidate = urlunparse(parsed._replace(query=urlencode(qs, doseq=True)))
             return candidate
 
         pg_host = os.getenv("PGHOST") or os.getenv("POSTGRES_HOST") or self.DB_HOST
