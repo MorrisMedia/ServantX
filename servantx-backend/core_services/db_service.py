@@ -19,6 +19,7 @@ if not IS_SQLITE:
             "pool_pre_ping": True,
             "pool_size": settings.SQL_POOL_SIZE,
             "max_overflow": settings.SQL_MAX_OVERFLOW,
+            "connect_args": {"ssl": True},  # required for Neon/managed postgres
         }
     )
 
