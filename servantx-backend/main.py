@@ -4,6 +4,9 @@ import os
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 from routes.admin_rates import router as admin_rates_router
 from routes.analysis import router as analysis_router
 from routes.appeals import router as appeals_router
@@ -23,11 +26,14 @@ from services.rate_seed_service import auto_seed_rate_data
 from services.storage_service import storage_service
 
 
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(
     title=settings.APP_NAME,
     description="Backend API for ServantX",
     version=settings.APP_VERSION,
 )
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 @app.on_event("startup")
