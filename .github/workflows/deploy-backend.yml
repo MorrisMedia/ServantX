@@ -1,0 +1,72 @@
+name: Deploy ServantX Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'servantx-backend/**'
+
+env:
+  DOCKER_IMAGE: asaasin/servantx-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: servantx-backend
+          push: true
+          platforms: linux/amd64
+          tags: ${{ env.DOCKER_IMAGE }}:latest
+
+  deploy:
+    runs-on: self-hosted
+    needs: build-and-push
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Write env file from secrets
+        run: |
+          cat > /home/github/k8s-shared-services/servantx.env << 'ENVEOF'
+          ENVIRONMENT=production
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
+          LANGFUSE_PUBLIC_KEY=${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY=${{ secrets.LANGFUSE_SECRET_KEY }}
+          ENVEOF
+          chmod 600 /home/github/k8s-shared-services/servantx.env
+
+      - name: Sync Kubernetes manifest
+        run: |
+          mkdir -p /home/github/k8s-shared-services
+          cp -f ${{ github.workspace }}/servantx-backend/servantx.yaml /home/github/k8s-shared-services/
+
+      - name: Update Kubernetes secret
+        working-directory: /home/github/k8s-shared-services
+        env:
+          KUBECONFIG: /home/github/.kube/config
+        run: |
+          kubectl delete secret servantx-shared-secret --ignore-not-found
+          kubectl create secret generic servantx-shared-secret --from-env-file=servantx.env
+
+      - name: Deploy
+        working-directory: /home/github/k8s-shared-services
+        env:
+          KUBECONFIG: /home/github/.kube/config
+        run: |
+          kubectl apply -f servantx.yaml
+          kubectl rollout restart deployment servantx-backend
+          kubectl rollout status deployment servantx-backend --timeout=120s
