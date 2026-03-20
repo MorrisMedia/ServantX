@@ -1,0 +1,40 @@
+name: Deploy ServantX Frontend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'servantx-frontend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: servantx-frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: servantx-frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: servantx-frontend
+        env:
+          VITE_API_URL: https://api.servantx.ai
+        run: npm run build
+
+      - name: Deploy to Vercel
+        working-directory: servantx-frontend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          npm install -g vercel
+          vercel deploy --prod --token=$VERCEL_TOKEN --yes
