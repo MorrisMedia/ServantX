@@ -229,12 +229,12 @@ class VercelBlobStorageService(BaseStorageService):
         if not self.token:
             raise RuntimeError("BLOB_READ_WRITE_TOKEN is required when STORAGE_BACKEND=vercel_blob")
         try:
-            from vercel.blob import BlobClient  # type: ignore
-        except Exception as exc:  # pragma: no cover - depends on env package install
+            import vercel_blob  # type: ignore
+            self._vercel_blob = vercel_blob
+        except ImportError as exc:  # pragma: no cover - depends on env package install
             raise RuntimeError(
-                "Missing Python Vercel Blob client. Install the `vercel` package to use STORAGE_BACKEND=vercel_blob."
+                "Missing Python Vercel Blob client. Install the `vercel-blob` package to use STORAGE_BACKEND=vercel_blob."
             ) from exc
-        self.client = BlobClient(token=self.token)
 
     async def save_upload(self, file: UploadFile, *, prefix: str, allowed_types: Set[str], allowed_extensions: Set[str], max_size: int = MAX_FILE_SIZE, namespace: Optional[str] = None) -> Dict[str, Any]:
         file_name, content_type, content = await self._read_and_validate_upload(
@@ -247,75 +247,46 @@ class VercelBlobStorageService(BaseStorageService):
 
     def save_bytes(self, *, content: bytes, filename: str, prefix: str, content_type: str | None = None, namespace: Optional[str] = None) -> Dict[str, Any]:
         pathname = self.build_key(prefix=prefix, filename=filename, namespace=namespace)
-        blob = self.client.put(
-            pathname,
-            content,
-            access=self.access,
-            add_random_suffix=self.add_random_suffix,
-            content_type=content_type,
-        )
-        blob_path = getattr(blob, "pathname", pathname)
+        options: Dict[str, Any] = {"token": self.token, "access": self.access, "addRandomSuffix": self.add_random_suffix}
+        if content_type:
+            options["contentType"] = content_type
+        blob = self._vercel_blob.put(pathname, content, options)
+        blob_path = blob.get("pathname", pathname) if isinstance(blob, dict) else getattr(blob, "pathname", pathname)
         return {
             "storage_key": blob_path,
             "byte_size": len(content),
             "sha256": hashlib.sha256(content).hexdigest(),
             "content_type": content_type,
             "original_file_name": filename,
-            "url": getattr(blob, "url", None),
-            "download_url": getattr(blob, "download_url", None),
-            "etag": getattr(blob, "etag", None),
+            "url": blob.get("url") if isinstance(blob, dict) else getattr(blob, "url", None),
+            "download_url": blob.get("downloadUrl") if isinstance(blob, dict) else getattr(blob, "downloadUrl", None),
         }
 
-    def _get_blob(self, storage_key: str):
-        return self.client.get(storage_key, access=self.access)
-
     def read_bytes(self, storage_key: str) -> bytes:
-        blob = self._get_blob(storage_key)
-        if blob is None:
-            raise FileNotFoundError(f"Storage file not found: {storage_key}")
-        if hasattr(blob, "read"):
-            return blob.read()
-        stream = getattr(blob, "stream", None)
-        if stream is None:
-            raise RuntimeError(f"Unable to read blob content for {storage_key}")
-        if hasattr(stream, "read"):
-            return stream.read()
-        return io.BytesIO(b"".join(stream)).read()
+        # storage_key is a blob URL for vercel_blob
+        response = requests.get(storage_key, timeout=30)
+        response.raise_for_status()
+        return response.content
 
     def file_url(self, storage_key: str, base_url: str = "") -> str:
-        if not storage_key:
-            return ""
-        blob = self.client.head(storage_key)
-        if blob is None:
-            return ""
-        return getattr(blob, "url", "") or ""
+        # For vercel_blob, storage_key IS the URL
+        return storage_key if storage_key.startswith("http") else ""
 
     def presign(self, storage_key: str, operation: str = "download", expires_in: int = settings.STORAGE_PRESIGN_TTL_SECONDS) -> Dict[str, Any]:
-        if operation == "download":
-            blob = self.client.head(storage_key)
-            url = getattr(blob, "download_url", None) or getattr(blob, "url", None)
-            return {
-                "storageKey": storage_key,
-                "operation": operation,
-                "expiresAt": int(time.time()) + expires_in,
-                "token": None,
-                "url": url,
-                "backend": self.backend,
-            }
         return {
             "storageKey": storage_key,
             "operation": operation,
             "expiresAt": int(time.time()) + expires_in,
             "token": None,
-            "url": None,
+            "url": storage_key if operation == "download" else None,
             "backend": self.backend,
-            "note": "Server-side uploads only. Upload through the backend when using vercel_blob.",
         }
 
     def healthcheck(self) -> Dict[str, Any]:
         try:
-            listing = self.client.list_objects(limit=1)
-            return {"backend": self.backend, "ok": True, "sampleCount": len(getattr(listing, "blobs", []) or [])}
+            result = self._vercel_blob.list({"token": self.token, "limit": 1})
+            blobs = result.get("blobs", []) if isinstance(result, dict) else getattr(result, "blobs", [])
+            return {"backend": self.backend, "ok": True, "sampleCount": len(blobs or [])}
         except Exception as exc:
             return {"backend": self.backend, "ok": False, "error": str(exc)}
 
