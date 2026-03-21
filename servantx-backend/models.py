@@ -430,3 +430,32 @@ class TxMedicaidFfsFeeSchedule(Base):
     pricing_context = Column(String, nullable=False, default="STANDARD", index=True)
     source_code = Column(String, nullable=True, index=True)
     allowed_amount = Column(Numeric(12, 2), nullable=False)
+
+
+class PhiTokenMap(Base):
+    """
+    HIPAA PHI De-identification Token Map.
+
+    Stores mappings from deterministic PHI tokens (sent to LLMs) back to the
+    original PHI values (stored locally only). Scoped per hospital with TTL.
+
+    Tokens are deterministic: same (hospital_id, phi_field, phi_value) always
+    produces the same token, so repeated encounters of the same PHI don't create
+    duplicate rows — they reuse the existing token.
+    """
+
+    __tablename__ = "phi_token_map"
+    __table_args__ = (
+        UniqueConstraint("hospital_id", "token", name="uq_phi_token_map_hospital_token"),
+    )
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=False, index=True)
+    document_id = Column(String, ForeignKey("documents.id"), nullable=True, index=True)
+    token = Column(String, nullable=False, index=True)
+    phi_field = Column(String, nullable=False)
+    phi_value = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+
+    hospital = relationship("Hospital")
