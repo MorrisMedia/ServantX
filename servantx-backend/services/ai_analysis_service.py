@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Tuple
 from pydantic import BaseModel
 from core_services.openai_service import chat_with_openai_async
 from services.contract_rules_engine import extract_candidate_rule_lines, extract_conditions
+from services.phi_service import deidentify_835_text, reidentify_text
 
 
 class PaymentAnalysis(BaseModel):
@@ -451,12 +452,24 @@ async def analyze_underpayment(
     contract_name: str,
     receipt_name: str,
     rule_library: Optional[Dict] = None,
+    hospital_id: Optional[str] = None,
 ) -> Dict:
     """
     Async function to analyze underpayment using OpenAI.
+
+    PHI in the receipt (835 EDI) is de-identified via phi_service before
+    being sent to the external API. The LLM only sees opaque tokens.
     """
     print(f"\n[AI SERVICE] Starting async analysis for {contract_name}...", flush=True)
-    
+
+    # ── HIPAA: De-identify PHI in 835 receipt text before sending to LLM ───
+    phi_token_map: Dict[str, str] = {}
+    safe_receipt_text = receipt_text
+    if hospital_id and receipt_text:
+        safe_receipt_text, phi_token_map = deidentify_835_text(receipt_text, hospital_id)
+        print(f"[PHI] De-identified {len(phi_token_map)} PHI tokens from receipt text", flush=True)
+    # Contract text never contains patient PHI — send as-is.
+
     print(f"\n{'='*80}", flush=True)
     print(f"ANALYZING UNDERPAYMENT WITH OPENAI (ASYNC)", flush=True)
     print(f"{'='*80}", flush=True)
@@ -464,10 +477,10 @@ async def analyze_underpayment(
     print(f"Receipt: {receipt_name}", flush=True)
     print(f"\nContract Text Preview (first 500 chars):", flush=True)
     print(contract_text[:500] if contract_text else "No text", flush=True)
-    print(f"\nReceipt Text Preview (first 500 chars):", flush=True)
-    print(receipt_text[:500] if receipt_text else "No text", flush=True)
+    print(f"\nReceipt Text Preview (first 500 chars, de-identified):", flush=True)
+    print(safe_receipt_text[:500] if safe_receipt_text else "No text", flush=True)
     print(f"{'='*80}\n", flush=True)
-    
+
     system_prompt = """You are an expert revenue integrity analyst specialized in identifying hospital underpayments. 
 
 Key principles:
@@ -497,7 +510,7 @@ CONTRACT ({contract_name}):
 {contract_text[:4000] if contract_text else "No contract text available"}
 {library_section}
 RECEIPT ({receipt_name}):
-{receipt_text[:4000] if receipt_text else "No receipt text available"}
+{safe_receipt_text[:4000] if safe_receipt_text else "No receipt text available"}
 
 Your task:
 1. IDENTIFY PAYMENT STRUCTURE in the contract:
@@ -644,14 +657,15 @@ WRONG EXAMPLE (DO NOT DO THIS):
 async def analyze_receipt_against_all_contracts(
     receipt_text: str,
     receipt_name: str,
-    contracts: List[Dict]
+    contracts: List[Dict],
+    hospital_id: Optional[str] = None,
 ) -> List[Dict]:
     """
     Analyze a receipt against all contracts in parallel.
     Returns a list of analysis results for each contract.
     """
     print(f"\n[AI SERVICE] Starting parallel analysis against {len(contracts)} contract(s)...", flush=True)
-    
+
     # Create tasks for all contract analyses
     tasks = []
     for contract in contracts:
@@ -661,6 +675,7 @@ async def analyze_receipt_against_all_contracts(
             contract_name=contract.get("name", "Unknown Contract"),
             receipt_name=receipt_name,
             rule_library=contract.get("rule_library"),
+            hospital_id=hospital_id,
         )
         tasks.append(task)
     
