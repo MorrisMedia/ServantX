@@ -251,7 +251,9 @@ class VercelBlobStorageService(BaseStorageService):
         if content_type:
             options["contentType"] = content_type
         blob = self._vercel_blob.put(pathname, content, options)
-        blob_path = blob.get("pathname", pathname) if isinstance(blob, dict) else getattr(blob, "pathname", pathname)
+        # Use the full CDN URL as storage_key so read_bytes can fetch it directly
+        blob_url = blob.get("url") if isinstance(blob, dict) else getattr(blob, "url", None)
+        blob_path = blob_url or (blob.get("pathname", pathname) if isinstance(blob, dict) else getattr(blob, "pathname", pathname))
         return {
             "storage_key": blob_path,
             "byte_size": len(content),
@@ -263,7 +265,14 @@ class VercelBlobStorageService(BaseStorageService):
         }
 
     def read_bytes(self, storage_key: str) -> bytes:
-        # storage_key is a blob URL for vercel_blob
+        # storage_key is the full CDN URL when saved via save_bytes
+        if not storage_key.startswith("http"):
+            # Fallback: look up by pathname via list API
+            result = self._vercel_blob.list({"token": self.token, "prefix": storage_key, "limit": 1})
+            blobs = result.get("blobs", []) if isinstance(result, dict) else getattr(result, "blobs", [])
+            if not blobs:
+                raise FileNotFoundError(f"Blob not found: {storage_key}")
+            storage_key = blobs[0].get("url") or blobs[0].get("downloadUrl")
         response = requests.get(storage_key, timeout=30)
         response.raise_for_status()
         return response.content
