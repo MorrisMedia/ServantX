@@ -1,10 +1,8 @@
 """
 Authentication routes for login, register, and user management
 """
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 from typing import Optional
 from datetime import datetime
 from sqlalchemy import delete, select
@@ -58,10 +56,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 # OAuth2 scheme for Bearer token
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
 
-# Rate limiter: max 5 login attempts per minute per IP (HIPAA brute-force mitigation)
-limiter = Limiter(key_func=get_remote_address)
-
-
 async def get_current_user(token: Optional[str] = Depends(oauth2_scheme)) -> dict:
     """Dependency to get current authenticated user from Bearer token"""
     if not token:
@@ -92,8 +86,7 @@ async def get_current_user(token: Optional[str] = Depends(oauth2_scheme)) -> dic
 
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit("3/minute")
-async def register(http_request: Request, request: RegisterRequest):
+async def register(request: RegisterRequest):
     """Register a new user"""
     try:
 
@@ -172,8 +165,7 @@ async def register(http_request: Request, request: RegisterRequest):
 
 
 @router.post("/login", response_model=AuthResponse)
-@limiter.limit("5/minute")
-async def login(http_request: Request, request: LoginRequest):
+async def login(request: LoginRequest):
     """Login with email and password using JSON body"""
     # Check if user exists
     user = await get_user_by_email(request.email)
