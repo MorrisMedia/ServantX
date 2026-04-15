@@ -223,3 +223,55 @@ async def chat_with_openai_async(
             model=model
         )
         return "" if schema is None else {}
+
+
+async def chat_with_openai_async_tracked(
+    text: str,
+    prompt: Optional[str] = None,
+    model: str = "gpt-4.1",
+    schema: Optional[BaseModel] = None,
+) -> tuple[Union[str, dict], dict]:
+    """
+    Same as chat_with_openai_async but returns (result, usage_dict).
+    usage_dict = {"input_tokens": int, "output_tokens": int, "latency_ms": int}
+    """
+    import time
+    empty = {} if schema else ""
+    if not settings.OPENAI_API_KEY:
+        return empty, {"input_tokens": 0, "output_tokens": 0, "latency_ms": None}
+
+    system_prompt = prompt or ""
+    client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+    t0 = time.monotonic()
+    try:
+        if schema is None:
+            response = await _call_with_retry(lambda: client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": text}
+                ]
+            ))
+            latency_ms = int((time.monotonic() - t0) * 1000)
+            usage = {"input_tokens": response.usage.prompt_tokens, "output_tokens": response.usage.completion_tokens, "latency_ms": latency_ms}
+            return response.choices[0].message.content, usage
+        else:
+            response = await _call_with_retry(lambda: client.responses.parse(
+                model=model,
+                input=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": text}
+                ],
+                text_format=schema
+            ))
+            latency_ms = int((time.monotonic() - t0) * 1000)
+            usage = {"input_tokens": response.usage.input_tokens, "output_tokens": response.usage.output_tokens, "latency_ms": latency_ms}
+            output_dict = (
+                response.output_parsed.model_dump()
+                if hasattr(response.output_parsed, "model_dump")
+                else dict(response.output_parsed)
+            )
+            return output_dict, usage
+    except Exception as e:
+        error_log(action="openai_tracked", error=str(e), model=model)
+        return empty, {"input_tokens": 0, "output_tokens": 0, "latency_ms": None}

@@ -42,7 +42,7 @@ async def get_user_by_email(email: str) -> Optional[dict]:
         user = result.scalar_one_or_none()
         if not user:
             return None
-        
+
         return {
             "id": user.id,
             "email": user.email,
@@ -50,6 +50,7 @@ async def get_user_by_email(email: str) -> Optional[dict]:
             "name": user.name,
             "hospital_id": user.hospital_id,
             "role": user.role,
+            "is_admin": user.is_admin,
             "has_contract": user.has_contract,
             "created_at": user.created_at.isoformat(),
         }
@@ -60,7 +61,7 @@ async def get_user(user_id: str) -> Optional[dict]:
         user = result.scalar_one_or_none()
         if not user:
             return None
-        
+
         return {
             "id": user.id,
             "email": user.email,
@@ -68,6 +69,7 @@ async def get_user(user_id: str) -> Optional[dict]:
             "name": user.name,
             "hospital_id": user.hospital_id,
             "role": user.role,
+            "is_admin": user.is_admin,
             "has_contract": user.has_contract,
             "created_at": user.created_at.isoformat(),
         }

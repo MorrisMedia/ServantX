@@ -16,7 +16,9 @@ from datetime import date
 from sqlalchemy import select
 
 from core_services.db_service import AsyncSessionLocal
-from core_services.openai_service import chat_with_openai_async
+import asyncio
+from core_services.openai_service import chat_with_openai_async, chat_with_openai_async_tracked
+from services.cost_service import log_ai_cost
 from models import Contract, Document, ParsedData, AuditFinding
 
 
@@ -179,11 +181,21 @@ FINDINGS:
         user_prompt += f"\nWrite a formal appeal letter requesting payment of the ${variance:,.2f} underpayment."
 
         # Call OpenAI
-        letter = await chat_with_openai_async(
+        letter, usage = await chat_with_openai_async_tracked(
             text=user_prompt,
             prompt=SYSTEM_PROMPT,
             model="gpt-4.1",
         )
+        asyncio.ensure_future(log_ai_cost(
+            service="appeal_letter",
+            provider="openai",
+            model="gpt-4.1",
+            input_tokens=usage.get("input_tokens", 0),
+            output_tokens=usage.get("output_tokens", 0),
+            latency_ms=usage.get("latency_ms"),
+            document_id=document_id,
+            success=bool(letter),
+        ))
 
         if not letter:
             return {"success": False, "error": "AI returned empty response"}

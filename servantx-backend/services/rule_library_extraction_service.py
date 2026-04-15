@@ -14,7 +14,9 @@ import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from core_services.openai_service import chat_with_openai_async
+import asyncio
+from core_services.openai_service import chat_with_openai_async, chat_with_openai_async_tracked
+from services.cost_service import log_ai_cost
 from services.rule_library_schema import (
     AuthRequirement,
     CarveOut,
@@ -164,12 +166,21 @@ CONTRACT TEXT:
 Return a JSON object conforming to the ContractRuleLibrary schema.  Be exhaustive."""
 
     try:
-        result = await chat_with_openai_async(
+        result, usage = await chat_with_openai_async_tracked(
             text=user_prompt,
             prompt=_SYSTEM_PROMPT,
             model="gpt-4.1",
             schema=ContractRuleLibrary,
         )
+        asyncio.ensure_future(log_ai_cost(
+            service="contract_extraction",
+            provider="openai",
+            model="gpt-4.1",
+            input_tokens=usage.get("input_tokens", 0),
+            output_tokens=usage.get("output_tokens", 0),
+            latency_ms=usage.get("latency_ms"),
+            success=bool(result),
+        ))
 
         if not isinstance(result, dict) or not result:
             print(f"[RULE LIBRARY] AI returned empty result for {contract_name}", flush=True)

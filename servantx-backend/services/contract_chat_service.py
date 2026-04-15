@@ -1,7 +1,9 @@
 import re
 from typing import Dict, List, Optional
 
-from core_services.openai_service import chat_with_openai_async
+import asyncio
+from core_services.openai_service import chat_with_openai_async, chat_with_openai_async_tracked
+from services.cost_service import log_ai_cost
 from services.web_research_service import search_legal_web_context
 
 
@@ -150,12 +152,20 @@ Answer with:
 4) Any uncertainty or missing clause notes.
 5) End with the required legal disclaimer sentence."""
 
-    output_text = await chat_with_openai_async(
+    output_text, usage = await chat_with_openai_async_tracked(
         text=user_prompt,
         prompt=system_prompt,
         model="gpt-4o-mini",
-        schema=None,
     )
+    asyncio.ensure_future(log_ai_cost(
+        service="contract_chat",
+        provider="openai",
+        model="gpt-4o-mini",
+        input_tokens=usage.get("input_tokens", 0),
+        output_tokens=usage.get("output_tokens", 0),
+        latency_ms=usage.get("latency_ms"),
+        success=bool(output_text),
+    ))
 
     if not output_text:
         return _fallback_answer(question, contract_snippets, web_results, include_web)
