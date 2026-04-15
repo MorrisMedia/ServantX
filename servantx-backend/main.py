@@ -5,6 +5,7 @@ import os
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from routes.admin import router as admin_router
 from routes.admin_rates import router as admin_rates_router
 from routes.analysis import router as analysis_router
 from routes.analytics import router as analytics_router
@@ -68,6 +69,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(admin_router)
 app.include_router(auth_router)
 app.include_router(contact_router)
 app.include_router(contracts_router)
