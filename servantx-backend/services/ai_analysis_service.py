@@ -3,9 +3,12 @@ import asyncio
 import csv
 import io
 import re
+import time
 from typing import Dict, List, Optional, Tuple
 from pydantic import BaseModel
 from core_services.openai_service import chat_with_openai_async
+from core_services.anthropic_service import chat_with_claude_async
+from services.cost_service import log_ai_cost
 from services.contract_rules_engine import extract_candidate_rule_lines, extract_conditions
 from services.phi_service import deidentify_835_text, reidentify_text
 
@@ -446,6 +449,84 @@ def _format_rule_library_for_prompt(rule_library: Optional[Dict]) -> str:
     return "\n".join(sections)
 
 
+async def _build_analysis_prompt(document_id: str) -> Optional[tuple]:
+    """
+    Build (system_prompt, user_prompt) for a given document_id.
+    Used by the benchmark endpoint to run side-by-side model comparisons.
+    Returns None if the document cannot be loaded.
+    Note: requires the document's contract and receipt text to be accessible
+    via storage_service. Returns None (benchmark returns 404) if texts unavailable.
+    """
+    try:
+        from services.document_service import get_document
+        from services.storage_service import storage_service
+        from core_services.db_service import AsyncSessionLocal
+        from sqlalchemy import select
+        from models import Contract, Receipt
+
+        doc = await get_document(document_id)
+        if not doc:
+            return None
+
+        contract_text = ""
+        receipt_text = ""
+
+        # Fetch contract text from storage
+        contract_id = doc.get("contractId")
+        if contract_id:
+            async with AsyncSessionLocal() as db:
+                result = await db.execute(select(Contract).where(Contract.id == contract_id))
+                contract = result.scalar_one_or_none()
+                if contract and contract.file_url:
+                    try:
+                        contract_text = await storage_service.read_text(contract.file_url)
+                    except Exception:
+                        pass
+
+        # Fetch receipt text from storage
+        receipt_id = doc.get("receiptId")
+        if receipt_id:
+            async with AsyncSessionLocal() as db:
+                result = await db.execute(select(Receipt).where(Receipt.id == receipt_id))
+                receipt = result.scalar_one_or_none()
+                if receipt and receipt.file_url:
+                    try:
+                        receipt_text = await storage_service.read_text(receipt.file_url)
+                    except Exception:
+                        pass
+
+        if not contract_text and not receipt_text:
+            return None
+
+        system_prompt = """You are an expert revenue integrity analyst specialized in identifying hospital underpayments.
+
+Key principles:
+- The RECEIPT amount is your base truth - never modify it
+- Always prorate the CONTRACT to match the RECEIPT's time period (not the other way around)
+- receipt_amount = exact amount from receipt (unchanged)
+- contract_amount = prorated contract amount (converted to match receipt's period)
+- underpayment_amount = contract_amount - receipt_amount
+- Show step-by-step prorating calculations in reasoning
+- Be conservative: when unclear, favor no underpayment over false positives
+- Extract amounts accurately from contracts and receipts
+- Always respond in valid JSON format"""
+
+        user_prompt = f"""Analyze the following contract and receipt to identify any underpayment issues.
+
+CONTRACT:
+{contract_text[:4000] if contract_text else "No contract text available"}
+
+RECEIPT:
+{receipt_text[:4000] if receipt_text else "No receipt text available"}
+
+Identify whether an underpayment occurred and by how much."""
+
+        return system_prompt, user_prompt
+
+    except Exception:
+        return None
+
+
 async def analyze_underpayment(
     contract_text: str,
     receipt_text: str,
@@ -616,12 +697,26 @@ WRONG EXAMPLE (DO NOT DO THIS):
 """
     
     try:
-        result = await chat_with_openai_async(
+        t0 = time.monotonic()
+        result, usage = await chat_with_claude_async(
             text=user_prompt,
             prompt=system_prompt,
-            model="gpt-4.1",
-            schema=UnderpaymentAnalysis
+            model="claude-sonnet-4-6",
+            cache_system=True,   # cache the ~2KB system prompt across claims in same batch
+            schema=UnderpaymentAnalysis,
         )
+        latency_ms = int((time.monotonic() - t0) * 1000)
+        asyncio.ensure_future(log_ai_cost(
+            service="underpayment_analysis",
+            provider="anthropic",
+            model="claude-sonnet-4-6",
+            input_tokens=usage.get("input_tokens", 0),
+            output_tokens=usage.get("output_tokens", 0),
+            cache_read_tokens=usage.get("cache_read_tokens", 0),
+            cache_write_tokens=usage.get("cache_write_tokens", 0),
+            latency_ms=latency_ms,
+            success=bool(result),
+        ))
 
         if not isinstance(result, dict) or not result:
             return _deterministic_rule_fallback(
