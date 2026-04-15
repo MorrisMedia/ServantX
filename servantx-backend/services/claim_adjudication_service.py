@@ -620,10 +620,16 @@ async def adjudicate_receipt(
         total_variance, has_underpayment, claim_results, documents_created
     """
     from services.document_service import create_document
+    from services.hospital_service import get_hospital
 
     receipt_id = receipt_data["id"]
     file_url = receipt_data.get("fileUrl", "")
     file_name = receipt_data.get("fileName", "")
+
+    # ── Fetch hospital config for pricing mode ──
+    hospital_record = await get_hospital(hospital_id)
+    pricing_mode = (hospital_record or {}).get("pricing_mode", "AUTO") if hospital_record else "AUTO"
+    hospital_state = (hospital_record or {}).get("state") if hospital_record else None
 
     # ── Step 1: Extract text ──
     raw_text = extract_billing_record_text(file_url, file_name)
@@ -664,6 +670,10 @@ async def adjudicate_receipt(
             payer_name = claim.get("payer_name")
             payer_key = normalize_payer_key(payer_name, None)
             claim["payer_key"] = payer_key
+            # CSV files often lack structured payer info — flag for contract/AI if no match
+            if payer_key == "OTHER" and pricing_mode == "AUTO":
+                # We'll let the orchestrator try contract rules + AI
+                claim["_use_contract_fallback"] = True
             claim["claim_index"] = claim.get("row_number", 0)
             parsed_claims.append(claim)
 
@@ -752,15 +762,20 @@ async def adjudicate_receipt(
     for claim in parsed_claims:
         claim_type = detect_claim_type(claim)
         contract = match_contract_for_claim(claim, contracts)
-        rule_library = (contract.get("rule_library") if contract else None) or {}
         contract_id = contract.get("id") if contract else None
 
-        repricing_result = await reprice_single_claim(
+        from services.pricing_orchestrator import price_claim
+        pricing_result = await price_claim(
             parsed_claim=claim,
             claim_type=claim_type,
-            rule_library=rule_library if isinstance(rule_library, dict) else {},
-            service_lines=claim.get("service_lines"),
+            contracts=contracts,
+            hospital_id=hospital_id,
+            pricing_mode=pricing_mode,
+            state=hospital_state,
+            receipt_raw_text=raw_text,
+            receipt_name=file_name,
         )
+        repricing_result = pricing_result["recommended"]
 
         expected = repricing_result.get("expected_payment")
         paid = float(repricing_result.get("actual_paid") or 0.0)
@@ -796,6 +811,9 @@ async def adjudicate_receipt(
             "errors": repricing_result.get("errors", []),
             "confidence_score": repricing_result.get("confidence_score"),
             "rate_source": repricing_result.get("rate_source"),
+            "pricing_comparison": pricing_result.get("all_results", []),
+            "engines_run": pricing_result.get("engines_run", []),
+            "pricing_mode": pricing_result.get("pricing_mode_used", "AUTO"),
         }
         if repricing_result.get("components"):
             notes_payload["components"] = repricing_result["components"]

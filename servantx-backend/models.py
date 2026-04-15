@@ -46,6 +46,8 @@ class Hospital(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     name = Column(String, nullable=False)
     phone = Column(String, nullable=True)
+    pricing_mode = Column(String, nullable=False, default="AUTO")
+    state = Column(String(2), nullable=True)  # e.g. "TX", "CA"
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     users = relationship("User", back_populates="hospital")

@@ -50,6 +50,7 @@ from services.user_service import (
 from services.hospital_service import (
     create_hospital,
     get_hospital,
+    update_hospital_config,
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -403,6 +404,66 @@ async def update_has_contract(
         has_contract=updated_user.get("has_contract", False),
         created_at=created_at,
     )
+
+
+VALID_PRICING_MODES = {"AUTO", "MEDICARE", "MEDICAID", "CONTRACT", "ALL"}
+
+
+@router.get("/hospital/config")
+async def get_hospital_config(current_user: dict = Depends(get_current_user)):
+    """Get pricing configuration for the current user's hospital."""
+    hospital = await get_hospital(current_user["hospital_id"])
+    if not hospital:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Hospital not found",
+        )
+    return {
+        "hospital_id": hospital["id"],
+        "pricing_mode": hospital.get("pricing_mode", "AUTO"),
+        "state": hospital.get("state"),
+    }
+
+
+@router.patch("/hospital/config")
+async def patch_hospital_config(
+    request: dict,
+    current_user: dict = Depends(get_current_user),
+):
+    """Update pricing_mode and/or state for the current user's hospital.
+
+    Body: {"pricing_mode": "ALL", "state": "TX"}
+    Valid pricing_mode values: AUTO, MEDICARE, MEDICAID, CONTRACT, ALL
+    """
+    pricing_mode = request.get("pricing_mode")
+    state = request.get("state")
+
+    if pricing_mode is not None and pricing_mode not in VALID_PRICING_MODES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid pricing_mode '{pricing_mode}'. Valid values: {sorted(VALID_PRICING_MODES)}",
+        )
+    if state is not None and (not isinstance(state, str) or len(state) != 2):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="state must be a 2-letter string (e.g. 'TX')",
+        )
+
+    updated = await update_hospital_config(
+        hospital_id=current_user["hospital_id"],
+        pricing_mode=pricing_mode,
+        state=state.upper() if state else None,
+    )
+    if not updated:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Hospital not found",
+        )
+    return {
+        "hospital_id": updated["id"],
+        "pricing_mode": updated["pricing_mode"],
+        "state": updated["state"],
+    }
 
 
 @router.post("/reset-demo-data")
