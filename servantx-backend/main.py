@@ -10,6 +10,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from routes.admin_rates import router as admin_rates_router
 from routes.analysis import router as analysis_router
+from routes.analytics import router as analytics_router
 from routes.appeals import router as appeals_router
 from routes.auth import router as auth_router
 from routes.batches import router as batches_router
@@ -80,6 +81,7 @@ app.include_router(receipts_router)
 app.include_router(rules_router)
 app.include_router(batches_router)
 app.include_router(analysis_router)
+app.include_router(analytics_router)
 app.include_router(appeals_router)
 app.include_router(admin_rates_router)
 app.include_router(documents_router)

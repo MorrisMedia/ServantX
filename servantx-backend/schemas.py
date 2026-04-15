@@ -297,6 +297,11 @@ class Document(BaseModel):
     parsedData: Optional[Dict[str, Any]] = None
     findings: Optional[List[Dict[str, Any]]] = None
     repricingSummary: Optional[Dict[str, Any]] = None
+    appealStatus: Optional[str] = "none"
+    appealLetter: Optional[str] = None
+    recoveredAmount: Optional[float] = None
+    appealFiledAt: Optional[datetime] = None
+    appealUpdatedAt: Optional[datetime] = None
 
     class Config:
         from_attributes = True

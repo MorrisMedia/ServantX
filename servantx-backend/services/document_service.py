@@ -89,7 +89,12 @@ async def get_document(document_id: str) -> Optional[dict]:
             "submittedAt": document.submitted_at,
             "notes": document.notes,
             "rulesApplied": document.rules_applied.split(",") if document.rules_applied else None,
-            "isBulkDownloaded": document.is_bulk_downloaded
+            "isBulkDownloaded": document.is_bulk_downloaded,
+            "appealStatus": document.appeal_status,
+            "appealLetter": document.appeal_letter,
+            "recoveredAmount": float(document.recovered_amount) if document.recovered_amount is not None else None,
+            "appealFiledAt": document.appeal_filed_at,
+            "appealUpdatedAt": document.appeal_updated_at,
         }
 
 async def get_documents_by_receipt(receipt_id: str) -> List[dict]:
@@ -115,7 +120,11 @@ async def get_documents_by_receipt(receipt_id: str) -> List[dict]:
                 "submittedAt": doc.submitted_at,
                 "notes": doc.notes,
                 "rulesApplied": doc.rules_applied.split(",") if doc.rules_applied else None,
-                "isBulkDownloaded": doc.is_bulk_downloaded
+                "isBulkDownloaded": doc.is_bulk_downloaded,
+                "appealStatus": doc.appeal_status,
+                "recoveredAmount": float(doc.recovered_amount) if doc.recovered_amount is not None else None,
+                "appealFiledAt": doc.appeal_filed_at,
+                "appealUpdatedAt": doc.appeal_updated_at,
             }
             for doc in documents
         ]
@@ -214,7 +223,11 @@ async def get_all_documents(
                 "submittedAt": doc.submitted_at,
                 "notes": doc.notes,
                 "rulesApplied": doc.rules_applied.split(",") if doc.rules_applied else None,
-                "isBulkDownloaded": doc.is_bulk_downloaded
+                "isBulkDownloaded": doc.is_bulk_downloaded,
+                "appealStatus": doc.appeal_status,
+                "recoveredAmount": float(doc.recovered_amount) if doc.recovered_amount is not None else None,
+                "appealFiledAt": doc.appeal_filed_at,
+                "appealUpdatedAt": doc.appeal_updated_at,
             }
             for doc in documents
         ]
@@ -270,7 +283,12 @@ async def update_document(document_id: str, **kwargs) -> Optional[dict]:
             "submittedAt": document.submitted_at,
             "notes": document.notes,
             "rulesApplied": document.rules_applied.split(",") if document.rules_applied else None,
-            "isBulkDownloaded": document.is_bulk_downloaded
+            "isBulkDownloaded": document.is_bulk_downloaded,
+            "appealStatus": document.appeal_status,
+            "appealLetter": document.appeal_letter,
+            "recoveredAmount": float(document.recovered_amount) if document.recovered_amount is not None else None,
+            "appealFiledAt": document.appeal_filed_at,
+            "appealUpdatedAt": document.appeal_updated_at,
         }
 
 async def delete_documents_by_receipt(receipt_id: str) -> int:

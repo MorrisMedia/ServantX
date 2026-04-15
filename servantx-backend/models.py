@@ -266,6 +266,12 @@ class Document(Base):
     submitted_at = Column(DateTime, nullable=True)
     notes = Column(Text, nullable=True)
     rules_applied = Column(Text, nullable=True)
+    appeal_status = Column(String, nullable=False, default="none", index=True)
+    # Values: none | identified | drafted | filed | under_review | approved | partial | denied
+    appeal_letter = Column(Text, nullable=True)        # Generated appeal letter text
+    recovered_amount = Column(Numeric(12, 2), nullable=True)  # Amount actually recovered
+    appeal_filed_at = Column(DateTime, nullable=True)
+    appeal_updated_at = Column(DateTime, nullable=True)
     is_bulk_downloaded = Column(Boolean, default=False, nullable=False)
 
     receipt = relationship("Receipt", back_populates="documents")
@@ -475,6 +481,18 @@ class OppsApcRate(Base):
     status_indicator = Column(String(5), nullable=True)      # S=significant, T=surgical, etc.
     description = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class MedicareDrgWeight(Base):
+    __tablename__ = "medicare_drg_weights"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    year = Column(Integer, nullable=False, index=True)
+    drg_code = Column(String(10), nullable=False, index=True)
+    drg_weight = Column(Numeric(10, 4), nullable=False)
+    geometric_mean_los = Column(Numeric(6, 1), nullable=True)
+    arithmetic_mean_los = Column(Numeric(6, 1), nullable=True)
+    description = Column(Text, nullable=True)
 
 
 class AppAuditLog(Base):

@@ -8,6 +8,7 @@ from core_services.db_service import AsyncSessionLocal
 from models import AuditFinding, ParsedData
 from services.document_service import get_document, get_all_documents, update_document, mark_documents_bulk_downloaded
 from services.audit_service import log_event
+from services.appeal_letter_service import generate_appeal_letter
 from routes.auth import get_current_user
 
 
@@ -21,6 +22,10 @@ class DocumentUpdateRequest(BaseModel):
 
 class BulkDownloadRequest(BaseModel):
     documentIds: List[str]
+
+class AppealUpdateRequest(BaseModel):
+    appeal_status: Optional[str] = None
+    recovered_amount: Optional[float] = None
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -288,15 +293,92 @@ async def mark_bulk_downloaded(
     try:
         hospital_id = current_user["hospital_id"]
         count = await mark_documents_bulk_downloaded(request.documentIds, hospital_id)
-        
+
         return {
             "success": True,
             "count": count,
             "message": f"Marked {count} documents as bulk downloaded"
         }
-    
+
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to mark documents as bulk downloaded: {str(e)}"
         )
+
+
+@router.post("/{document_id}/generate-appeal")
+async def generate_document_appeal(
+    document_id: str,
+    additional_context: str = Body(default="", embed=True),
+    current_user: dict = Depends(get_current_user),
+):
+    """Generate an AI appeal letter for an underpaid claim."""
+    doc_data = await get_document(document_id)
+    if not doc_data:
+        raise HTTPException(status_code=404, detail="Document not found")
+    if doc_data.get("hospitalId") != current_user["hospital_id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    result = await generate_appeal_letter(
+        document_id=document_id,
+        hospital_id=current_user["hospital_id"],
+        additional_context=additional_context,
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "Failed to generate appeal"))
+
+    # Save the letter to the document
+    await update_document(
+        document_id,
+        appeal_letter=result["letter"],
+        appeal_status="drafted",
+        appeal_updated_at=datetime.utcnow(),
+    )
+    await log_event(
+        "APPEAL_GENERATED",
+        hospital_id=current_user["hospital_id"],
+        user_id=current_user.get("id"),
+        resource_type="document",
+        resource_id=document_id,
+    )
+
+    return {"letter": result["letter"], "summary": result["summary"], "appeal_status": "drafted"}
+
+
+@router.patch("/{document_id}/appeal")
+async def update_appeal_status(
+    document_id: str,
+    request: AppealUpdateRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    """Update appeal status (filed, approved, denied, etc.) and recovered amount."""
+    doc_data = await get_document(document_id)
+    if not doc_data:
+        raise HTTPException(status_code=404, detail="Document not found")
+    if doc_data.get("hospitalId") != current_user["hospital_id"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    valid_statuses = {"none", "identified", "drafted", "filed", "under_review", "approved", "partial", "denied"}
+    if request.appeal_status and request.appeal_status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {valid_statuses}")
+
+    update_kwargs: dict = {"appeal_updated_at": datetime.utcnow()}
+    if request.appeal_status:
+        update_kwargs["appeal_status"] = request.appeal_status
+        if request.appeal_status == "filed":
+            update_kwargs["appeal_filed_at"] = datetime.utcnow()
+    if request.recovered_amount is not None:
+        update_kwargs["recovered_amount"] = request.recovered_amount
+
+    await update_document(document_id, **update_kwargs)
+    await log_event(
+        "APPEAL_STATUS_UPDATE",
+        hospital_id=current_user["hospital_id"],
+        user_id=current_user.get("id"),
+        resource_type="document",
+        resource_id=document_id,
+        metadata={"new_status": request.appeal_status, "recovered_amount": request.recovered_amount},
+    )
+
+    return {"message": "Appeal updated", "appeal_status": request.appeal_status}
