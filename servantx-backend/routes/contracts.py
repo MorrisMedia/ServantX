@@ -33,6 +33,7 @@ from services.contract_chat_service import generate_contract_chat_response
 from services.contract_processing_service import process_contract_with_rules_engine
 from services.contract_rules_engine import get_contract_text_with_fallback
 from routes.auth import get_current_user
+from services.audit_service import log_event
 
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 
@@ -220,9 +221,17 @@ async def upload_contract(
             await process_contract_with_rules_engine(contract_data["id"])
         else:
             background_tasks.add_task(process_contract_with_rules_engine, contract_data["id"])
-        
+
+        await log_event(
+            "CONTRACT_UPLOAD",
+            hospital_id=hospital_id,
+            user_id=current_user.get("id"),
+            resource_type="contract",
+            resource_id=contract_data["id"],
+        )
+
         contract = Contract(**contract_data)
-        
+
         return ContractUploadResponse(
             contract=contract,
             message="Contract uploaded successfully. Processing continues in the background."

@@ -30,14 +30,44 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import os
+import base64
 import re
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
+
+
+def _get_phi_key() -> bytes:
+    """Load or derive the 32-byte AES key from env."""
+    raw = os.environ.get("PHI_ENCRYPTION_KEY", "")
+    if not raw:
+        # Dev fallback: derive from JWT_SECRET_KEY so local dev still works
+        return hashlib.sha256(settings.JWT_SECRET_KEY.encode()).digest()
+    return base64.b64decode(raw)
+
+
+def encrypt_phi(plaintext: str) -> str:
+    """AES-256-GCM encrypt PHI. Returns base64(nonce + ciphertext + tag)."""
+    key = _get_phi_key()
+    aesgcm = AESGCM(key)
+    nonce = os.urandom(12)  # 96-bit nonce
+    ct = aesgcm.encrypt(nonce, plaintext.encode(), None)
+    return base64.b64encode(nonce + ct).decode()
+
+
+def decrypt_phi(encoded: str) -> str:
+    """Decrypt a value produced by encrypt_phi(). Returns original plaintext."""
+    key = _get_phi_key()
+    raw = base64.b64decode(encoded)
+    nonce, ct = raw[:12], raw[12:]
+    aesgcm = AESGCM(key)
+    return aesgcm.decrypt(nonce, ct, None).decode()
 
 # TTL for PHI token records — 90 days satisfies HIPAA minimum retention
 PHI_TOKEN_TTL_DAYS = 90
@@ -385,7 +415,7 @@ async def store_phi_tokens(
                 document_id=document_id,
                 token=token,
                 phi_field=phi_field,
-                phi_value=phi_value,
+                phi_value=encrypt_phi(phi_value),
                 expires_at=expires_at,
             ))
 
@@ -408,7 +438,7 @@ async def lookup_phi_token(
         )
     )
     row = result.scalar_one_or_none()
-    return row.phi_value if row else None
+    return decrypt_phi(row.phi_value) if row else None
 
 
 async def fetch_token_map_for_document(
@@ -430,4 +460,4 @@ async def fetch_token_map_for_document(
         )
     )
     rows = result.scalars().all()
-    return {row.token: row.phi_value for row in rows}
+    return {row.token: decrypt_phi(row.phi_value) for row in rows}

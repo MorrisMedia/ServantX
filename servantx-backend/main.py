@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 
 import os
 from fastapi import FastAPI, HTTPException, Request, status
@@ -45,6 +46,21 @@ async def startup_bootstrap_local_db():
         if settings.AUTO_SEED_RATE_DATA:
             async with AsyncSessionLocal() as db:
                 await auto_seed_rate_data(db)
+
+        # Purge expired PHI tokens (HIPAA: minimize PHI retention)
+        try:
+            async with AsyncSessionLocal() as db:
+                from sqlalchemy import delete
+                from models import PhiTokenMap
+                result = await db.execute(
+                    delete(PhiTokenMap).where(PhiTokenMap.expires_at < datetime.utcnow())
+                )
+                await db.commit()
+                if result.rowcount:
+                    print(f"[STARTUP] Purged {result.rowcount} expired PHI tokens", flush=True)
+        except Exception as e:
+            print(f"[STARTUP] PHI token cleanup warning: {e}", flush=True)
+
     except Exception as exc:
         print(f"Startup bootstrap warning: {exc}")
 

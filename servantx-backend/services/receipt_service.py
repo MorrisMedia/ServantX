@@ -10,7 +10,8 @@ async def create_receipt(
     file_path: str,
     file_size: int,
     amount: float = 0.0,
-    has_difference: bool = False
+    has_difference: bool = False,
+    file_hash: Optional[str] = None,
 ) -> dict:
     async with AsyncSessionLocal() as db:
         receipt = Receipt(
@@ -21,7 +22,8 @@ async def create_receipt(
             file_name=file_name,
             file_size=file_size,
             file_url=file_path,
-            status="pending"
+            status="pending",
+            file_hash=file_hash,
         )
         db.add(receipt)
         await db.commit()

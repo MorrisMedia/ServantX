@@ -7,6 +7,7 @@ from schemas import Document, PaginatedDocumentsResponse
 from core_services.db_service import AsyncSessionLocal
 from models import AuditFinding, ParsedData
 from services.document_service import get_document, get_all_documents, update_document, mark_documents_bulk_downloaded
+from services.audit_service import log_event
 from routes.auth import get_current_user
 
 
@@ -130,6 +131,14 @@ async def get_document_by_id(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You don't have permission to view this document"
             )
+
+        await log_event(
+            "DOCUMENT_VIEW",
+            hospital_id=doc_data.get("hospitalId"),
+            user_id=current_user.get("id"),
+            resource_type="document",
+            resource_id=document_id,
+        )
 
         # Claim-level documents include parsed payload, findings, and repricing summary.
         if doc_data.get("documentRole") == "CLAIM":

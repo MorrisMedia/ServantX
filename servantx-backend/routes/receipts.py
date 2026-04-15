@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, status, UploadFile, File, Query, D
 from config import settings
 from typing import List, Optional
 from datetime import datetime
+import hashlib
 import zipfile
 import io
 import uuid
@@ -28,6 +29,7 @@ from services.document_service import create_document
 from services.claim_adjudication_service import adjudicate_receipt
 from services.contract_rules_engine import get_contract_text_with_fallback
 from routes.auth import get_current_user
+from services.audit_service import log_event
 
 router = APIRouter(prefix="/receipts", tags=["receipts"])
 
@@ -334,18 +336,45 @@ async def upload_receipt(
             )
 
         # ── Normal single-file upload path ──
+        # Read bytes for hashing before saving (file object is consumed by save)
+        file_content = await file.read()
+        file_hash = hashlib.sha256(file_content).hexdigest()
+        # Seek back so save_receipt_file can read the bytes
+        import io as _io
+        from fastapi import UploadFile as _UploadFile
+        file.file = _io.BytesIO(file_content)
+
+        # Check for duplicate within this hospital
+        from sqlalchemy import select as _select
+        from models import Receipt as ReceiptModel
+        from core_services.db_service import AsyncSessionLocal as _AsyncSessionLocal
+        async with _AsyncSessionLocal() as _db:
+            _existing = await _db.execute(
+                _select(ReceiptModel).where(
+                    ReceiptModel.hospital_id == hospital_id,
+                    ReceiptModel.file_hash == file_hash,
+                )
+            )
+            _dup = _existing.scalar_one_or_none()
+            if _dup:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"This file was already uploaded (receipt ID: {_dup.id}). Use the existing record or delete it first."
+                )
+
         file_id, file_path, file_size = await save_receipt_file(file, hospital_id)
-        
+
         amount = 0.0
         has_difference = False
-        
+
         receipt_data = await create_receipt(
             hospital_id=hospital_id,
             file_name=file.filename or "receipt.pdf",
             file_path=file_path,
             file_size=file_size,
             amount=amount,
-            has_difference=has_difference
+            has_difference=has_difference,
+            file_hash=file_hash,
         )
 
         queued_receipt = await update_receipt(receipt_data["id"], status="processing")
@@ -355,9 +384,17 @@ async def upload_receipt(
             await _run_rules_scan_for_receipt_background(receipt_data["id"], hospital_id)
         else:
             background_tasks.add_task(_run_rules_scan_for_receipt_background, receipt_data["id"], hospital_id)
-        
+
+        await log_event(
+            "RECEIPT_UPLOAD",
+            hospital_id=hospital_id,
+            user_id=current_user.get("id"),
+            resource_type="receipt",
+            resource_id=receipt_data["id"],
+        )
+
         receipt_data["fileUrl"] = get_file_url(file_path)
-        
+
         document = None
         receipt = Receipt(**receipt_data)
         

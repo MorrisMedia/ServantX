@@ -202,6 +202,7 @@ class Receipt(Base):
     file_size = Column(Integer, nullable=True)
     file_url = Column(String, nullable=True)
     status = Column(String, default="pending", nullable=False)
+    file_hash = Column(String(64), nullable=True, index=True)  # SHA-256 hex
 
     hospital = relationship("Hospital", back_populates="receipts")
     project = relationship("Project", back_populates="receipts")
@@ -461,3 +462,30 @@ class PhiTokenMap(Base):
     expires_at = Column(DateTime, nullable=False)
 
     hospital = relationship("Hospital")
+
+
+class OppsApcRate(Base):
+    __tablename__ = "opps_apc_rates"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    year = Column(Integer, nullable=False, index=True)
+    hcpcs_code = Column(String(10), nullable=False, index=True)
+    apc_code = Column(String(10), nullable=False, index=True)
+    payment_rate = Column(Numeric(12, 2), nullable=False)   # 2026 national payment
+    status_indicator = Column(String(5), nullable=True)      # S=significant, T=surgical, etc.
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class AppAuditLog(Base):
+    __tablename__ = "app_audit_log"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=True, index=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=True, index=True)
+    event_type = Column(String, nullable=False, index=True)  # RECEIPT_UPLOAD, DOCUMENT_VIEW, CONTRACT_UPLOAD, PHI_ACCESS, etc.
+    resource_type = Column(String, nullable=True)   # receipt, document, contract, phi_token
+    resource_id = Column(String, nullable=True, index=True)
+    ip_address = Column(String, nullable=True)
+    metadata_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)

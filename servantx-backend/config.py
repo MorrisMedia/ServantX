@@ -31,6 +31,9 @@ class Settings(BaseSettings):
         "http://localhost:5000",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5000",
+        "https://www.servantx.ai",
+        "https://servantx.ai",
+        "https://servantx-frontend.vercel.app",
     ])
 
     OPENAI_API_KEY: str = ""
@@ -44,6 +47,7 @@ class Settings(BaseSettings):
     LANGFUSE_HOST: str = "https://cloud.langfuse.com"
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
+    PHI_ENCRYPTION_KEY: str = ""
 
     DATABASE_URL: str = ""
     POSTGRES_URL: str = ""

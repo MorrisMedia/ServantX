@@ -33,3 +33,4 @@ slowapi==0.1.9
 
 
 vercel-blob>=0.4.0
+cryptography>=42.0.0
