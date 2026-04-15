@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "build": {
+    "env": {
+      "PIP_BREAK_SYSTEM_PACKAGES": "1"
+    }
+  },
   "builds": [
     {
       "src": "main.py",
