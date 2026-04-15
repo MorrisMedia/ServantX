@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     ])
 
     OPENAI_API_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
+    ADMIN_SECRET_KEY: str = ""
     SENDGRID_API_KEY: str = ""
     SENDGRID_FROM_EMAIL: str = "servantx@hirekosovo.com"
     SENDGRID_FROM_NAME: str = "ServantX Contact"
