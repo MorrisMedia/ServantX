@@ -87,6 +87,64 @@ def lookup_drg_weight(
         except ValueError:
             pass
 
+    # DB fallback — look up CMS 2026 DRG weights table
+    try:
+        import asyncio
+        import asyncpg
+        import os
+
+        db_url = os.environ.get("DATABASE_URL", "")
+        if db_url.startswith("postgresql+asyncpg://"):
+            pg_url = db_url.replace("postgresql+asyncpg://", "postgresql://", 1)
+        elif db_url.startswith("postgres://"):
+            pg_url = db_url.replace("postgres://", "postgresql://", 1)
+        else:
+            pg_url = db_url
+
+        if pg_url:
+            # Try all candidate forms
+            candidates = [drg_code.strip()]
+            if clean_drg not in candidates:
+                candidates.append(clean_drg)
+            try:
+                padded = str(int(clean_drg)).zfill(3)
+                if padded not in candidates:
+                    candidates.append(padded)
+            except ValueError:
+                pass
+
+            async def _db_lookup():
+                conn = await asyncpg.connect(pg_url)
+                try:
+                    for candidate in candidates:
+                        row = await conn.fetchrow(
+                            "SELECT drg_weight FROM medicare_drg_weights "
+                            "WHERE drg_code = $1 AND year = 2026 LIMIT 1",
+                            candidate,
+                        )
+                        if row:
+                            return float(row["drg_weight"])
+                    return None
+                finally:
+                    await conn.close()
+
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    import concurrent.futures
+                    with concurrent.futures.ThreadPoolExecutor() as pool:
+                        future = pool.submit(asyncio.run, _db_lookup())
+                        weight_val = future.result(timeout=5)
+                else:
+                    weight_val = loop.run_until_complete(_db_lookup())
+
+                if weight_val is not None:
+                    return {"weight": weight_val, "source": "CMS_DRG_2026_DB", "errors": []}
+            except Exception:
+                pass
+    except Exception:
+        pass
+
     # Fallback — no DRG weight found
     return {"weight": 1.0, "source": "FALLBACK_WEIGHT", "errors": ["DRG_WEIGHT_NOT_FOUND"]}
 
