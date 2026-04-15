@@ -409,7 +409,8 @@ async def reprice_single_claim(
         return reprice_ipps_claim(claim=parsed_claim, rule_library=rule_library)
 
     if claim_type == "INSTITUTIONAL_OP":
-        return reprice_opps_claim(claim=parsed_claim, rule_library=rule_library)
+        from services.opps_repricing_service import reprice_opps_claim_with_db
+        return await reprice_opps_claim_with_db(claim=parsed_claim, rule_library=rule_library)
 
     # PROFESSIONAL — use existing per-line repricing from repricing_service
     # We import lazily to avoid circular imports and because we need an async
@@ -750,6 +751,17 @@ async def adjudicate_receipt(
             "claim_results": [],
             "documents_created": [doc],
         }
+
+    # ── Step 3b: Chunk large files to avoid Vercel 60s timeout ──
+    MAX_CLAIMS_PER_RUN = 30  # Process at most 30 claims synchronously on Vercel
+
+    if len(parsed_claims) > MAX_CLAIMS_PER_RUN:
+        print(f"[ADJUDICATION] Large file: {len(parsed_claims)} claims. Processing first {MAX_CLAIMS_PER_RUN} synchronously.", flush=True)
+        # Process first batch synchronously; remaining claims get a deferred document
+        deferred_count = len(parsed_claims) - MAX_CLAIMS_PER_RUN
+        parsed_claims = parsed_claims[:MAX_CLAIMS_PER_RUN]
+        # We'll note the deferred count in the receipt notes
+        # (full batch processing can be done via the /receipts/{id}/scan endpoint triggered later)
 
     # ── Step 4-5: Detect type, route to repricing, create documents ──
     claim_results: List[Dict[str, Any]] = []

@@ -619,7 +619,7 @@ WRONG EXAMPLE (DO NOT DO THIS):
         result = await chat_with_openai_async(
             text=user_prompt,
             prompt=system_prompt,
-            model="gpt-4o-mini",
+            model="gpt-4.1",
             schema=UnderpaymentAnalysis
         )
 

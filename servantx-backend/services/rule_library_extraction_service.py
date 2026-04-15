@@ -167,7 +167,7 @@ Return a JSON object conforming to the ContractRuleLibrary schema.  Be exhaustiv
         result = await chat_with_openai_async(
             text=user_prompt,
             prompt=_SYSTEM_PROMPT,
-            model="gpt-4o-mini",
+            model="gpt-4.1",
             schema=ContractRuleLibrary,
         )
 

@@ -66,4 +66,15 @@ async def auto_seed_rate_data(db: AsyncSession) -> list[dict]:
             "rows_imported": result.rows_imported,
             "sha256": result.sha256,
         })
+
+    # Seed OPPS APC rates (idempotent — ON CONFLICT DO NOTHING)
+    from services.opps_seed_service import seed_opps_rates
+    opps_inserted = await seed_opps_rates(db)
+    if opps_inserted > 0:
+        seeded.append({
+            "payer_key": "CMS_OPPS_2026",
+            "rows_imported": opps_inserted,
+            "sha256": "static_seed",
+        })
+
     return seeded

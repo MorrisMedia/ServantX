@@ -14,6 +14,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+from sqlalchemy import select
+
 
 def reprice_opps_claim(
     claim: Dict[str, Any],
@@ -99,4 +101,102 @@ def reprice_opps_claim(
             "total_charges": round(total_charges, 2),
             "note": "OPPS stub — full APC-level repricing not yet implemented.",
         },
+    }
+
+
+async def reprice_opps_claim_with_db(
+    claim: Dict[str, Any],
+    rule_library: Optional[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """
+    Full APC-based OPPS repricing. Looks up each HCPCS in opps_apc_rates table.
+    Falls back to the existing contract-based calculation if DB lookup fails.
+    """
+    from core_services.db_service import AsyncSessionLocal
+    from models import OppsApcRate
+
+    # Extract service lines or fall back to single claim CPT
+    service_lines = claim.get("service_lines") or []
+    single_cpt = claim.get("cpt_hcpcs", "").strip()
+    if not service_lines and single_cpt:
+        service_lines = [{"cpt_hcpcs": single_cpt, "line_payment_amount": float(claim.get("claim_payment_amount") or 0), "units": 1}]
+
+    if not service_lines:
+        # No line detail — fall back to existing stub logic
+        return reprice_opps_claim(claim, rule_library)
+
+    total_expected = 0.0
+    total_paid = 0.0
+    total_variance = 0.0
+    line_results: List[Dict[str, Any]] = []
+    errors: List[str] = []
+
+    async with AsyncSessionLocal() as db:
+        for line in service_lines:
+            cpt = (line.get("cpt_hcpcs") or "").strip()
+            actual = float(line.get("line_payment_amount") or 0.0)
+            units = max(float(line.get("units") or 1.0), 0.0)
+
+            if not cpt:
+                errors.append("MISSING_HCPCS")
+                continue
+
+            result = await db.execute(
+                select(OppsApcRate).where(
+                    OppsApcRate.hcpcs_code == cpt,
+                    OppsApcRate.year == 2026,
+                ).limit(1)
+            )
+            apc_row = result.scalar_one_or_none()
+
+            if apc_row:
+                expected_line = float(apc_row.payment_rate) * units
+                variance_line = expected_line - actual
+                total_expected += expected_line
+                total_paid += actual
+                if variance_line > 0:
+                    total_variance += variance_line
+                line_results.append({
+                    "cpt_hcpcs": cpt,
+                    "apc_code": apc_row.apc_code,
+                    "expected_allowed": round(expected_line, 2),
+                    "actual_paid": round(actual, 2),
+                    "variance_amount": round(variance_line, 2),
+                    "rate_source": f"CMS_OPPS_2026_APC_{apc_row.apc_code}",
+                    "confidence_score": 85.0,
+                    "errors": [],
+                })
+            else:
+                errors.append(f"OPPS_APC_NOT_FOUND_{cpt}")
+                line_results.append({
+                    "cpt_hcpcs": cpt,
+                    "expected_allowed": None,
+                    "actual_paid": round(actual, 2),
+                    "variance_amount": None,
+                    "rate_source": "OPPS_APC_NOT_FOUND",
+                    "confidence_score": 15.0,
+                    "errors": [f"OPPS_APC_NOT_FOUND_{cpt}"],
+                })
+
+    if not line_results or not any(r.get("expected_allowed") for r in line_results):
+        # No APC matches found — fall back to contract-based stub
+        fallback = reprice_opps_claim(claim, rule_library)
+        fallback["repricing_method"] = "OPPS_CONTRACT_FALLBACK"
+        return fallback
+
+    overall_pct = (total_variance / total_expected * 100) if total_expected > 0 else 0.0
+    avg_confidence = sum(r.get("confidence_score", 0) for r in line_results) / len(line_results) if line_results else 0.0
+
+    return {
+        "errors": list(set(errors)),
+        "claim_type": "INSTITUTIONAL_OP",
+        "repricing_method": "OPPS_APC_2026",
+        "expected_payment": round(total_expected, 2),
+        "actual_paid": round(total_paid, 2),
+        "variance_amount": round(total_variance, 2),
+        "variance_percent": round(overall_pct, 2),
+        "confidence_score": round(avg_confidence, 2),
+        "rate_source": "CMS_OPPS_2026",
+        "per_line_results": line_results,
+        "components": None,
     }

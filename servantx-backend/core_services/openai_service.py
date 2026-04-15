@@ -1,3 +1,5 @@
+import asyncio
+
 from openai import OpenAI, AsyncOpenAI
 from typing import Union, Optional
 from pydantic import BaseModel
@@ -5,6 +7,24 @@ from pydantic import BaseModel
 from config import settings
 from .logger_service import error_log, info_log, warning_log
 from .langfuse_service import get_compiled_prompt
+
+
+async def _call_with_retry(coro_fn, max_retries=2, base_delay=1.0):
+    """Retry an async OpenAI call on transient failures."""
+    last_exc = None
+    for attempt in range(max_retries + 1):
+        try:
+            return await coro_fn()
+        except Exception as e:
+            err_str = str(e).lower()
+            # Only retry on transient errors
+            if any(t in err_str for t in ("rate limit", "timeout", "503", "502", "529", "overloaded")):
+                last_exc = e
+                if attempt < max_retries:
+                    await asyncio.sleep(base_delay * (2 ** attempt))
+                    continue
+            raise  # Non-transient error — re-raise immediately
+    raise last_exc
 
 
 def chat_with_openai(
@@ -161,13 +181,13 @@ async def chat_with_openai_async(
 
     try:
         if schema is None:
-            response = await client.chat.completions.create(
+            response = await _call_with_retry(lambda: client.chat.completions.create(
                 model=model,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": text}
                 ]
-            )
+            ))
             output_text = response.choices[0].message.content
             info_log(
                 action="openai_chat_async",
@@ -176,14 +196,14 @@ async def chat_with_openai_async(
             )
             return output_text
         else:
-            response = await client.responses.parse(
+            response = await _call_with_retry(lambda: client.responses.parse(
                 model=model,
                 input=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": text}
                 ],
                 text_format=schema
-            )
+            ))
             output_dict = (
                 response.output_parsed.model_dump()
                 if hasattr(response.output_parsed, "model_dump")
