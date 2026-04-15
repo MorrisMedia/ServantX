@@ -28,6 +28,7 @@ import SettingsPage from "@/pages/dashboard/settings";
 import UserGuidePage from "@/pages/dashboard/user-guide";
 import AuditWorkflowPage from "@/pages/dashboard/audit-workflow";
 import AnalyticsPage from "@/pages/dashboard/analytics";
+import AdminDashboard from "@/pages/dashboard/admin";
 
 function Router() {
   return (
@@ -129,6 +130,11 @@ function Router() {
           <ContractRequiredRoute>
             <AnalyticsPage />
           </ContractRequiredRoute>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/dashboard/admin">
+        <ProtectedRoute>
+          <AdminDashboard />
         </ProtectedRoute>
       </Route>
       <Route path="/dashboard/user-guide">

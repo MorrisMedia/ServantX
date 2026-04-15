@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useContractCheck } from "@/lib/hooks/useContractCheck";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
   LayoutDashboard,
@@ -11,6 +12,7 @@ import {
   BarChart3,
   HelpCircle,
   Lock,
+  Shield,
   TrendingUp,
 } from "lucide-react";
 
@@ -36,6 +38,7 @@ const navItems: NavItem[] = [
 export function DashboardSidebar() {
   const [location] = useLocation();
   const { hasContract, isLoading } = useContractCheck();
+  const { user } = useAuth();
 
   const handleDisabledClick = (e: React.MouseEvent, item: NavItem) => {
     if (item.requiresContract && !hasContract && !isLoading) {
@@ -52,6 +55,20 @@ export function DashboardSidebar() {
         <h2 className="text-lg font-semibold">ServantX</h2>
       </div>
       <nav className="flex-1 space-y-1 p-4">
+        {user?.isAdmin && (
+          <Link
+            href="/dashboard/admin"
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              location === "/dashboard/admin"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <Shield className="h-5 w-5" />
+            Admin
+          </Link>
+        )}
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.href || (item.href !== "/dashboard" && location.startsWith(item.href));

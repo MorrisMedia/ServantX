@@ -6,6 +6,7 @@ export interface User {
   hospitalName?: string;
   role?: string;
   hasContract?: boolean;
+  isAdmin?: boolean;
   createdAt: string;
 }
 
@@ -44,6 +45,7 @@ export function mapAuthResponse(data: any): { user: User; accessToken: string; r
       hospitalName: user.hospitalName || user.hospital_name,
       role: user.role,
       hasContract: user.hasContract ?? user.has_contract ?? false,
+      isAdmin: user.isAdmin ?? user.is_admin ?? false,
       createdAt: user.createdAt || user.created_at || new Date().toISOString(),
     },
     accessToken: data.access_token || data.accessToken || "",
