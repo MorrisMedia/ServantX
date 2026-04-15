@@ -41,6 +41,27 @@ export interface Document {
   parsedData?: Record<string, unknown>;
   findings?: Array<Record<string, unknown>>;
   repricingSummary?: Record<string, unknown>;
+  notes_payload?: NotesPayload | string;
+}
+
+export interface PricingEngineResult {
+  engine: string;
+  method?: string;
+  expected_payment: number;
+  actual_paid: number;
+  variance_amount: number;
+  variance_percent: number;
+  confidence_score: number;
+  rate_source: string;
+  errors?: string[];
+  ai_reasoning?: string;
+}
+
+export interface NotesPayload {
+  pricing_comparison?: PricingEngineResult[];
+  engines_run?: string[];
+  pricing_mode?: string;
+  [key: string]: unknown;
 }
 
 export interface DocumentFilters {

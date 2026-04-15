@@ -20,7 +20,7 @@ import { DocumentFilters, DocumentStatus } from "@/lib/types/document";
 import { formatCurrency } from "@/lib/utils/currency";
 import { formatDate, formatDateTime } from "@/lib/utils/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Download, ExternalLink, FileText, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, ExternalLink, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
@@ -253,6 +253,81 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
     }
   };
 
+  const handleExportCSV = () => {
+    if (!documents || documents.length === 0) {
+      toast.error("No documents to export");
+      return;
+    }
+
+    const csvEscape = (val: string | number | undefined | null): string => {
+      if (val === undefined || val === null) return "";
+      const str = String(val);
+      if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const headers = [
+      "Claim ID",
+      "Claim Type",
+      "Repricing Method",
+      "Expected Payment",
+      "Actual Paid",
+      "Variance Amount",
+      "Variance %",
+      "Confidence Score",
+      "Engines Run",
+      "Date",
+    ];
+
+    const rows = documents.map((doc) => {
+      let notesPayload: Record<string, unknown> | null = null;
+      try {
+        if (doc.notes_payload) {
+          notesPayload =
+            typeof doc.notes_payload === "string"
+              ? JSON.parse(doc.notes_payload)
+              : (doc.notes_payload as Record<string, unknown>);
+        }
+      } catch {
+        notesPayload = null;
+      }
+
+      const pricingComparison = notesPayload?.pricing_comparison as Array<{
+        variance_amount?: number;
+        variance_percent?: number;
+        confidence_score?: number;
+      }> | undefined;
+
+      const primaryResult = pricingComparison?.[0];
+      const enginesRun = (notesPayload?.engines_run as string[] | undefined)?.join("; ") ?? "";
+
+      return [
+        csvEscape(doc.id),
+        csvEscape((doc as any).claim_type ?? (doc as any).documentRole ?? ""),
+        csvEscape((doc as any).repricing_method ?? notesPayload?.pricing_mode ?? ""),
+        csvEscape(doc.contractAmount ?? ""),
+        csvEscape(doc.receiptAmount ?? ""),
+        csvEscape(primaryResult?.variance_amount ?? (doc.underpaymentAmount ?? doc.amount)),
+        csvEscape(primaryResult?.variance_percent != null ? primaryResult.variance_percent.toFixed(2) + "%" : ""),
+        csvEscape(primaryResult?.confidence_score != null ? primaryResult.confidence_score + "%" : ""),
+        csvEscape(enginesRun),
+        csvEscape(formatDate(doc.createdAt)),
+      ].join(",");
+    });
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `servantx-documents-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${documents.length} documents`);
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -297,6 +372,20 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
 
   return (
     <Card>
+      <div className="flex items-center justify-between px-4 py-3 border-b">
+        <p className="text-sm text-muted-foreground">
+          {total > 0 ? `${total} document${total !== 1 ? "s" : ""}` : ""}
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleExportCSV}
+          disabled={documents.length === 0}
+        >
+          <FileSpreadsheet className="h-4 w-4 mr-1.5" />
+          Export CSV
+        </Button>
+      </div>
       <CardContent className="p-0">
         <Table>
           <TableHeader>

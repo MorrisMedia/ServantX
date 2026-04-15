@@ -2,6 +2,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { ContractUpload } from "@/components/contracts/ContractUpload";
 import { ContractList } from "@/components/contracts/ContractList";
 import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
+import { HospitalPricingSettings } from "@/components/settings/HospitalSettings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { getHospital, updateHospital } from "@/lib/api/hospitals";
@@ -95,6 +96,7 @@ export default function SettingsPage() {
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList>
             <TabsTrigger value="profile">Hospital Profile</TabsTrigger>
+            <TabsTrigger value="pricing">Pricing Config</TabsTrigger>
             <TabsTrigger value="password">Change Password</TabsTrigger>
             <TabsTrigger value="contracts">Contracts</TabsTrigger>
           </TabsList>
@@ -171,6 +173,10 @@ export default function SettingsPage() {
                 </form>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="pricing" className="space-y-6">
+            <HospitalPricingSettings />
           </TabsContent>
 
           <TabsContent value="password" className="space-y-6">

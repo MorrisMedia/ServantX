@@ -17,5 +17,13 @@ export interface HospitalSettings {
   };
 }
 
+export type PricingMode = "AUTO" | "MEDICARE" | "MEDICAID" | "CONTRACT" | "ALL";
+
+export interface HospitalPricingConfig {
+  hospital_id: string;
+  pricing_mode: PricingMode;
+  state: string;
+}
+
 
 

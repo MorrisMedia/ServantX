@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "../api";
 import { apiRequest } from "../queryClient";
-import type { Hospital, HospitalSettings } from "../types/hospital";
+import type { Hospital, HospitalSettings, HospitalPricingConfig, PricingMode } from "../types/hospital";
 
 export async function getHospital(): Promise<Hospital> {
   const response = await fetch(`${API_BASE_URL}/hospitals/me`, {
@@ -27,6 +27,18 @@ export async function updateHospitalSettings(
   settings: Partial<HospitalSettings>
 ): Promise<HospitalSettings> {
   const response = await apiRequest("PATCH", `${API_BASE_URL}/hospitals/me/settings`, settings);
+  return response.json();
+}
+
+export async function getHospitalPricingConfig(): Promise<HospitalPricingConfig> {
+  const response = await apiRequest("GET", `${API_BASE_URL}/auth/hospital/config`);
+  return response.json();
+}
+
+export async function updateHospitalPricingConfig(
+  data: { pricing_mode?: PricingMode; state?: string }
+): Promise<HospitalPricingConfig> {
+  const response = await apiRequest("PATCH", `${API_BASE_URL}/auth/hospital/config`, data);
   return response.json();
 }
 

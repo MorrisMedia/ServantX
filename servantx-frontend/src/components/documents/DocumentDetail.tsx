@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { getDocument, submitDocument, updateDocument } from "@/lib/api/documents";
 import { DocumentStatus } from "@/lib/types/document";
+import { PricingEnginesTable } from "./PricingEnginesTable";
 import { formatCurrency } from "@/lib/utils/currency";
 import { formatDateTime } from "@/lib/utils/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -526,6 +527,11 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
               )}
             </CardContent>
           </Card>
+
+          <PricingEnginesTable
+            notesPayload={(document as any).notes_payload}
+            primaryEngine={(document as any).repricing_method}
+          />
 
           <Card>
             <CardHeader className="pb-3">
