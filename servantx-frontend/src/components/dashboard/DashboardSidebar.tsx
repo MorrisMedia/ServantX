@@ -11,6 +11,7 @@ import {
   BarChart3,
   HelpCircle,
   Lock,
+  TrendingUp,
 } from "lucide-react";
 
 interface NavItem {
@@ -26,6 +27,7 @@ const navItems: NavItem[] = [
   { title: "Documents", href: "/dashboard/documents", icon: FileText, requiresContract: true },
   { title: "Contracts", href: "/dashboard/contracts", icon: FileCheck, requiresContract: false },
   { title: "Audit Workflow", href: "/dashboard/audit-workflow", icon: BarChart3, requiresContract: true },
+  { title: "ROI Dashboard", href: "/dashboard/analytics", icon: TrendingUp, requiresContract: true },
   { title: "Reports", href: "/dashboard/reports", icon: BarChart3, requiresContract: true },
   { title: "Operations Guide", href: "/dashboard/user-guide", icon: HelpCircle, requiresContract: false },
   { title: "Settings", href: "/dashboard/settings", icon: Settings, requiresContract: false },

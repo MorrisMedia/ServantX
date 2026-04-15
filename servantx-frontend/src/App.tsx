@@ -27,6 +27,7 @@ import ReportsPage from "@/pages/dashboard/reports";
 import SettingsPage from "@/pages/dashboard/settings";
 import UserGuidePage from "@/pages/dashboard/user-guide";
 import AuditWorkflowPage from "@/pages/dashboard/audit-workflow";
+import AnalyticsPage from "@/pages/dashboard/analytics";
 
 function Router() {
   return (
@@ -120,6 +121,13 @@ function Router() {
         <ProtectedRoute>
           <ContractRequiredRoute>
             <AuditWorkflowPage />
+          </ContractRequiredRoute>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/dashboard/analytics">
+        <ProtectedRoute>
+          <ContractRequiredRoute>
+            <AnalyticsPage />
           </ContractRequiredRoute>
         </ProtectedRoute>
       </Route>

@@ -7,19 +7,44 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { getDocument, submitDocument, updateDocument } from "@/lib/api/documents";
+import { generateAppealLetter, updateAppealStatus } from "@/lib/api/appeals";
 import { DocumentStatus } from "@/lib/types/document";
 import { PricingEnginesTable } from "./PricingEnginesTable";
 import { formatCurrency } from "@/lib/utils/currency";
 import { formatDateTime } from "@/lib/utils/date";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Brain, DollarSign, Download, FileText, Loader2, Pencil, Save, Send, X } from "lucide-react";
+import { ArrowLeft, Brain, CheckCircle2, ClipboardCopy, DollarSign, Download, FileText, Gavel, Loader2, Pencil, Save, Send, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+
+// Appeal status helpers
+const appealStatusColors: Record<string, string> = {
+  none: "bg-gray-100 text-gray-600 border-gray-300",
+  identified: "bg-yellow-100 text-yellow-800 border-yellow-300",
+  drafted: "bg-blue-100 text-blue-700 border-blue-300",
+  filed: "bg-purple-100 text-purple-700 border-purple-300",
+  under_review: "bg-orange-100 text-orange-700 border-orange-300",
+  approved: "bg-green-100 text-green-700 border-green-300",
+  partial: "bg-emerald-100 text-emerald-700 border-emerald-300",
+  denied: "bg-red-100 text-red-700 border-red-300",
+};
+
+const appealStatusLabels: Record<string, string> = {
+  none: "No Appeal",
+  identified: "Identified",
+  drafted: "Draft Ready",
+  filed: "Filed",
+  under_review: "Under Review",
+  approved: "Approved",
+  partial: "Partial Recovery",
+  denied: "Denied",
+};
 
 interface DocumentDetailProps {
   documentId: string;
@@ -48,6 +73,10 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  // Appeal workflow state
+  const [appealLetter, setAppealLetter] = useState<string | null>(null);
+  const [appealStatusValue, setAppealStatusValue] = useState<string>("");
+  const [recoveredInput, setRecoveredInput] = useState<string>("");
   const [editForm, setEditForm] = useState({
     name: "",
     notes: "",
@@ -97,6 +126,60 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
       toast.error(err.message || "Failed to update status");
     },
   });
+
+  const generateAppealMutation = useMutation({
+    mutationFn: () => generateAppealLetter(documentId),
+    onSuccess: (result) => {
+      setAppealLetter(result.letter);
+      toast.success("Appeal letter generated");
+      queryClient.invalidateQueries({ queryKey: ["/documents", documentId] });
+      queryClient.invalidateQueries({ queryKey: ["/documents"] });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to generate appeal letter");
+    },
+  });
+
+  const updateAppealMutation = useMutation({
+    mutationFn: (data: { appeal_status?: string; recovered_amount?: number }) =>
+      updateAppealStatus(documentId, data),
+    onSuccess: () => {
+      toast.success("Appeal status updated");
+      queryClient.invalidateQueries({ queryKey: ["/documents", documentId] });
+      queryClient.invalidateQueries({ queryKey: ["/documents"] });
+      queryClient.invalidateQueries({ queryKey: ["/analytics/roi"] });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to update appeal status");
+    },
+  });
+
+  const handleCopyLetter = () => {
+    const letter = appealLetter || document?.appeal_letter;
+    if (!letter) return;
+    navigator.clipboard.writeText(letter).then(() => toast.success("Letter copied to clipboard"));
+  };
+
+  const handleDownloadLetter = () => {
+    const letter = appealLetter || document?.appeal_letter;
+    if (!letter) return;
+    const blob = new Blob([letter], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = window.document.createElement("a");
+    a.href = url;
+    a.download = `appeal-letter-${documentId.slice(0, 8)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleSaveAppealStatus = () => {
+    if (!appealStatusValue) return;
+    const data: { appeal_status: string; recovered_amount?: number } = { appeal_status: appealStatusValue };
+    if ((appealStatusValue === "approved" || appealStatusValue === "partial") && recoveredInput) {
+      data.recovered_amount = parseFloat(recoveredInput) || 0;
+    }
+    updateAppealMutation.mutate(data);
+  };
 
   const startEditing = () => {
     if (document) {
@@ -532,6 +615,144 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
             notesPayload={(document as any).notes_payload}
             primaryEngine={(document as any).repricing_method}
           />
+
+          {/* Appeals section */}
+          {(() => {
+            const appealStatus = document.appeal_status || 'none';
+            const currentLetter = appealLetter || document.appeal_letter;
+            const hasUnderpayment = (document.underpaymentAmount !== undefined && document.underpaymentAmount > 0) || document.amount > 0;
+            const canGenerate = hasUnderpayment && (appealStatus === 'none' || appealStatus === 'identified');
+
+            return (
+              <Card className="border-purple-200 dark:border-purple-800">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center justify-between text-lg">
+                    <div className="flex items-center gap-2">
+                      <Gavel className="h-5 w-5 text-purple-600" />
+                      Appeal Workflow
+                    </div>
+                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${appealStatusColors[appealStatus] || appealStatusColors.none}`}>
+                      {appealStatusLabels[appealStatus] || appealStatus}
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Recovered amount display */}
+                  {document.recovered_amount != null && document.recovered_amount > 0 && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50 border border-green-200 dark:bg-green-950/30 dark:border-green-800">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-green-700 dark:text-green-400">
+                          Recovered: {formatCurrency(document.recovered_amount)}
+                        </p>
+                        <p className="text-xs text-green-600/70">Amount recovered via appeal</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Generate appeal button */}
+                  {canGenerate && !currentLetter && (
+                    <div>
+                      <Button
+                        onClick={() => generateAppealMutation.mutate()}
+                        disabled={generateAppealMutation.isPending}
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                      >
+                        {generateAppealMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Generating Letter...
+                          </>
+                        ) : (
+                          <>
+                            <Gavel className="h-4 w-4 mr-2" />
+                            Generate Appeal Letter
+                          </>
+                        )}
+                      </Button>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        AI will draft a formal appeal letter based on contract terms and underpayment details.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Appeal letter display */}
+                  {currentLetter && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium">Appeal Letter</Label>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" onClick={handleCopyLetter}>
+                            <ClipboardCopy className="h-3 w-3 mr-1" />
+                            Copy
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={handleDownloadLetter}>
+                            <Download className="h-3 w-3 mr-1" />
+                            Download .txt
+                          </Button>
+                        </div>
+                      </div>
+                      <pre className="text-xs leading-relaxed whitespace-pre-wrap p-4 rounded-lg border bg-muted/30 max-h-80 overflow-y-auto font-mono">
+                        {currentLetter}
+                      </pre>
+                    </div>
+                  )}
+
+                  {/* Status update controls */}
+                  {appealStatus !== 'none' && (
+                    <div className="space-y-3 pt-2 border-t">
+                      <Label className="text-sm font-medium">Update Appeal Status</Label>
+                      <div className="flex items-start gap-3">
+                        <Select
+                          value={appealStatusValue || appealStatus}
+                          onValueChange={setAppealStatusValue}
+                        >
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="identified">Identified</SelectItem>
+                            <SelectItem value="drafted">Draft Ready</SelectItem>
+                            <SelectItem value="filed">Filed</SelectItem>
+                            <SelectItem value="under_review">Under Review</SelectItem>
+                            <SelectItem value="approved">Approved</SelectItem>
+                            <SelectItem value="partial">Partial Recovery</SelectItem>
+                            <SelectItem value="denied">Denied</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {(appealStatusValue === "approved" || appealStatusValue === "partial") && (
+                          <div className="flex items-center gap-2">
+                            <DollarSign className="h-4 w-4 text-muted-foreground shrink-0" />
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              placeholder="Recovered amount"
+                              value={recoveredInput}
+                              onChange={(e) => setRecoveredInput(e.target.value)}
+                              className="w-40"
+                            />
+                          </div>
+                        )}
+                        <Button
+                          size="sm"
+                          onClick={handleSaveAppealStatus}
+                          disabled={updateAppealMutation.isPending || !appealStatusValue}
+                        >
+                          {updateAppealMutation.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Save className="h-4 w-4 mr-1" />
+                          )}
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })()}
 
           <Card>
             <CardHeader className="pb-3">

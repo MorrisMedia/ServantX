@@ -42,6 +42,11 @@ export interface Document {
   findings?: Array<Record<string, unknown>>;
   repricingSummary?: Record<string, unknown>;
   notes_payload?: NotesPayload | string;
+  appeal_status?: 'none' | 'identified' | 'drafted' | 'filed' | 'under_review' | 'approved' | 'partial' | 'denied';
+  appeal_letter?: string;
+  recovered_amount?: number | null;
+  appeal_filed_at?: string | null;
+  appeal_updated_at?: string | null;
 }
 
 export interface PricingEngineResult {
@@ -78,6 +83,7 @@ export interface DocumentFilters {
   sortOrder?: "asc" | "desc";
   limit?: number;
   offset?: number;
+  appeal_status?: string;
 }
 
 export interface PaginatedDocumentsResponse {
@@ -86,6 +92,32 @@ export interface PaginatedDocumentsResponse {
   limit: number;
   offset: number;
   hasMore: boolean;
+}
+
+export interface ROIPayerSummary {
+  payer: string;
+  claims: number;
+  identified: number;
+  recovered: number;
+  rate: number;
+}
+
+export interface ROIStatusSummary {
+  appeal_status: string;
+  count: number;
+  identified: number;
+  recovered: number;
+}
+
+export interface ROISummary {
+  identified_total: number;
+  recovered_total: number;
+  recovery_rate: number;
+  total_claims_processed: number;
+  total_flagged: number;
+  flag_rate: number;
+  by_status: ROIStatusSummary[];
+  by_payer: ROIPayerSummary[];
 }
 
 export interface DocumentStats {

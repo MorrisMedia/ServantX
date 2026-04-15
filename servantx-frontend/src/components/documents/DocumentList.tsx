@@ -4,7 +4,8 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectTrigger
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -25,10 +26,36 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 
+type AppealStatusFilter = 'all' | 'none' | 'identified' | 'drafted' | 'filed' | 'under_review' | 'approved' | 'partial' | 'denied';
+
+const appealStatusColors: Record<string, string> = {
+  none: "bg-gray-100 text-gray-600 border-gray-300",
+  identified: "bg-yellow-100 text-yellow-800 border-yellow-300",
+  drafted: "bg-blue-100 text-blue-700 border-blue-300",
+  filed: "bg-purple-100 text-purple-700 border-purple-300",
+  under_review: "bg-orange-100 text-orange-700 border-orange-300",
+  approved: "bg-green-100 text-green-700 border-green-300",
+  partial: "bg-emerald-100 text-emerald-700 border-emerald-300",
+  denied: "bg-red-100 text-red-700 border-red-300",
+};
+
+const appealStatusLabels: Record<string, string> = {
+  none: "No Appeal",
+  identified: "Identified",
+  drafted: "Draft Ready",
+  filed: "Filed",
+  under_review: "Under Review",
+  approved: "Approved",
+  partial: "Partial Recovery",
+  denied: "Denied",
+};
+
 interface DocumentListProps {
   filters?: DocumentFilters;
   page: number;
   onPageChange: (page: number) => void;
+  appealStatusFilter?: AppealStatusFilter;
+  onAppealStatusFilterChange?: (value: AppealStatusFilter) => void;
 }
 
 const statusColors: Record<DocumentStatus, string> = {
@@ -51,7 +78,7 @@ const statusLabels: Record<DocumentStatus, string> = {
 
 const LIMIT = 15;
 
-export function DocumentList({ filters, page, onPageChange }: DocumentListProps) {
+export function DocumentList({ filters, page, onPageChange, appealStatusFilter = 'all', onAppealStatusFilterChange }: DocumentListProps) {
   const queryClient = useQueryClient();
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -73,10 +100,22 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
     },
   });
 
-  const documents = Array.isArray(data) ? data : (data?.items || []);
+  const allDocuments = Array.isArray(data) ? data : (data?.items || []);
   const total = Array.isArray(data) ? data.length : (data?.total || 0);
   const hasMore = Array.isArray(data) ? false : (data?.hasMore || false);
   const totalPages = Math.ceil(total / LIMIT);
+
+  // Client-side appeal status filter
+  const documents = appealStatusFilter === 'all'
+    ? allDocuments
+    : allDocuments.filter((doc) => {
+        const ds = doc.appeal_status || 'none';
+        return ds === appealStatusFilter;
+      });
+
+  // Total recovered when filtering by approved/partial
+  const showRecoveredTotal = appealStatusFilter === 'approved' || appealStatusFilter === 'partial' || appealStatusFilter === 'all';
+  const totalRecovered = documents.reduce((sum, doc) => sum + (doc.recovered_amount || 0), 0);
 
   const handleStatusChange = (documentId: string, newStatus: string) => {
     setUpdatingId(documentId);
@@ -372,19 +411,52 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
 
   return (
     <Card>
-      <div className="flex items-center justify-between px-4 py-3 border-b">
-        <p className="text-sm text-muted-foreground">
-          {total > 0 ? `${total} document${total !== 1 ? "s" : ""}` : ""}
-        </p>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportCSV}
-          disabled={documents.length === 0}
-        >
-          <FileSpreadsheet className="h-4 w-4 mr-1.5" />
-          Export CSV
-        </Button>
+      <div className="flex items-center justify-between px-4 py-3 border-b gap-4">
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">
+            {total > 0 ? `${total} document${total !== 1 ? "s" : ""}` : ""}
+          </p>
+          {onAppealStatusFilterChange && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Appeal:</span>
+              <Select
+                value={appealStatusFilter}
+                onValueChange={(v) => onAppealStatusFilterChange(v as AppealStatusFilter)}
+              >
+                <SelectTrigger className="h-7 text-xs w-36 border-dashed">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="none">No Appeal</SelectItem>
+                  <SelectItem value="identified">Identified</SelectItem>
+                  <SelectItem value="drafted">Draft Ready</SelectItem>
+                  <SelectItem value="filed">Filed</SelectItem>
+                  <SelectItem value="under_review">Under Review</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="partial">Partial Recovery</SelectItem>
+                  <SelectItem value="denied">Denied</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {showRecoveredTotal && totalRecovered > 0 && (
+            <span className="text-xs font-medium text-green-700 bg-green-100 border border-green-200 rounded-full px-3 py-0.5">
+              Recovered: {formatCurrency(totalRecovered)}
+            </span>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCSV}
+            disabled={documents.length === 0}
+          >
+            <FileSpreadsheet className="h-4 w-4 mr-1.5" />
+            Export CSV
+          </Button>
+        </div>
       </div>
       <CardContent className="p-0">
         <Table>
@@ -395,6 +467,7 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
               <TableHead>Should Pay</TableHead>
               <TableHead>Underpayment</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Appeal</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -460,6 +533,16 @@ export function DocumentList({ filters, page, onPageChange }: DocumentListProps)
                       </SelectContent>
                     </Select>
                   )}
+                </TableCell>
+                <TableCell>
+                  {(() => {
+                    const as = document.appeal_status || 'none';
+                    return (
+                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${appealStatusColors[as] || appealStatusColors.none}`}>
+                        {appealStatusLabels[as] || as}
+                      </span>
+                    );
+                  })()}
                 </TableCell>
                 <TableCell>{formatDate(document.createdAt)}</TableCell>
                 <TableCell>

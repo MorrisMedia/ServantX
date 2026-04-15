@@ -22,6 +22,7 @@ export default function DocumentsPage() {
   if (queryProjectId) setActiveProjectId(queryProjectId);
   const [page, setPage] = useState(0);
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
+  const [appealStatusFilter, setAppealStatusFilter] = useState<'all' | 'none' | 'identified' | 'drafted' | 'filed' | 'under_review' | 'approved' | 'partial' | 'denied'>('all');
 
   const { data: stats } = useQuery({
     queryKey: ["/documents/stats", filters, activeProjectId],
@@ -390,7 +391,13 @@ export default function DocumentsPage() {
           </Button>
         </div>
 
-        <DocumentList filters={filters} page={page} onPageChange={setPage} />
+        <DocumentList
+          filters={filters}
+          page={page}
+          onPageChange={setPage}
+          appealStatusFilter={appealStatusFilter}
+          onAppealStatusFilterChange={setAppealStatusFilter}
+        />
       </div>
     </DashboardLayout>
   );
