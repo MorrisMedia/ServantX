@@ -15,10 +15,10 @@ async def get_roi_summary(current_user: dict = Depends(get_current_user)):
     hospital_id = current_user["hospital_id"]
 
     async with AsyncSessionLocal() as db:
-        # Base filter: only claim-level documents for this hospital
+        # Base filter: claim-level documents (CLAIM from batch pipeline, LEGACY from receipt scan)
         base = and_(
             Document.hospital_id == hospital_id,
-            Document.document_role == DocumentRole.CLAIM,
+            Document.document_role.in_([DocumentRole.CLAIM, DocumentRole.LEGACY]),
         )
 
         # Total underpayment identified

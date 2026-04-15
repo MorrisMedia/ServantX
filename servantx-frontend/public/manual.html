@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ServantX User Manual</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:        #0f766e;
+      --teal-dark:   #0d5c57;
+      --teal-light:  #ccfbf1;
+      --teal-mid:    #5eead4;
+      --gray-50:     #f9fafb;
+      --gray-100:    #f3f4f6;
+      --gray-200:    #e5e7eb;
+      --gray-300:    #d1d5db;
+      --gray-500:    #6b7280;
+      --gray-700:    #374151;
+      --gray-900:    #111827;
+      --amber-50:    #fffbeb;
+      --amber-200:   #fde68a;
+      --amber-700:   #b45309;
+      --blue-50:     #eff6ff;
+      --blue-200:    #bfdbfe;
+      --blue-700:    #1d4ed8;
+      --red-50:      #fef2f2;
+      --red-200:     #fecaca;
+      --red-700:     #b91c1c;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--gray-900);
+      background: #ffffff;
+      line-height: 1.6;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* ─── Print ────────────────────────────────────────────── */
+    @media print {
+      body { max-width: 100%; padding: 0 1cm; font-size: 11pt; }
+      .no-print { display: none !important; }
+      .page-break { page-break-after: always; }
+      .page-break-before { page-break-before: always; }
+      a { text-decoration: none; color: inherit; }
+      .cover { page-break-after: always; }
+      h2 { page-break-after: avoid; }
+      h3 { page-break-after: avoid; }
+      .section-block { page-break-inside: avoid; }
+      thead { display: table-header-group; }
+      tr { page-break-inside: avoid; }
+
+      @page {
+        margin: 2cm 2cm 2.5cm;
+        @top-center { content: "ServantX User Manual  |  Confidential"; font-size: 9pt; color: #6b7280; font-family: system-ui; }
+        @bottom-right { content: "Page " counter(page) " of " counter(pages); font-size: 9pt; color: #6b7280; font-family: system-ui; }
+        @bottom-left { content: "© 2026 ServantX, Inc."; font-size: 9pt; color: #6b7280; font-family: system-ui; }
+      }
+    }
+
+    /* ─── Screen header/footer hint ───────────────────────── */
+    .print-header {
+      display: none;
+    }
+    @media print {
+      .print-header {
+        display: block;
+        font-size: 8pt;
+        color: var(--gray-500);
+        border-bottom: 1px solid var(--gray-200);
+        padding-bottom: 4px;
+        margin-bottom: 12px;
+      }
+    }
+
+    /* ─── Cover Page ───────────────────────────────────────── */
+    .cover {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      border-left: 8px solid var(--teal);
+      padding: 3rem 3rem 3rem 3.5rem;
+      margin: 2rem 0 0;
+      background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
+    }
+
+    .cover-logo {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--teal);
+      letter-spacing: -0.5px;
+      margin-bottom: 0.25rem;
+    }
+
+    .cover-logo span {
+      color: var(--gray-900);
+    }
+
+    .cover-tagline {
+      font-size: 1rem;
+      color: var(--gray-500);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .cover h1 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      max-width: 580px;
+    }
+
+    .cover-sub {
+      font-size: 1.15rem;
+      color: var(--gray-500);
+      max-width: 520px;
+      margin-bottom: 3rem;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cover-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .cover-meta-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gray-500);
+    }
+
+    .cover-meta-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+
+    .cover-url {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--gray-200);
+      width: 100%;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+
+    .cover-url a {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* ─── Table of Contents ────────────────────────────────── */
+    .toc {
+      margin: 3rem 0;
+      padding: 2rem 2.5rem;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+    }
+
+    .toc h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--teal);
+      margin-bottom: 1.25rem;
+      border: none;
+      padding: 0;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.3rem 2rem;
+    }
+
+    @media (max-width: 640px) {
+      .toc-list { grid-template-columns: 1fr; }
+    }
+
+    .toc-list li { font-size: 0.9rem; }
+
+    .toc-list a {
+      color: var(--gray-700);
+      text-decoration: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding: 0.15rem 0;
+      border-bottom: 1px dotted var(--gray-300);
+    }
+
+    .toc-list a:hover { color: var(--teal); }
+
+    .toc-num {
+      font-weight: 700;
+      color: var(--teal);
+      min-width: 2rem;
+    }
+
+    .toc-title { flex: 1; }
+
+    /* ─── Section Heading ──────────────────────────────────── */
+    .section-number {
+      display: inline-block;
+      background: var(--teal);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      border-bottom: 3px solid var(--teal);
+      padding-bottom: 0.5rem;
+      margin: 3rem 0 1.25rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      margin: 2rem 0 0.75rem;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-700);
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    p { margin-bottom: 0.9rem; }
+
+    /* ─── Step List ────────────────────────────────────────── */
+    .steps {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .steps > li {
+      counter-increment: step-counter;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .steps > li::before {
+      content: counter(step-counter);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.75rem;
+      height: 1.75rem;
+      background: var(--teal);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border-radius: 50%;
+      margin-top: 0.1rem;
+      flex-shrink: 0;
+    }
+
+    /* ─── Standard Lists ───────────────────────────────────── */
+    ul.bullet {
+      margin: 0.5rem 0 1rem 1.5rem;
+    }
+
+    ul.bullet li { margin-bottom: 0.35rem; }
+
+    /* ─── Screenshot Placeholder ───────────────────────────── */
+    .screenshot {
+      border: 2px dashed var(--gray-300);
+      border-radius: 6px;
+      background: var(--gray-50);
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 1.25rem 0;
+      padding: 2rem;
+      text-align: center;
+      color: var(--gray-500);
+    }
+
+    .screenshot-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.5;
+    }
+
+    .screenshot-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-500);
+    }
+
+    /* ─── Callout Boxes ────────────────────────────────────── */
+    .callout {
+      border-left: 4px solid;
+      border-radius: 0 6px 6px 0;
+      padding: 0.9rem 1.1rem;
+      margin: 1.25rem 0;
+      font-size: 0.92rem;
+    }
+
+    .callout-label {
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.4rem;
+    }
+
+    .callout.tip {
+      background: var(--blue-50);
+      border-color: var(--blue-700);
+      color: #1e3a6a;
+    }
+    .callout.tip .callout-label { color: var(--blue-700); }
+
+    .callout.warning {
+      background: var(--amber-50);
+      border-color: var(--amber-700);
+      color: #5c3407;
+    }
+    .callout.warning .callout-label { color: var(--amber-700); }
+
+    .callout.danger {
+      background: var(--red-50);
+      border-color: var(--red-700);
+      color: #7f1d1d;
+    }
+    .callout.danger .callout-label { color: var(--red-700); }
+
+    .callout.note {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      color: #134e4a;
+    }
+    .callout.note .callout-label { color: var(--teal-dark); }
+
+    /* ─── Tables ───────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    thead th {
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    tbody tr:nth-child(even) { background: var(--gray-50); }
+    tbody tr:hover { background: var(--teal-light); }
+
+    tbody td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--gray-200);
+      vertical-align: top;
+    }
+
+    td code, th code {
+      background: rgba(0,0,0,0.06);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.85em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    /* ─── Inline Code ──────────────────────────────────────── */
+    code {
+      background: var(--gray-100);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.85em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      color: var(--teal-dark);
+    }
+
+    /* ─── Status Badge ─────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      vertical-align: middle;
+    }
+
+    .badge-gray   { background: var(--gray-200); color: var(--gray-700); }
+    .badge-teal   { background: var(--teal-light); color: var(--teal-dark); }
+    .badge-amber  { background: var(--amber-200); color: var(--amber-700); }
+    .badge-blue   { background: var(--blue-200); color: var(--blue-700); }
+    .badge-red    { background: var(--red-200); color: var(--red-700); }
+    .badge-green  { background: #d1fae5; color: #065f46; }
+
+    /* ─── Status Ladder ────────────────────────────────────── */
+    .status-ladder {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 1rem 0;
+    }
+
+    .status-ladder .arrow {
+      color: var(--gray-400);
+      font-size: 1rem;
+    }
+
+    /* ─── KPI Cards ────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1.25rem 0;
+    }
+
+    .kpi-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-top: 4px solid var(--teal);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+    }
+
+    .kpi-card-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gray-500);
+      margin-bottom: 0.3rem;
+    }
+
+    .kpi-card-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--teal-dark);
+    }
+
+    .kpi-card-desc {
+      font-size: 0.78rem;
+      color: var(--gray-500);
+      margin-top: 0.25rem;
+    }
+
+    /* ─── Funnel ───────────────────────────────────────────── */
+    .funnel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin: 1rem 0;
+      max-width: 480px;
+    }
+
+    .funnel-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .funnel-bar {
+      height: 28px;
+      background: var(--teal);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      padding: 0 0.6rem;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      min-width: 60px;
+    }
+
+    /* ─── Section divider ──────────────────────────────────── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--gray-200);
+      margin: 2rem 0;
+    }
+
+    /* ─── Appendix ─────────────────────────────────────────── */
+    .appendix-label {
+      display: inline-block;
+      background: var(--gray-200);
+      color: var(--gray-700);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ─── FAQ ──────────────────────────────────────────────── */
+    .faq-item {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .faq-item:last-child { border-bottom: none; }
+
+    .faq-q {
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .faq-q::before {
+      content: "Q: ";
+      color: var(--teal);
+    }
+
+    .faq-a {
+      font-size: 0.92rem;
+      color: var(--gray-700);
+    }
+
+    .faq-a::before {
+      content: "A: ";
+      font-weight: 600;
+      color: var(--gray-500);
+    }
+
+    /* ─── Glossary ─────────────────────────────────────────── */
+    .glossary-term {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 0.5rem 1.5rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--gray-200);
+      font-size: 0.92rem;
+      align-items: baseline;
+    }
+
+    .glossary-term:last-child { border-bottom: none; }
+
+    .glossary-key {
+      font-weight: 800;
+      color: var(--teal-dark);
+      font-size: 0.85rem;
+    }
+
+    /* ─── Workflow Diagram ─────────────────────────────────── */
+    .workflow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 1.5rem 0;
+    }
+
+    .workflow-step {
+      flex: 1;
+      min-width: 130px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-right: none;
+      padding: 1rem 0.85rem;
+      position: relative;
+    }
+
+    .workflow-step:last-child {
+      border-right: 1px solid var(--gray-200);
+    }
+
+    .workflow-step-num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--teal);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .workflow-step-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-700);
+      margin-bottom: 0.3rem;
+    }
+
+    .workflow-step-desc {
+      font-size: 0.78rem;
+      color: var(--gray-500);
+    }
+
+    /* ─── Misc ─────────────────────────────────────────────── */
+    strong { color: var(--gray-900); }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .url-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.82rem;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      color: var(--teal-dark);
+    }
+
+    .section-intro {
+      font-size: 1.05rem;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      border-left: 3px solid var(--gray-300);
+      padding: 0.8rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .confidence-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.3rem 0;
+    }
+
+    .confidence-bar {
+      height: 8px;
+      border-radius: 99px;
+      background: var(--gray-200);
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      border-radius: 99px;
+    }
+
+    .fill-high   { background: #059669; width: 85%; }
+    .fill-medium { background: #d97706; width: 40%; }
+    .fill-low    { background: #dc2626; width: 20%; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+    .highlighted-path {
+      background: var(--teal-light);
+      border: 1px solid var(--teal-mid);
+      border-radius: 4px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     COVER PAGE
+════════════════════════════════════════════════════════ -->
+<div class="cover" id="cover">
+  <div class="cover-badge">HIPAA-Compliant Platform</div>
+  <div class="cover-logo">Servant<span>X</span></div>
+  <div class="cover-tagline">Medical Billing Audit &amp; Underpayment Recovery</div>
+  <h1>User Manual</h1>
+  <p class="cover-sub">
+    A complete guide for hospital billing teams and practice managers — from first login through measuring ROI.
+  </p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Version</span>
+      <span class="cover-meta-value">2.0 — April 2026</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Fee Schedules</span>
+      <span class="cover-meta-value">CMS 2026 (MPFS, IPPS, OPPS)</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Audience</span>
+      <span class="cover-meta-value">Billing Teams &amp; Practice Managers</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Classification</span>
+      <span class="cover-meta-value">Confidential</span>
+    </div>
+  </div>
+  <div class="cover-url">
+    Application: <a href="https://www.servantx.ai">https://www.servantx.ai</a> &nbsp;&nbsp;|&nbsp;&nbsp;
+    API Docs: <a href="https://api.servantx.ai/docs">https://api.servantx.ai/docs</a>
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     PLATFORM OVERVIEW
+════════════════════════════════════════════════════════ -->
+<h2 id="overview">Platform Overview</h2>
+
+<p>
+  ServantX is an AI-powered medical billing audit platform that automatically detects insurance underpayments and generates ready-to-file appeal letters. By combining CMS 2026 Medicare fee schedules with your payer contracts, ServantX reprices every remittance line item and flags discrepancies with plain-English explanations and confidence scores.
+</p>
+
+<p><strong>Who this manual is for:</strong> Hospital billing departments, revenue cycle managers, practice managers, and coding specialists who upload remittance files, review findings, and manage payer appeals.</p>
+
+<h3>How ServantX Works — Core Workflow</h3>
+
+<div class="workflow">
+  <div class="workflow-step">
+    <div class="workflow-step-num">1</div>
+    <div class="workflow-step-title">Upload Contract</div>
+    <div class="workflow-step-desc">AI extracts your payer fee schedule and rules</div>
+  </div>
+  <div class="workflow-step">
+    <div class="workflow-step-num">2</div>
+    <div class="workflow-step-title">Upload 835 Files</div>
+    <div class="workflow-step-desc">Electronic Remittance Advice from your clearinghouse</div>
+  </div>
+  <div class="workflow-step">
+    <div class="workflow-step-num">3</div>
+    <div class="workflow-step-title">AI Repricing</div>
+    <div class="workflow-step-desc">CMS fee schedules + contract applied to every claim</div>
+  </div>
+  <div class="workflow-step">
+    <div class="workflow-step-num">4</div>
+    <div class="workflow-step-title">Flag Underpayments</div>
+    <div class="workflow-step-desc">Variance + confidence score + AI reasoning per claim</div>
+  </div>
+  <div class="workflow-step">
+    <div class="workflow-step-num">5</div>
+    <div class="workflow-step-title">Generate Appeals</div>
+    <div class="workflow-step-desc">One-click formal letter; track status; measure ROI</div>
+  </div>
+</div>
+
+<div class="callout warning">
+  <div class="callout-label">HIPAA Notice</div>
+  ServantX processes Protected Health Information (PHI). All access is logged. Only authorized personnel with a signed Business Associate Agreement (BAA) on file should have login credentials. Do not share your password or session link.
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+════════════════════════════════════════════════════════ -->
+<div class="toc" id="toc">
+  <h2>Table of Contents</h2>
+  <ul class="toc-list">
+    <li><a href="#section1"><span class="toc-num">1.0</span><span class="toc-title">Registration &amp; Authentication</span></a></li>
+    <li><a href="#section2"><span class="toc-num">2.0</span><span class="toc-title">Hospital Settings &amp; Pricing Config</span></a></li>
+    <li><a href="#section3"><span class="toc-num">3.0</span><span class="toc-title">Payer Contracts</span></a></li>
+    <li><a href="#section4"><span class="toc-num">4.0</span><span class="toc-title">Uploading 835 Remittance Files</span></a></li>
+    <li><a href="#section5"><span class="toc-num">5.0</span><span class="toc-title">Audit Documents &amp; Findings</span></a></li>
+    <li><a href="#section6"><span class="toc-num">6.0</span><span class="toc-title">Appeal Workflow</span></a></li>
+    <li><a href="#section7"><span class="toc-num">7.0</span><span class="toc-title">ROI Dashboard &amp; Analytics</span></a></li>
+    <li><a href="#section8"><span class="toc-num">8.0</span><span class="toc-title">Projects &amp; Audit Workspace</span></a></li>
+    <li><a href="#section9"><span class="toc-num">9.0</span><span class="toc-title">Analysis &amp; Pattern Reports</span></a></li>
+    <li><a href="#appendixA"><span class="toc-num">A</span><span class="toc-title">Pricing Mode Quick Reference</span></a></li>
+    <li><a href="#appendixB"><span class="toc-num">B</span><span class="toc-title">Appeal Status Definitions</span></a></li>
+    <li><a href="#appendixC"><span class="toc-num">C</span><span class="toc-title">Frequently Asked Questions</span></a></li>
+    <li><a href="#appendixD"><span class="toc-num">D</span><span class="toc-title">Glossary</span></a></li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 1 — REGISTRATION & AUTHENTICATION
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 1.0</div>
+<h2 id="section1">Registration &amp; Authentication</h2>
+
+<p class="section-intro">
+  Every user needs a personal ServantX account tied to their organization. Accounts are provisioned individually — do not share login credentials.
+</p>
+
+<h3>1.1 Creating an Account</h3>
+
+<p>Navigate to <span class="url-pill">https://www.servantx.ai/auth/register</span> to create your account.</p>
+
+<ol class="steps">
+  <li>Go to <a href="https://www.servantx.ai/auth/register">https://www.servantx.ai/auth/register</a></li>
+  <li>Enter your <strong>First and Last Name</strong> — this appears on generated appeal letters, so use your full legal or professional name.</li>
+  <li>Enter your <strong>Work Email Address</strong>. Use an organizational email (not personal Gmail/Yahoo).</li>
+  <li>Enter your <strong>Hospital or Practice Name</strong> exactly as it should appear on official correspondence.</li>
+  <li>Enter your <strong>Phone Number</strong> for account verification purposes.</li>
+  <li>Create a <strong>Password</strong> — minimum 8 characters; use a mix of letters, numbers, and symbols. Do not reuse a password from another system.</li>
+  <li>Click <strong>Create Account</strong>. You will be redirected to the dashboard on success.</li>
+</ol>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Registration Form (/auth/register)</div>
+</div>
+
+<div class="callout tip">
+  <div class="callout-label">Tip</div>
+  If your organization needs multiple users (e.g., a billing team of five), each person should register with their own credentials. This ensures appeal letters are attributed correctly and the audit log reflects individual actions.
+</div>
+
+<h3>1.2 Logging In</h3>
+
+<ol class="steps">
+  <li>Navigate to <span class="url-pill">https://www.servantx.ai/auth/login</span></li>
+  <li>Enter your registered email address and password.</li>
+  <li>Click <strong>Sign In</strong>. You will land on the main dashboard.</li>
+</ol>
+
+<div class="callout warning">
+  <div class="callout-label">Session Timeout</div>
+  For security, sessions expire after a period of inactivity. If you are redirected to the login page while working, simply log back in — your data is not lost. Always close your browser when working from a shared workstation.
+</div>
+
+<h3>1.3 Forgot Password / Reset Password</h3>
+
+<ol class="steps">
+  <li>On the login page, click <strong>Forgot Password?</strong></li>
+  <li>Enter your registered email address and click <strong>Send Reset Link</strong>.</li>
+  <li>Check your inbox for a password reset email from ServantX. Check spam if it does not appear within 5 minutes.</li>
+  <li>Click the reset link in the email. The link is valid for <strong>60 minutes</strong>.</li>
+  <li>Enter and confirm your new password. Click <strong>Reset Password</strong>.</li>
+  <li>You will be redirected to login with your new credentials.</li>
+</ol>
+
+<h3>1.4 Changing Your Password</h3>
+
+<ol class="steps">
+  <li>Log in to your account.</li>
+  <li>Navigate to <span class="highlighted-path">/dashboard/settings</span></li>
+  <li>Locate the <strong>Security</strong> section.</li>
+  <li>Enter your current password, then enter and confirm your new password.</li>
+  <li>Click <strong>Save Changes</strong>.</li>
+</ol>
+
+<div class="callout danger">
+  <div class="callout-label">HIPAA Compliance Requirement</div>
+  HIPAA requires covered entities to change passwords regularly (at minimum annually) and immediately upon suspected compromise. If you believe your credentials have been exposed, change your password immediately and notify your Privacy Officer.
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 2 — HOSPITAL SETTINGS & PRICING CONFIG
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 2.0</div>
+<h2 id="section2">Hospital Settings &amp; Pricing Configuration</h2>
+
+<p class="section-intro">
+  Pricing configuration is the most critical setup step. It tells ServantX which fee schedule engines to use when repricing claims from your 835 files. Choosing the wrong mode will produce misleading variance results. Read this section carefully before uploading remittance files.
+</p>
+
+<p>Navigate to: <span class="highlighted-path">/dashboard/settings</span> → <strong>Pricing Config</strong> tab</p>
+
+<h3>2.1 Hospital Profile Settings</h3>
+
+<ol class="steps">
+  <li>Click your username or the settings gear icon in the top navigation bar.</li>
+  <li>Select <strong>Settings</strong> from the dropdown menu.</li>
+  <li>On the Settings page, confirm or update your <strong>Hospital Name</strong>, <strong>NPI</strong> (if applicable), and <strong>Contact Information</strong>.</li>
+  <li>Click <strong>Save Profile</strong>.</li>
+</ol>
+
+<h3>2.2 Pricing Mode — Overview</h3>
+
+<p>
+  ServantX uses multiple fee schedule engines to determine the "correct" reimbursement for each claim. The <strong>Pricing Mode</strong> controls which engines are activated and in what order. The platform reads claim data from each 835 file — including payer type, procedure codes (CPT/HCPCS), and place of service — and selects the appropriate repricing logic.
+</p>
+
+<h4>The Three Medicare Engines Explained</h4>
+
+<div class="two-col">
+  <div>
+    <div class="callout note">
+      <div class="callout-label">MPFS — Medicare Physician Fee Schedule</div>
+      Applies to <strong>professional/physician claims</strong> billed on a CMS-1500 form. Covers office visits, procedures, specialist consultations, lab interpretations, and other outpatient physician services. Uses RVU-based pricing with GPCI geographic adjustments.
+    </div>
+  </div>
+  <div>
+    <div class="callout note">
+      <div class="callout-label">IPPS — Inpatient Prospective Payment System</div>
+      Applies to <strong>hospital inpatient admissions</strong> billed on a UB-04 form with a Diagnosis Related Group (DRG) code. Payment is based on the DRG weight × base rate. Used for acute care hospital stays.
+    </div>
+  </div>
+</div>
+
+<div class="callout note">
+  <div class="callout-label">OPPS/APC — Outpatient Prospective Payment System</div>
+  Applies to <strong>hospital outpatient services</strong>: emergency department visits, same-day surgery, infusion therapy, imaging, observation stays, and clinic visits billed by a facility. Claims are classified into Ambulatory Payment Classification (APC) groups for payment.
+</div>
+
+<h4>Selecting Your Pricing Mode</h4>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Mode</th>
+        <th>Engine Behavior</th>
+        <th>Best Use Case</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>AUTO</strong> <span class="badge badge-teal">Recommended</span></td>
+        <td>Reads payer type from the 835. Medicare claims → MPFS/IPPS/OPPS (by claim type). Medicaid → state fee schedule. Commercial → contract + AI fallback.</td>
+        <td>Default setting for most hospitals with a mixed payer mix. Best starting point.</td>
+      </tr>
+      <tr>
+        <td><strong>MEDICARE</strong></td>
+        <td>Forces all claims through CMS 2026 Medicare fee schedules regardless of actual payer listed in the 835.</td>
+        <td>Medicare-focused audits; benchmarking commercial payer rates against Medicare as a baseline.</td>
+      </tr>
+      <tr>
+        <td><strong>MEDICAID</strong></td>
+        <td>Forces claims through Texas Medicaid Fee-For-Service rates. Claims for other states fall through to CONTRACT + AI.</td>
+        <td>Texas Medicaid audits. Note: non-Texas Medicaid states are not yet natively supported.</td>
+      </tr>
+      <tr>
+        <td><strong>CONTRACT</strong></td>
+        <td>Uses only the rules extracted from your uploaded payer contract, with AI gap-filling for missing codes.</td>
+        <td>When you have a comprehensive, recently uploaded contract with full CPT-level fee schedules.</td>
+      </tr>
+      <tr>
+        <td><strong>ALL</strong></td>
+        <td>Runs all available engines simultaneously. The engine that produces the highest-variance result at ≥30% confidence is selected for the finding.</td>
+        <td>Maximum recovery potential; QA validation to compare engines; compliance audits where you need full documentation.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>2.3 Configuring Pricing Mode (Step-by-Step)</h3>
+
+<ol class="steps">
+  <li>Navigate to <span class="highlighted-path">/dashboard/settings</span> and click the <strong>Pricing Config</strong> tab.</li>
+  <li>In the <strong>Pricing Mode</strong> dropdown, select the appropriate mode for your audit objective. If unsure, select <strong>AUTO</strong>.</li>
+  <li>In the <strong>State</strong> field, enter your two-letter state code (e.g., <code>TX</code> for Texas). This is required for Medicaid mode and improves AUTO mode accuracy.</li>
+  <li>Review the engine summary that appears below the dropdown — it describes what will happen when you upload 835 files.</li>
+  <li>Click <strong>Save Pricing Configuration</strong>.</li>
+</ol>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Pricing Config Tab (/dashboard/settings → Pricing Config)</div>
+</div>
+
+<div class="callout warning">
+  <div class="callout-label">Important — Pricing Mode Affects All Future Uploads</div>
+  Changing the Pricing Mode after uploading 835 files does not retroactively reprice existing documents. To re-run existing files under a different mode, you must re-upload the 835 file (deduplication is based on content hash, so you may need to rename the file or contact support).
+</div>
+
+<div class="callout tip">
+  <div class="callout-label">Best Practice</div>
+  For most hospital settings, keep mode on <strong>AUTO</strong> for day-to-day operations. Switch to <strong>MEDICARE</strong> or <strong>MEDICAID</strong> only when running targeted payer-specific audit batches. Use <strong>ALL</strong> mode when preparing escalation evidence for contracting disputes.
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 3 — CONTRACTS
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 3.0</div>
+<h2 id="section3">Payer Contracts</h2>
+
+<p class="section-intro">
+  Payer contracts define your negotiated reimbursement rates with commercial insurers. Uploading your contracts allows ServantX to audit commercial claims against your actual agreed-upon rates — not just a generic benchmark. The better your contract coverage, the more precise your audit findings.
+</p>
+
+<p>Navigate to: <span class="highlighted-path">/dashboard/contracts</span></p>
+
+<h3>3.1 What ServantX Extracts from Contracts</h3>
+
+<p>The AI contract parser reads your PDF or DOCX file and automatically extracts:</p>
+
+<ul class="bullet">
+  <li><strong>Fee schedule entries</strong> — CPT/HCPCS code-level rates or percentage-of-billed-charge rules</li>
+  <li><strong>Percentage-of-billed rules</strong> — e.g., "85% of billed charges for unlisted procedures"</li>
+  <li><strong>Carve-outs and special provisions</strong> — services with non-standard payment rules</li>
+  <li><strong>IPPS/OPPS rates</strong> — facility-specific inpatient/outpatient addenda</li>
+  <li><strong>Payment timelines</strong> — timely payment provisions and interest clauses</li>
+  <li><strong>Timely filing deadlines</strong> — the window within which claims and appeals must be submitted</li>
+</ul>
+
+<div class="callout warning">
+  <div class="callout-label">About the Demo Contract</div>
+  New accounts include a pre-loaded synthetic demonstration contract. This contract does <em>not</em> contain a CPT-level fee schedule — it is for familiarization only. For accurate audit results, you must upload your actual payer contracts before processing production 835 files.
+</div>
+
+<h3>3.2 Uploading a Payer Contract</h3>
+
+<ol class="steps">
+  <li>Navigate to <span class="highlighted-path">/dashboard/contracts</span>.</li>
+  <li>Click <strong>Upload Contract</strong> (top-right button).</li>
+  <li>Select your contract file. Supported formats: <strong>PDF</strong> or <strong>DOCX</strong>. Maximum file size: <strong>50 MB</strong>.</li>
+  <li>In the <strong>Payer Name</strong> field, enter the exact payer name (e.g., "Aetna," "BlueCross BlueShield of Texas," "UnitedHealthcare"). This must match the payer identifier in your 835 files for automatic rule matching.</li>
+  <li>Click <strong>Upload &amp; Process</strong>. The AI extraction process begins immediately.</li>
+  <li>Wait for the status to change from <span class="badge badge-amber">Processing</span> to <span class="badge badge-green">Extracted</span>. Large contracts may take 2–5 minutes.</li>
+  <li>Once complete, click on the contract to review the extracted <strong>Rule Library</strong>.</li>
+</ol>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Contract Upload Dialog (/dashboard/contracts)</div>
+</div>
+
+<h3>3.3 Reviewing Extracted Rules</h3>
+
+<ol class="steps">
+  <li>From <span class="highlighted-path">/dashboard/contracts</span>, click on a contract to open it.</li>
+  <li>Review the <strong>Rule Library</strong> — a structured table of every extracted rate, rule, and provision.</li>
+  <li>Spot-check several CPT codes you know well against your paper contract. Verify the rates match.</li>
+  <li>Note the <strong>Coverage Percentage</strong> — the proportion of your most frequently billed CPT codes that have an extracted rate. Higher is better; &gt;70% coverage is typical for a comprehensive contract.</li>
+</ol>
+
+<div class="callout tip">
+  <div class="callout-label">Tip — Improve Coverage</div>
+  If coverage is lower than expected, check whether your contract has attached fee schedule addenda (separate PDF pages or Excel tables). Re-upload with the addenda included as pages within the same PDF. Alternatively, use the Reprocess function after combining documents.
+</div>
+
+<h3>3.4 Chat with Your Contract</h3>
+
+<p>Every uploaded contract includes an AI chat interface for quick lookups — no need to search the PDF manually.</p>
+
+<ol class="steps">
+  <li>Open the contract from <span class="highlighted-path">/dashboard/contracts</span>.</li>
+  <li>Click the <strong>Ask a Question</strong> or chat icon.</li>
+  <li>Type your question in plain English. Examples:
+    <ul class="bullet">
+      <li>"What is the negotiated rate for CPT 99214?"</li>
+      <li>"What is the timely filing deadline for appeals?"</li>
+      <li>"Does this contract have any mental health carve-outs?"</li>
+      <li>"What is the interest rate on late payments?"</li>
+    </ul>
+  </li>
+  <li>The AI responds with a direct answer and cites the relevant contract section or page number.</li>
+</ol>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Contract Chat Interface</div>
+</div>
+
+<h3>3.5 Reprocessing a Contract</h3>
+
+<p>
+  If you believe the initial extraction missed rules (e.g., the contract was scanned and the OCR was imperfect, or you have since combined addenda), you can trigger a fresh extraction.
+</p>
+
+<ol class="steps">
+  <li>Open the contract from <span class="highlighted-path">/dashboard/contracts</span>.</li>
+  <li>Click the <strong>Reprocess</strong> button (or the three-dot menu → Reprocess).</li>
+  <li>Confirm the reprocess. The existing rule library is replaced when the new extraction completes.</li>
+</ol>
+
+<div class="callout warning">
+  <div class="callout-label">One Contract per Payer</div>
+  ServantX associates one active contract per payer name per workspace. Uploading a new contract for the same payer replaces the previous one for <em>future</em> 835 processing. Previously processed claims are not retroactively updated.
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 4 — RECEIPTS (835 FILES)
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 4.0</div>
+<h2 id="section4">Uploading 835 Remittance Files</h2>
+
+<p class="section-intro">
+  The 835 Electronic Remittance Advice (ERA) is the standard file payers use to explain every payment and adjustment they make to your claims. This is the primary data source for ServantX auditing. Most clearinghouses and practice management systems can export these files on demand.
+</p>
+
+<p>Navigate to: <span class="highlighted-path">/dashboard/receipts</span></p>
+
+<h3>4.1 What Is an 835 File?</h3>
+
+<p>
+  The 835 is an EDI (Electronic Data Interchange) X12 transaction set defined by the HIPAA standard. Each 835 file contains one or more claim payment records, with detailed breakdowns of:
+</p>
+
+<ul class="bullet">
+  <li>The original billed amount for each service line</li>
+  <li>The amount the payer actually paid</li>
+  <li>Adjustment reason codes (why payment was reduced)</li>
+  <li>Contractual adjustments, patient responsibility, and denials</li>
+  <li>Payer identification and claim identifiers</li>
+</ul>
+
+<h4>Where to Get Your 835 Files</h4>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th>How to Export</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Availity</strong></td>
+        <td>Remittance Viewer → Remittance Files → Download ERA (select date range and payer)</td>
+      </tr>
+      <tr>
+        <td><strong>Change Healthcare</strong></td>
+        <td>Enrollment &amp; Connectivity → ERA Downloads → Export .835</td>
+      </tr>
+      <tr>
+        <td><strong>Waystar</strong></td>
+        <td>Remittance → ERA Management → Download as 835 File</td>
+      </tr>
+      <tr>
+        <td><strong>Practice Management System</strong></td>
+        <td>Varies by system — look for "ERA Export," "835 Export," or "Remittance Download" in your billing module</td>
+      </tr>
+      <tr>
+        <td><strong>Direct from Payer</strong></td>
+        <td>Some payers (e.g., Noridian for Medicare) offer portal downloads; file type will be <code>.835</code> or <code>.txt</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout tip">
+  <div class="callout-label">File Extensions</div>
+  835 files may have extensions: <code>.835</code>, <code>.txt</code>, <code>.edi</code>, or <code>.x12</code>. ServantX accepts all of these. The file content must be a valid X12 835 transaction set.
+</div>
+
+<h3>4.2 Uploading 835 Files</h3>
+
+<ol class="steps">
+  <li>Navigate to <span class="highlighted-path">/dashboard/receipts</span>.</li>
+  <li>Click <strong>Upload Files</strong>.</li>
+  <li>Choose your upload method:
+    <ul class="bullet">
+      <li><strong>Single file</strong> — select one <code>.835</code> file from your computer</li>
+      <li><strong>Bulk upload</strong> — hold Ctrl (Windows) or Command (Mac) and select multiple <code>.835</code> files</li>
+      <li><strong>ZIP archive</strong> — compress multiple 835 files into a <code>.zip</code> and upload the archive; ServantX automatically unpacks and processes each file</li>
+    </ul>
+  </li>
+  <li>Click <strong>Upload</strong>. Files are validated and queued immediately.</li>
+  <li>Monitor the status column on the Receipts page. Processing typically completes within 1–3 minutes per file depending on size.</li>
+</ol>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Receipts Upload Dialog (/dashboard/receipts)</div>
+</div>
+
+<h3>4.3 What Happens After Upload</h3>
+
+<p>ServantX processes each uploaded file through a multi-stage pipeline:</p>
+
+<ol class="steps">
+  <li><strong>File validation</strong> — the 835 structure is verified against the X12 standard. Invalid files are flagged with an error message.</li>
+  <li><strong>Deduplication check</strong> — a SHA-256 cryptographic hash of the file content is compared against previously uploaded files. Exact duplicates are rejected to prevent double-counting.</li>
+  <li><strong>Claim extraction</strong> — each service line is parsed out: CPT/HCPCS codes, payer ID, billed amount, paid amount, adjustment codes, date of service, rendering provider, and DRG (if inpatient).</li>
+  <li><strong>Repricing engine selection</strong> — based on your Pricing Mode setting and the payer/claim type, the appropriate fee schedule engine (MPFS, IPPS, OPPS, CONTRACT, or AI) is selected.</li>
+  <li><strong>Repricing &amp; variance calculation</strong> — every claim is repriced. Variance = Expected Amount − Paid Amount. Positive variance = potential underpayment.</li>
+  <li><strong>Confidence scoring</strong> — the AI assigns a 0–100 confidence score based on data completeness, fee schedule match quality, and rule applicability.</li>
+  <li><strong>Document creation</strong> — an Audit Document is created for each claim and made available in <span class="highlighted-path">/dashboard/documents</span>.</li>
+</ol>
+
+<div class="callout warning">
+  <div class="callout-label">Batch Size Limit</div>
+  Each upload batch processes a maximum of <strong>30 claims</strong> in a single run. Larger 835 files are automatically chunked. If you upload a file with 200 claims, ServantX will process it in multiple batches automatically — all resulting documents will appear in the Documents view.
+</div>
+
+<h3>4.4 Managing Uploaded Receipts</h3>
+
+<ul class="bullet">
+  <li><strong>View receipts list</strong> — the Receipts page shows all uploaded files with upload date, status, and claim count.</li>
+  <li><strong>Open a receipt</strong> — click any row to see the raw claim list extracted from that file.</li>
+  <li><strong>File status indicators:</strong>
+    <ul class="bullet">
+      <li><span class="badge badge-blue">Queued</span> — waiting to be processed</li>
+      <li><span class="badge badge-amber">Processing</span> — currently being analyzed</li>
+      <li><span class="badge badge-green">Complete</span> — all claims processed; documents available</li>
+      <li><span class="badge badge-red">Error</span> — validation failed; check the error message and re-upload a corrected file</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 5 — DOCUMENTS (AUDIT RESULTS)
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 5.0</div>
+<h2 id="section5">Audit Documents &amp; Findings</h2>
+
+<p class="section-intro">
+  Every claim extracted from your 835 files becomes an Audit Document. This is your primary workspace for reviewing findings, evaluating underpayments, and deciding which claims are worth appealing.
+</p>
+
+<p>Navigate to: <span class="highlighted-path">/dashboard/documents</span></p>
+
+<h3>5.1 Anatomy of an Audit Document</h3>
+
+<p>Click any document row to open the full detail view. Each document contains:</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Claim Summary</strong></td>
+        <td>Payer name, date of service, rendering provider, place of service</td>
+      </tr>
+      <tr>
+        <td><strong>CPT/HCPCS Codes</strong></td>
+        <td>All procedure codes billed on this claim, with descriptions</td>
+      </tr>
+      <tr>
+        <td><strong>Billed Amount</strong></td>
+        <td>The amount your organization submitted to the payer</td>
+      </tr>
+      <tr>
+        <td><strong>Paid Amount</strong></td>
+        <td>The amount the payer actually remitted per the 835</td>
+      </tr>
+      <tr>
+        <td><strong>Expected Amount</strong></td>
+        <td>What ServantX calculated the payer should have paid per the applicable fee schedule or contract</td>
+      </tr>
+      <tr>
+        <td><strong>Variance</strong></td>
+        <td>Expected − Paid. A positive number indicates a potential underpayment.</td>
+      </tr>
+      <tr>
+        <td><strong>Pricing Engine Used</strong></td>
+        <td>Which engine produced the finding: MPFS, IPPS, OPPS, CONTRACT_AUDIT, or AI</td>
+      </tr>
+      <tr>
+        <td><strong>Confidence Score</strong></td>
+        <td>0–100 scale. Higher = stronger basis for the finding.</td>
+      </tr>
+      <tr>
+        <td><strong>AI Reasoning</strong></td>
+        <td>Plain-English explanation of why this was flagged and how the expected amount was calculated</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-Engine Table</strong></td>
+        <td>Side-by-side comparison of all engines (visible when ALL mode was used)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>5.2 Understanding Confidence Scores</h3>
+
+<p>The confidence score reflects how well the pricing engine was able to match your claim to authoritative rate data. It is not a judgment of whether the payer made an error — it is a measure of data quality.</p>
+
+<div class="confidence-bar-wrap">
+  <span style="font-weight:700; font-size:0.85rem; width:90px;">80–100</span>
+  <div class="confidence-bar"><div class="confidence-fill fill-high"></div></div>
+  <span style="font-size:0.85rem; color:#065f46;">Strong case — confident match to fee schedule. File appeal with high priority.</span>
+</div>
+<div class="confidence-bar-wrap">
+  <span style="font-weight:700; font-size:0.85rem; width:90px;">50–79</span>
+  <div class="confidence-bar"><div class="confidence-fill fill-medium"></div></div>
+  <span style="font-size:0.85rem; color:#92400e;">Moderate confidence — review AI reasoning before deciding to file.</span>
+</div>
+<div class="confidence-bar-wrap">
+  <span style="font-weight:700; font-size:0.85rem; width:90px;">30–49</span>
+  <div class="confidence-bar"><div class="confidence-fill fill-low"></div></div>
+  <span style="font-size:0.85rem; color:#991b1b;">Lower confidence — may reflect a gap in contract coverage. Manual review strongly recommended.</span>
+</div>
+<div class="confidence-bar-wrap">
+  <span style="font-weight:700; font-size:0.85rem; width:90px;">0–29</span>
+  <div class="confidence-bar"><div class="confidence-fill" style="background:#dc2626; width:10%;"></div></div>
+  <span style="font-size:0.85rem; color:#991b1b;">Insufficient data — do not file an appeal based on this finding alone.</span>
+</div>
+
+<div class="callout tip">
+  <div class="callout-label">Working Efficiently</div>
+  Start your appeal queue with documents at 80+ confidence and a variance above your minimum threshold (e.g., $50). Small-dollar, low-confidence findings cost more to appeal than you recover.
+</div>
+
+<h3>5.3 Document Status Flow</h3>
+
+<p>Every document has a <strong>processing status</strong> (distinct from appeal status) that shows whether the AI analysis is complete:</p>
+
+<div class="status-ladder">
+  <span class="badge badge-amber">not_submitted</span>
+  <span class="arrow">→</span>
+  <span class="badge badge-blue">in_progress</span>
+  <span class="arrow">→</span>
+  <span class="badge badge-green">succeeded</span>
+</div>
+<div style="margin-top:0.5rem;">
+  <span class="badge badge-red">failed</span> — AI processing error; check the error details and contact support if it persists.
+</div>
+
+<h3>5.4 Filtering and Searching Documents</h3>
+
+<ol class="steps">
+  <li>Navigate to <span class="highlighted-path">/dashboard/documents</span>.</li>
+  <li>Use the <strong>Filter</strong> bar to narrow results by:
+    <ul class="bullet">
+      <li>Appeal status (none, identified, drafted, filed, approved, etc.)</li>
+      <li>Payer name</li>
+      <li>Date range</li>
+      <li>Confidence score threshold</li>
+      <li>Minimum variance amount</li>
+    </ul>
+  </li>
+  <li>Use the <strong>Search</strong> bar to find claims by patient name, claim number, or CPT code.</li>
+  <li>Sort columns by clicking the column header — sort by Variance (descending) to prioritize highest-dollar underpayments.</li>
+</ol>
+
+<h3>5.5 Exporting Findings</h3>
+
+<ol class="steps">
+  <li>Apply any desired filters to narrow the document list.</li>
+  <li>Click <strong>Export CSV</strong> (top-right of Documents page).</li>
+  <li>The exported file includes: claim ID, payer, service date, CPT codes, billed amount, paid amount, expected amount, variance, confidence score, AI reasoning summary, and current appeal status.</li>
+  <li>Use this export for management reporting, auditor review, or loading into your practice management system.</li>
+</ol>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Documents List View with Filter Panel (/dashboard/documents)</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 6 — APPEAL WORKFLOW
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 6.0</div>
+<h2 id="section6">Appeal Workflow</h2>
+
+<p class="section-intro">
+  ServantX streamlines the appeal process from identifying an underpayment to tracking the payer's response. This section covers the full lifecycle — from reviewing a finding to entering a recovered amount in the ROI Dashboard.
+</p>
+
+<h3>6.1 The Appeal Status Ladder</h3>
+
+<p>Every Audit Document has an appeal status that tracks where it is in the recovery process. Move claims through this workflow as you take action.</p>
+
+<div class="status-ladder">
+  <span class="badge badge-gray">none</span>
+  <span class="arrow">→</span>
+  <span class="badge badge-blue">identified</span>
+  <span class="arrow">→</span>
+  <span class="badge badge-blue">drafted</span>
+  <span class="arrow">→</span>
+  <span class="badge badge-amber">filed</span>
+  <span class="arrow">→</span>
+  <span class="badge badge-amber">under_review</span>
+  <span class="arrow">→</span>
+  <span class="badge badge-green">approved</span>
+  <span class="arrow">/</span>
+  <span class="badge badge-teal">partial</span>
+  <span class="arrow">/</span>
+  <span class="badge badge-red">denied</span>
+</div>
+
+<p style="margin-top:0.75rem; font-size:0.9rem; color:var(--gray-500);">See <a href="#appendixB">Appendix B</a> for full definitions of each status.</p>
+
+<h3>6.2 Step-by-Step Appeal Workflow</h3>
+
+<ol class="steps">
+  <li>
+    <div>
+      <strong>Review the Audit Document</strong><br/>
+      Open the document from <span class="highlighted-path">/dashboard/documents</span>. Read the AI Reasoning section carefully. Confirm the variance amount and confidence score justify the effort. For findings under $25 or confidence below 40, consider deferring.
+    </div>
+  </li>
+  <li>
+    <div>
+      <strong>Mark as Identified</strong><br/>
+      Change the appeal status to <span class="badge badge-blue">identified</span> to flag this claim for appeal. This moves it into your active appeal pipeline.
+    </div>
+  </li>
+  <li>
+    <div>
+      <strong>Generate the Appeal Letter</strong><br/>
+      Click <strong>Generate Appeal Letter</strong>. ServantX's AI (powered by GPT-4.1) drafts a formal appeal letter that includes:
+      <ul class="bullet" style="margin-top:0.5rem;">
+        <li>Your hospital/practice name and the payer name</li>
+        <li>Claim identifiers, date of service, and member information</li>
+        <li>The specific fee schedule basis (e.g., Medicare RVU calculation, APC rate, DRG weight)</li>
+        <li>Regulatory citations: 42 CFR, applicable state Medicaid regulations</li>
+        <li>Your contract terms and applicable provisions</li>
+        <li>The exact underpayment calculation</li>
+        <li>A formal request for reconsideration and payment of the identified balance</li>
+      </ul>
+    </div>
+  </li>
+  <li>
+    <div>
+      <strong>Review and Edit the Letter</strong><br/>
+      Read the generated letter carefully. Verify all amounts, dates, and claim references are accurate. Edit directly in the platform or download as <code>.txt</code> and paste into Microsoft Word to apply your letterhead.
+    </div>
+  </li>
+  <li>
+    <div>
+      <strong>Submit to the Payer</strong><br/>
+      Submit the appeal through the payer's official channel. <em>ServantX does not submit appeals electronically to payers</em> — you must file through:
+      <ul class="bullet" style="margin-top:0.5rem;">
+        <li>The payer's provider portal (Medicare: NGSconnect, Noridian, etc.)</li>
+        <li>Fax (if required by the payer)</li>
+        <li>Certified mail for written appeals</li>
+      </ul>
+    </div>
+  </li>
+  <li>
+    <div>
+      <strong>Update Status to Filed</strong><br/>
+      After submitting, update the status to <span class="badge badge-amber">filed</span> in ServantX. Record the submission date and reference number in the notes field.
+    </div>
+  </li>
+  <li>
+    <div>
+      <strong>Track Payer Response</strong><br/>
+      When the payer acknowledges receipt and begins review, update to <span class="badge badge-amber">under_review</span>. Check your clearinghouse or payer portal for responses.
+    </div>
+  </li>
+  <li>
+    <div>
+      <strong>Record the Outcome</strong><br/>
+      When the payer responds:
+      <ul class="bullet" style="margin-top:0.5rem;">
+        <li><span class="badge badge-green">approved</span> — enter the full recovered amount in the <strong>Recovered Amount</strong> field</li>
+        <li><span class="badge badge-teal">partial</span> — enter the actual amount received (less than the variance)</li>
+        <li><span class="badge badge-red">denied</span> — note the denial reason; consider escalation or second-level appeal</li>
+      </ul>
+      The recovered amount automatically rolls into the <strong>ROI Dashboard</strong>.
+    </div>
+  </li>
+</ol>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Appeal Letter Preview with Edit Controls</div>
+</div>
+
+<h3>6.3 Appeal Timelines by Payer Type</h3>
+
+<div class="callout danger">
+  <div class="callout-label">Timely Filing — Do Not Miss These Deadlines</div>
+  Missing a timely filing deadline is one of the most common reasons appeals are denied. Track your deadlines carefully.
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Payer Type</th>
+        <th>Typical Appeal Deadline</th>
+        <th>Where to File</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Medicare (Fee-for-Service)</strong></td>
+        <td><strong>120 days</strong> from date of remittance for a Redetermination (first level)</td>
+        <td>Your Medicare Administrative Contractor (MAC) portal (e.g., Noridian, Novitas, NGSconnect)</td>
+      </tr>
+      <tr>
+        <td><strong>Medicare Advantage</strong></td>
+        <td>Varies by plan — check the contract. Typically <strong>60–180 days</strong> from remittance.</td>
+        <td>MA plan's provider appeals portal</td>
+      </tr>
+      <tr>
+        <td><strong>Commercial</strong></td>
+        <td><strong>90–180 days</strong> — check your specific contract. Stored in Contract Chat.</td>
+        <td>Payer's provider portal or per contract instructions</td>
+      </tr>
+      <tr>
+        <td><strong>Medicaid (Texas)</strong></td>
+        <td><strong>90 days</strong> from remittance as a general rule (verify for your specific program)</td>
+        <td>Texas Medicaid &amp; Healthcare Partnership (TMHP) portal</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout warning">
+  <div class="callout-label">Legal Disclaimer</div>
+  All appeal letters generated by ServantX are AI-drafted and must be reviewed by a qualified billing professional or compliance officer before submission. Verify all regulatory citations, amounts, and contract provisions for accuracy. ServantX does not provide legal or regulatory advice.
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 7 — ROI DASHBOARD
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 7.0</div>
+<h2 id="section7">ROI Dashboard &amp; Analytics</h2>
+
+<p class="section-intro">
+  The ROI Dashboard gives leadership and billing management a real-time view of the financial impact of underpayment recovery efforts — from total opportunity identified to dollars actually collected.
+</p>
+
+<p>Navigate to: <span class="highlighted-path">/dashboard/analytics</span></p>
+
+<h3>7.1 KPI Summary Cards</h3>
+
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-card-label">Total Identified</div>
+    <div class="kpi-card-value">$—</div>
+    <div class="kpi-card-desc">Sum of all flagged underpayment variances. Your potential recovery opportunity.</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-card-label">Total Recovered</div>
+    <div class="kpi-card-value">$—</div>
+    <div class="kpi-card-desc">Actual dollars collected: sum of approved + partial recovered_amount entries.</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-card-label">Recovery Rate</div>
+    <div class="kpi-card-value">—%</div>
+    <div class="kpi-card-desc">Recovered ÷ Identified. Industry typical: 20–60%.</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-card-label">Flag Rate</div>
+    <div class="kpi-card-value">—%</div>
+    <div class="kpi-card-desc">Flagged claims ÷ total claims processed. Above 15% = systematic payer issue.</div>
+  </div>
+</div>
+
+<div class="callout tip">
+  <div class="callout-label">Reading the Numbers</div>
+  A high <strong>Total Identified</strong> combined with a low <strong>Recovery Rate</strong> usually means appeals are being generated but not filed (a bottleneck). Check the Appeal Pipeline Funnel to diagnose where claims are stalling.
+</div>
+
+<h3>7.2 Appeal Pipeline Funnel</h3>
+
+<p>
+  The funnel shows the count of claims at each appeal status. This is your operational view — where are claims getting stuck?
+</p>
+
+<div class="funnel">
+  <div class="funnel-step">
+    <div class="funnel-bar" style="width:100%;">Identified</div>
+    <span style="font-size:0.82rem; color:var(--gray-500);">Claims flagged and awaiting action</span>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="width:80%; background:#0d9488;">Drafted</div>
+    <span style="font-size:0.82rem; color:var(--gray-500);">Letters generated but not yet filed — <strong>bottleneck indicator</strong></span>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="width:60%; background:#0f766e;">Filed</div>
+    <span style="font-size:0.82rem; color:var(--gray-500);">Submitted to payer</span>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="width:40%; background:#134e4a;">Under Review</div>
+    <span style="font-size:0.82rem; color:var(--gray-500);">Payer acknowledged; awaiting decision</span>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="width:25%; background:#047857;">Approved</div>
+    <span style="font-size:0.82rem; color:var(--gray-500);">Recovery complete</span>
+  </div>
+</div>
+
+<p style="margin-top:1rem;">
+  A large buildup in the <strong>Drafted</strong> status means your team is generating letters but not submitting them — assign a dedicated staff member or set a daily submission target.
+</p>
+
+<h3>7.3 Recovery by Payer Table</h3>
+
+<p>
+  This table ranks payers by total underpayment amount identified. Review it monthly to identify patterns.
+</p>
+
+<div class="callout tip">
+  <div class="callout-label">Strategic Insight</div>
+  If one payer consistently appears at the top of this table across multiple audit batches, this is likely a systematic contract interpretation issue — not random errors. Document the pattern and escalate to your contracting team. A contract amendment or formal dispute letter from legal may recover more than individual appeal-by-appeal work.
+</div>
+
+<h3>7.4 Industry Benchmarks</h3>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Typical Range</th>
+        <th>What It Means if You're Outside the Range</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Flag Rate</td>
+        <td>5–15%</td>
+        <td>Above 15%: systematic payer underpayment issue. Below 5%: may need better contract coverage or more 835 data.</td>
+      </tr>
+      <tr>
+        <td>Recovery Rate</td>
+        <td>20–60%</td>
+        <td>Below 20%: letters may not be filed consistently; low confidence findings inflating denominator. Above 60%: excellent — scale appeal volume.</td>
+      </tr>
+      <tr>
+        <td>Days to Resolution</td>
+        <td>30–120 days</td>
+        <td>Longer times often reflect Medicare multi-level appeals; commercial payers typically respond faster.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — ROI Dashboard with KPIs and Funnel (/dashboard/analytics)</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 8 — PROJECTS & AUDIT WORKSPACE
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 8.0</div>
+<h2 id="section8">Projects &amp; Audit Workspace</h2>
+
+<p class="section-intro">
+  Projects organize formal audit runs, supporting evidence, and verification records for your organization. Every hospital account includes a default "Primary Audit Workspace" out of the box.
+</p>
+
+<p>Navigate to: <span class="highlighted-path">/dashboard</span> (Projects section)</p>
+
+<h3>8.1 Understanding Projects</h3>
+
+<p>
+  A Project is a container for an audit effort — typically tied to a specific payer, time period, or compliance initiative. Using separate projects allows your team to organize work without commingling findings from different payers or quarters.
+</p>
+
+<ul class="bullet">
+  <li>The default <strong>Primary Audit Workspace</strong> is created automatically when your account is provisioned.</li>
+  <li>Most organizations can operate entirely within the default workspace.</li>
+  <li>Additional projects can be created for specialized audits (e.g., "2025 Q4 Medicare Audit" or "Aetna Contract Review — Cardiology").</li>
+</ul>
+
+<h3>8.2 Audit Evidence and Verification Runs</h3>
+
+<p>
+  For compliance purposes, ServantX allows you to attach formal audit evidence and generate verification run digests — cryptographic records of the audit state at a point in time.
+</p>
+
+<ol class="steps">
+  <li>Open a project from the dashboard.</li>
+  <li>To attach evidence files (e.g., payer correspondence, contract excerpts, internal review notes), click <strong>Upload Evidence</strong>. The system generates a secure pre-signed upload URL for each file.</li>
+  <li>To create a formal audit snapshot, click <strong>Run Verification</strong>. This creates a tamper-evident digest of all current findings, evidence, and timestamps — suitable for compliance documentation.</li>
+  <li>Download the verification report as PDF for your compliance files.</li>
+</ol>
+
+<div class="callout warning">
+  <div class="callout-label">Retention Policy</div>
+  Store audit records in accordance with your organization's HIPAA retention policy — a minimum of 6 years for records related to PHI. ServantX is not a long-term records management system; export and archive completed audits per your internal policy.
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 9 — ANALYSIS & PATTERNS
+════════════════════════════════════════════════════════ -->
+<div class="section-number">Section 9.0</div>
+<h2 id="section9">Analysis &amp; Pattern Reports</h2>
+
+<p class="section-intro">
+  Pattern Reports analyze your entire audit history to surface systemic underpayment trends — going beyond individual claims to identify CPT codes, providers, and payer behavior patterns that drive the most revenue leakage.
+</p>
+
+<p>Navigate to: <span class="highlighted-path">/dashboard/reports</span></p>
+
+<h3>9.1 Available Metrics</h3>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>totalClaims</code></td>
+        <td>Total number of claims processed across all 835 uploads</td>
+      </tr>
+      <tr>
+        <td><code>totalPaid</code></td>
+        <td>Sum of all amounts actually paid by payers</td>
+      </tr>
+      <tr>
+        <td><code>totalExpected</code></td>
+        <td>Sum of all expected amounts per fee schedules and contracts</td>
+      </tr>
+      <tr>
+        <td><code>totalVariance</code></td>
+        <td>totalExpected − totalPaid. Total underpayment across all audited claims.</td>
+      </tr>
+      <tr>
+        <td><code>topCpts</code></td>
+        <td>CPT codes ranked by total variance across all claims. Identifies your highest-impact procedure codes.</td>
+      </tr>
+      <tr>
+        <td><code>topProviders</code></td>
+        <td>Rendering providers ranked by total underpayments. May indicate systematic denial targeting of certain providers.</td>
+      </tr>
+      <tr>
+        <td><code>topPatterns</code></td>
+        <td>Payer + CPT + modifier combinations with repeated underpayments. These are your strongest candidates for contract disputes.</td>
+      </tr>
+      <tr>
+        <td><code>coverage</code></td>
+        <td>Rate match coverage by engine — what percentage of billed codes were matched to an authoritative rate.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>9.2 Acting on Pattern Data</h3>
+
+<ul class="bullet">
+  <li><strong>Top CPT codes with high variance:</strong> Add these to a watch list. If the same CPT is consistently underpaid by the same payer, pull all related claims and generate a batch appeal or file a group contract dispute.</li>
+  <li><strong>Top providers with frequent underpayments:</strong> Check whether a specific provider NPI is being targeted. This could indicate a credentialing gap in the payer's system.</li>
+  <li><strong>Payer + CPT + modifier patterns:</strong> These are the gold standard for contract renegotiation. Document the pattern, quantify the total revenue impact, and share with your contracting team before the next renewal.</li>
+  <li><strong>Low engine coverage:</strong> If coverage is under 50% for the CONTRACT engine, your uploaded contract may be missing a fee schedule addendum. Re-upload an updated version.</li>
+</ul>
+
+<div class="callout tip">
+  <div class="callout-label">Monthly Review Recommendation</div>
+  Run the Pattern Report at the end of each month after closing out your appeal queue. Identify the top 3 CPTs and the top 2 payers driving underpayments. Brief your billing manager with the variance totals — this data is most persuasive when presented as a cumulative dollar figure rather than per-claim amounts.
+</div>
+
+<div class="screenshot">
+  <div class="screenshot-icon">&#128247;</div>
+  <div class="screenshot-label">Screenshot Placeholder — Pattern Report with Top CPT and Payer Tables (/dashboard/reports)</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     APPENDIX A — PRICING MODE QUICK REFERENCE
+════════════════════════════════════════════════════════ -->
+<div class="appendix-label">Appendix A</div>
+<h2 id="appendixA">Pricing Mode Quick Reference</h2>
+
+<p>Use this table as a quick reference when selecting a Pricing Mode in Settings. For full explanations, see <a href="#section2">Section 2.0</a>.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Mode</th>
+        <th>Engines Active</th>
+        <th>Commercial Claims</th>
+        <th>Medicare Claims</th>
+        <th>Medicaid Claims</th>
+        <th>Best For</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>AUTO</strong></td>
+        <td>All, selected by claim type</td>
+        <td>Contract + AI fallback</td>
+        <td>MPFS / IPPS / OPPS</td>
+        <td>State rate (TX only) or Contract</td>
+        <td>Mixed payer environments; day-to-day use</td>
+      </tr>
+      <tr>
+        <td><strong>MEDICARE</strong></td>
+        <td>MPFS, IPPS, OPPS</td>
+        <td>Benchmarked to Medicare</td>
+        <td>MPFS / IPPS / OPPS</td>
+        <td>Benchmarked to Medicare</td>
+        <td>Medicare-only audits; commercial benchmarking</td>
+      </tr>
+      <tr>
+        <td><strong>MEDICAID</strong></td>
+        <td>TX Medicaid FFS</td>
+        <td>Falls to Contract + AI</td>
+        <td>Falls to MPFS</td>
+        <td>TX Medicaid FFS (others → Contract)</td>
+        <td>Texas Medicaid providers</td>
+      </tr>
+      <tr>
+        <td><strong>CONTRACT</strong></td>
+        <td>Contract rules + AI</td>
+        <td>Contract + AI</td>
+        <td>Contract + AI</td>
+        <td>Contract + AI</td>
+        <td>Strong full contract coverage; complex carve-outs</td>
+      </tr>
+      <tr>
+        <td><strong>ALL</strong></td>
+        <td>Every engine in parallel</td>
+        <td>All engines; highest variance at ≥30% confidence wins</td>
+        <td>All engines</td>
+        <td>All engines</td>
+        <td>Maximum recovery; QA validation; contract disputes</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Medicare Engine Selection by Claim Type</h3>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Claim Characteristics</th>
+        <th>Engine Selected</th>
+        <th>Form Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Professional/physician service; CPT procedure codes; no DRG</td>
+        <td><strong>MPFS</strong> — Medicare Physician Fee Schedule</td>
+        <td>CMS-1500</td>
+      </tr>
+      <tr>
+        <td>Hospital inpatient admission; DRG code present; facility bill</td>
+        <td><strong>IPPS</strong> — Inpatient Prospective Payment System</td>
+        <td>UB-04</td>
+      </tr>
+      <tr>
+        <td>Hospital outpatient facility; ER, same-day surgery, infusion, imaging</td>
+        <td><strong>OPPS/APC</strong> — Outpatient Prospective Payment</td>
+        <td>UB-04</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     APPENDIX B — APPEAL STATUS DEFINITIONS
+════════════════════════════════════════════════════════ -->
+<div class="appendix-label">Appendix B</div>
+<h2 id="appendixB">Appeal Status Definitions</h2>
+
+<p>The following table defines every appeal status value in ServantX. Update a document's appeal status manually as you take action on each claim.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Badge</th>
+        <th>Meaning</th>
+        <th>Next Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>none</code></td>
+        <td><span class="badge badge-gray">none</span></td>
+        <td>Claim processed; no appeal action taken yet. This is the default state for every new document.</td>
+        <td>Review the finding; set to <em>identified</em> if you decide to pursue.</td>
+      </tr>
+      <tr>
+        <td><code>identified</code></td>
+        <td><span class="badge badge-blue">identified</span></td>
+        <td>Underpayment confirmed by reviewer; claim added to active appeal queue.</td>
+        <td>Generate appeal letter.</td>
+      </tr>
+      <tr>
+        <td><code>drafted</code></td>
+        <td><span class="badge badge-blue">drafted</span></td>
+        <td>Appeal letter has been generated and is ready for review.</td>
+        <td>Review letter; correct if needed; submit to payer.</td>
+      </tr>
+      <tr>
+        <td><code>filed</code></td>
+        <td><span class="badge badge-amber">filed</span></td>
+        <td>Appeal has been submitted to the payer through their official channel. Record submission date in notes.</td>
+        <td>Monitor payer portal for acknowledgment.</td>
+      </tr>
+      <tr>
+        <td><code>under_review</code></td>
+        <td><span class="badge badge-amber">under_review</span></td>
+        <td>Payer has acknowledged receipt and is reviewing the appeal.</td>
+        <td>Monitor for decision. Follow up if no response within 30 days.</td>
+      </tr>
+      <tr>
+        <td><code>approved</code></td>
+        <td><span class="badge badge-green">approved</span></td>
+        <td>Payer agreed with the appeal; full additional payment issued.</td>
+        <td>Enter recovered_amount. Confirm payment received in your PM system.</td>
+      </tr>
+      <tr>
+        <td><code>partial</code></td>
+        <td><span class="badge badge-teal">partial</span></td>
+        <td>Payer agreed to a partial additional payment — less than the full variance.</td>
+        <td>Enter actual recovered_amount. Evaluate whether to escalate to second-level appeal for the remaining balance.</td>
+      </tr>
+      <tr>
+        <td><code>denied</code></td>
+        <td><span class="badge badge-red">denied</span></td>
+        <td>Payer rejected the appeal. Note the denial reason code.</td>
+        <td>Evaluate the denial reason. Consider second-level appeal, external review request (Medicare), or escalation to contracting if systematic.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Medicare Appeal Levels</h3>
+
+<p>Medicare has a formal multi-level appeal process for disputed claims:</p>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Level</th>
+        <th>Name</th>
+        <th>Who Reviews</th>
+        <th>Filing Deadline</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1st</td>
+        <td>Redetermination</td>
+        <td>Medicare Administrative Contractor (MAC)</td>
+        <td>120 days from initial determination</td>
+      </tr>
+      <tr>
+        <td>2nd</td>
+        <td>Reconsideration</td>
+        <td>Qualified Independent Contractor (QIC)</td>
+        <td>180 days from MAC decision</td>
+      </tr>
+      <tr>
+        <td>3rd</td>
+        <td>ALJ Hearing</td>
+        <td>Office of Medicare Hearings and Appeals (OMHA)</td>
+        <td>60 days from QIC decision; minimum $180 in controversy</td>
+      </tr>
+      <tr>
+        <td>4th</td>
+        <td>Medicare Appeals Council</td>
+        <td>Department Appeals Board (DAB)</td>
+        <td>60 days from ALJ decision</td>
+      </tr>
+      <tr>
+        <td>5th</td>
+        <td>Federal District Court</td>
+        <td>Federal judiciary</td>
+        <td>60 days from Council decision; minimum $1,760 in controversy</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     APPENDIX C — FAQ
+════════════════════════════════════════════════════════ -->
+<div class="appendix-label">Appendix C</div>
+<h2 id="appendixC">Frequently Asked Questions</h2>
+
+<div class="faq-item">
+  <p class="faq-q">What is the difference between a 835 and a 277?</p>
+  <p class="faq-a">The 835 is an Electronic Remittance Advice — it tells you what was paid and why, for claims the payer has adjudicated. The 277 is a Claim Status Inquiry/Response — it tells you the current processing status of a submitted claim. ServantX uses 835 files because underpayment analysis requires knowing the final adjudicated payment. The 277 is not used for audit purposes.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">My clearinghouse doesn't export .835 files — what do I do?</p>
+  <p class="faq-a">Most modern clearinghouses and practice management systems support 835 export. If yours uses a different format (e.g., human-readable PDF EOBs or proprietary reports), contact support at ServantX — the team may be able to assist with conversion. Some clearinghouses require you to explicitly enroll for ERA/835 delivery; check your clearinghouse enrollment settings.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">The AI flagged a claim but I believe the payer paid correctly. What do I do?</p>
+  <p class="faq-a">Do not file an appeal. The confidence score and AI Reasoning help distinguish solid findings from uncertain ones. If the confidence score is below 60 or the AI reasoning cites a contract provision that doesn't apply to this claim type, mark the document as <em>none</em> (or leave it unactioned). ServantX finds potential underpayments — your billing team's professional judgment is the final filter before an appeal is filed.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">Can I use ServantX for Medicaid claims outside of Texas?</p>
+  <p class="faq-a">At this time, ServantX has native Texas Medicaid Fee-For-Service rates built in. For other states, set the Pricing Mode to CONTRACT and upload your state Medicaid managed care contract. The AI will audit against your contract terms. Native multi-state Medicaid rate support is on the product roadmap.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">How do I handle a payer that doesn't accept electronic appeal submissions?</p>
+  <p class="faq-a">Download the generated appeal letter (as .txt or copy to Word) and apply your organization's letterhead. Print and submit via fax or certified mail as required by the payer. Record the fax confirmation or tracking number in the notes field of the ServantX document and set the status to <em>filed</em>.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">The same 835 file keeps getting rejected as a duplicate. How do I re-upload it?</p>
+  <p class="faq-a">ServantX deduplicates by the SHA-256 hash of the file content — an identical file will always be rejected. If you need to reprocess the same data (e.g., after changing your Pricing Mode), contact your administrator for options. In most cases, if the underlying 835 data needs to be re-audited, you should download a fresh copy from your clearinghouse, which may have a slightly different timestamp in the file header.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">My contract was recently renegotiated. How do I update it in ServantX?</p>
+  <p class="faq-a">Upload the new contract PDF under the same payer name in <em>/dashboard/contracts</em>. The new contract replaces the previous one for all future 835 uploads. Claims already processed before the update retain their original findings — they are not retroactively re-analyzed. If you need to re-audit old claims against new rates, re-upload those 835 files (you may need to rename them to bypass deduplication).</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">Who should have access to ServantX at our organization?</p>
+  <p class="faq-a">Access should be limited to authorized billing staff and revenue cycle personnel who have completed HIPAA training and are covered under your organization's workforce policies. Under HIPAA's minimum necessary standard, only individuals who need access to PHI for their job function should have credentials. Do not share logins between staff members — each person should have an individual account.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">How does ServantX handle PHI (Protected Health Information)?</p>
+  <p class="faq-a">ServantX operates as a HIPAA Business Associate. PHI contained in 835 files is processed in a secure, encrypted environment. All data is encrypted in transit (TLS 1.3) and at rest (AES-256). Audit logs record all access to claim-level data. A Business Associate Agreement (BAA) must be executed before production use. Contact ServantX support for your BAA.</p>
+</div>
+
+<div class="faq-item">
+  <p class="faq-q">An appeal was approved but the payment hasn't shown up in our practice management system. What should I check?</p>
+  <p class="faq-a">ServantX tracks appeal status and recovered amounts based on what your staff enters manually — it does not automatically reconcile with your PM system. When you receive an approved additional payment, you must (1) enter the recovered_amount in the ServantX document, and (2) post the payment in your PM system separately. The recovered_amount in ServantX is for ROI reporting only; it does not create a transaction in your billing workflow.</p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     APPENDIX D — GLOSSARY
+════════════════════════════════════════════════════════ -->
+<div class="appendix-label">Appendix D</div>
+<h2 id="appendixD">Glossary</h2>
+
+<div class="glossary-term">
+  <div class="glossary-key">835</div>
+  <div>The HIPAA X12 EDI transaction set for Health Care Claim Payment/Advice. The standard electronic file format that payers use to communicate payment decisions, adjustment codes, and denial reasons to providers. Also called an ERA (Electronic Remittance Advice).</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">ERA</div>
+  <div>Electronic Remittance Advice. The human-friendly name for the 835 transaction. An ERA details what was paid, what was adjusted, and the reason codes for any reductions, for one or more claims.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">MPFS</div>
+  <div>Medicare Physician Fee Schedule. The CMS schedule that defines reimbursement for physician and professional services billed to Medicare. Payment is calculated based on Relative Value Units (RVUs) multiplied by the Conversion Factor and adjusted for geography using the Geographic Practice Cost Index (GPCI).</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">IPPS</div>
+  <div>Inpatient Prospective Payment System. The Medicare payment methodology for hospital inpatient acute care stays. Payment is based on the patient's Diagnosis Related Group (DRG) weight multiplied by a hospital-specific base rate.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">OPPS</div>
+  <div>Outpatient Prospective Payment System. The Medicare payment methodology for hospital outpatient services including emergency department visits, same-day surgery, observation stays, and outpatient infusion. Claims are grouped into Ambulatory Payment Classifications (APCs).</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">APC</div>
+  <div>Ambulatory Payment Classification. The unit of payment under OPPS. Hospital outpatient services are classified into APCs based on the procedure codes billed; each APC has a set payment rate updated annually by CMS.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">DRG</div>
+  <div>Diagnosis Related Group. A classification system used by Medicare IPPS (and many commercial payers) to group inpatient hospital stays by diagnosis and procedure. Each DRG has a relative weight that determines the payment amount for that hospitalization.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">RVU</div>
+  <div>Relative Value Unit. The building block of Medicare physician fee calculations. Each CPT code has three RVU components: work (physician effort), practice expense (overhead), and malpractice (liability insurance). Total RVUs are multiplied by the Conversion Factor to determine the Medicare payment amount.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">GPCI</div>
+  <div>Geographic Practice Cost Index. A CMS adjustment factor applied to RVUs to account for regional variations in the cost of providing medical services. Each Medicare locality (geographic area) has its own GPCI values, which adjust the practice expense and malpractice RVU components up or down.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">PHI</div>
+  <div>Protected Health Information. Under HIPAA, any individually identifiable health information — including patient names, dates of service, diagnoses, claim numbers, and any other data that could be used to identify a patient — that is transmitted or maintained by a covered entity or their business associates.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">BAA</div>
+  <div>Business Associate Agreement. A HIPAA-required contract between a covered entity (your hospital or practice) and a vendor (ServantX) that handles PHI on their behalf. The BAA defines each party's responsibilities for protecting PHI. A signed BAA must be in place before using ServantX in a production environment.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">CPT</div>
+  <div>Current Procedural Terminology. The standardized code set maintained by the American Medical Association (AMA) used to describe medical, surgical, and diagnostic procedures and services billed by physicians and outpatient facilities. CPT codes are 5-digit numeric codes (e.g., 99214 for an established patient office visit).</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">HCPCS</div>
+  <div>Healthcare Common Procedure Coding System. A code set that extends CPT codes to include supplies, equipment, and services not covered by CPT. Level I HCPCS codes are CPT codes. Level II HCPCS codes begin with a letter (A–V) and cover items such as durable medical equipment, ambulance services, and drugs.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">Timely Filing</div>
+  <div>The contractual or regulatory requirement to submit a claim or appeal within a defined time window from the date of service or original remittance. Missing a timely filing deadline is an absolute bar to payment in most cases and cannot be appealed on the merits. Timely filing deadlines vary by payer and are specified in your payer contract.</div>
+</div>
+
+<div class="glossary-term">
+  <div class="glossary-key">Underpayment</div>
+  <div>The difference between what a payer should have paid (per the applicable fee schedule or contract) and what they actually paid. An underpayment is distinct from a denial (where no payment was made) and may occur due to incorrect rate application, missing contract provisions, payer system errors, or inappropriate downcoding.</div>
+</div>
+
+<hr/>
+
+<!-- ─── Footer ─────────────────────────────────────────── -->
+<div style="margin-top:3rem; padding-top:1.5rem; border-top:2px solid var(--teal); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+  <div style="font-size:0.8rem; color:var(--gray-500);">
+    <strong style="color:var(--teal-dark);">ServantX</strong> &nbsp;|&nbsp;
+    <a href="https://www.servantx.ai" style="color:var(--teal);">www.servantx.ai</a> &nbsp;|&nbsp;
+    <a href="https://api.servantx.ai/docs" style="color:var(--teal);">API Documentation</a>
+  </div>
+  <div style="font-size:0.75rem; color:var(--gray-500);">
+    User Manual v2.0 &nbsp;|&nbsp; April 2026 &nbsp;|&nbsp; Confidential
+  </div>
+</div>
+
+<div style="margin-top:0.75rem; font-size:0.75rem; color:var(--gray-500); line-height:1.5;">
+  This document is confidential and intended solely for authorized users of ServantX. Do not distribute outside your organization. ServantX processes Protected Health Information — use and access must comply with HIPAA regulations and your organization's policies. Appeal letters generated by ServantX are AI-assisted drafts and must be reviewed by a qualified billing professional prior to submission. ServantX does not provide legal, regulatory, or medical advice.
+</div>
+
+</body>
+</html>
