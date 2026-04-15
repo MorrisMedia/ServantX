@@ -507,3 +507,24 @@ class AppAuditLog(Base):
     ip_address = Column(String, nullable=True)
     metadata_json = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+
+class AiCostLog(Base):
+    __tablename__ = "ai_cost_log"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    hospital_id = Column(String, ForeignKey("hospitals.id"), nullable=True, index=True)
+    document_id = Column(String, nullable=True, index=True)
+    batch_run_id = Column(String, nullable=True, index=True)
+    service = Column(String, nullable=False, index=True)
+    provider = Column(String, nullable=False, index=True)
+    model = Column(String, nullable=False)
+    input_tokens = Column(Integer, nullable=False, default=0)
+    output_tokens = Column(Integer, nullable=False, default=0)
+    cache_read_tokens = Column(Integer, nullable=False, default=0)
+    cache_write_tokens = Column(Integer, nullable=False, default=0)
+    cost_usd = Column(Numeric(10, 6), nullable=False, default=0)
+    latency_ms = Column(Integer, nullable=True)
+    success = Column(Boolean, nullable=False, default=True)
+    error_message = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
